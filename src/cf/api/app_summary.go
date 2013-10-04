@@ -9,7 +9,7 @@ import (
 )
 
 type AppSummaryRepository interface {
-	GetSummary(app cf.Application) (summary cf.AppSummary, apiStatus net.ApiStatus)
+	GetSummary(app cf.Application) (summary cf.AppSummary, apiStatus ApiStatus)
 }
 
 type CloudControllerAppSummaryRepository struct {
@@ -25,7 +25,7 @@ func NewCloudControllerAppSummaryRepository(config *configuration.Configuration,
 	return
 }
 
-func (repo CloudControllerAppSummaryRepository) GetSummary(app cf.Application) (summary cf.AppSummary, apiStatus net.ApiStatus) {
+func (repo CloudControllerAppSummaryRepository) GetSummary(app cf.Application) (summary cf.AppSummary, apiStatus ApiStatus) {
 	summary.App = app
 
 	instances, apiStatus := repo.appRepo.GetInstances(app)
@@ -57,16 +57,16 @@ type InstanceStatsApiResponse struct {
 	}
 }
 
-func (repo CloudControllerAppSummaryRepository) updateInstancesWithStats(app cf.Application, instances []cf.ApplicationInstance) (updatedInst []cf.ApplicationInstance, apiStatus net.ApiStatus) {
+func (repo CloudControllerAppSummaryRepository) updateInstancesWithStats(app cf.Application, instances []cf.ApplicationInstance) (updatedInst []cf.ApplicationInstance, apiStatus ApiStatus) {
 	path := fmt.Sprintf("%s/v2/apps/%s/stats", repo.config.Target, app.Guid)
-	request, apiStatus := repo.gateway.NewRequest("GET", path, repo.config.AccessToken, nil)
+	request, apiStatus := newRequest(repo.gateway, "GET", path, repo.config.AccessToken, nil)
 	if apiStatus.NotSuccessful() {
 		return
 	}
 
 	apiResponse := StatsApiResponse{}
 
-	_, apiStatus = repo.gateway.PerformRequestForJSONResponse(request, &apiResponse)
+	_, apiStatus = performRequestForJSONResponse(repo.gateway, request, &apiResponse)
 	if apiStatus.NotSuccessful() {
 		return
 	}

@@ -1,6 +1,7 @@
-package net
+package api
 
 import (
+	"cf/net"
 	"fmt"
 )
 
@@ -39,6 +40,18 @@ func NewApiStatusWithMessage(message string, a ...interface{}) (apiStatus ApiSta
 func NewApiStatusWithError(message string, err error) (apiStatus ApiStatus) {
 	return ApiStatus{
 		Message: fmt.Sprintf("%s: %s", message, err.Error()),
+		isError: true,
+	}
+}
+
+func NewApiStatusWithErrorResponse(errResponse net.ErrorResponse) (apiStatus ApiStatus) {
+	return ApiStatus{
+		Message: fmt.Sprintf(
+			"Server Error, Status %d. Code: %s, Description: %s",
+			errResponse.StatusCode,
+			errResponse.ErrorCode,
+			errResponse.Description,
+		),
 		isError: true,
 	}
 }

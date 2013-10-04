@@ -2,8 +2,8 @@ package domain_test
 
 import (
 	"cf"
+	"cf/api"
 	. "cf/commands/domain"
-	"cf/net"
 	"errors"
 	"github.com/stretchr/testify/assert"
 	"testhelpers"
@@ -68,7 +68,7 @@ func TestMapDomainDomainNotFound(t *testing.T) {
 	ctxt := testhelpers.NewContext("map-domain", []string{"my-space", "foo.com"})
 	ui := &testhelpers.FakeUI{}
 	domainRepo := &testhelpers.FakeDomainRepository{
-		FindByNameInOrgApiStatus: net.NewNotFoundApiStatus("Domain", "foo.com"),
+		FindByNameInOrgApiStatus: api.NewNotFoundApiStatus("Domain", "foo.com"),
 	}
 
 	reqFactory := &testhelpers.FakeReqFactory{
@@ -95,7 +95,7 @@ func TestMapDomainMappingFails(t *testing.T) {
 	ui := &testhelpers.FakeUI{}
 	domainRepo := &testhelpers.FakeDomainRepository{
 		FindByNameInOrgDomain: cf.Domain{Name: "foo.com"},
-		MapDomainApiStatus:    net.NewApiStatusWithError("Did not work %s", errors.New("bummer")),
+		MapDomainApiStatus:    api.NewApiStatusWithError("Did not work %s", errors.New("bummer")),
 	}
 
 	reqFactory := &testhelpers.FakeReqFactory{

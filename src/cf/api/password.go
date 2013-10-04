@@ -9,8 +9,8 @@ import (
 )
 
 type PasswordRepository interface {
-	GetScore(password string) (string, net.ApiStatus)
-	UpdatePassword(old string, new string) net.ApiStatus
+	GetScore(password string) (string, ApiStatus)
+	UpdatePassword(old string, new string) ApiStatus
 }
 
 type CloudControllerPasswordRepository struct {
@@ -36,7 +36,7 @@ type InfoResponse struct {
 	UserGuid      string `json:"user"`
 }
 
-func (repo CloudControllerPasswordRepository) GetScore(password string) (score string, apiStatus net.ApiStatus) {
+func (repo CloudControllerPasswordRepository) GetScore(password string) (score string, apiStatus ApiStatus) {
 	infoResponse, apiStatus := repo.getTargetInfo()
 	if apiStatus.NotSuccessful() {
 		return
@@ -47,14 +47,14 @@ func (repo CloudControllerPasswordRepository) GetScore(password string) (score s
 		"password": []string{password},
 	}
 
-	scoreRequest, apiStatus := repo.gateway.NewRequest("POST", scorePath, repo.config.AccessToken, strings.NewReader(scoreBody.Encode()))
+	scoreRequest, apiStatus := newRequest(repo.gateway, "POST", scorePath, repo.config.AccessToken, strings.NewReader(scoreBody.Encode()))
 	if apiStatus.NotSuccessful() {
 		return
 	}
 	scoreRequest.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	scoreResponse := ScoreResponse{}
 
-	_, apiStatus = repo.gateway.PerformRequestForJSONResponse(scoreRequest, &scoreResponse)
+	_, apiStatus = performRequestForJSONResponse(repo.gateway, scoreRequest, &scoreResponse)
 	if apiStatus.NotSuccessful() {
 		return
 	}
@@ -63,7 +63,7 @@ func (repo CloudControllerPasswordRepository) GetScore(password string) (score s
 	return
 }
 
-func (repo CloudControllerPasswordRepository) UpdatePassword(old string, new string) (apiStatus net.ApiStatus) {
+func (repo CloudControllerPasswordRepository) UpdatePassword(old string, new string) (apiStatus ApiStatus) {
 	infoResponse, apiStatus := repo.getTargetInfo()
 	if apiStatus.NotSuccessful() {
 		return
@@ -71,29 +71,29 @@ func (repo CloudControllerPasswordRepository) UpdatePassword(old string, new str
 
 	path := fmt.Sprintf("%s/Users/%s/password", infoResponse.TokenEndpoint, repo.config.UserGuid())
 	body := fmt.Sprintf(`{"password":"%s","oldPassword":"%s"}`, new, old)
-	request, apiStatus := repo.gateway.NewRequest("PUT", path, repo.config.AccessToken, strings.NewReader(body))
+	request, apiStatus := newRequest(repo.gateway, "PUT", path, repo.config.AccessToken, strings.NewReader(body))
 	if apiStatus.NotSuccessful() {
 		return
 	}
 
 	request.Header.Set("Content-Type", "application/json")
 
-	apiStatus = repo.gateway.PerformRequest(request)
+	apiStatus = performRequest(repo.gateway, request)
 	return
 }
 
-func (repo *CloudControllerPasswordRepository) getTargetInfo() (response InfoResponse, apiStatus net.ApiStatus) {
+func (repo *CloudControllerPasswordRepository) getTargetInfo() (response InfoResponse, apiStatus ApiStatus) {
 	if repo.infoResponse.UserGuid == "" {
 		path := fmt.Sprintf("%s/info", repo.config.Target)
 		var request *net.Request
-		request, apiStatus = repo.gateway.NewRequest("GET", path, repo.config.AccessToken, nil)
+		request, apiStatus = newRequest(repo.gateway, "GET", path, repo.config.AccessToken, nil)
 		if apiStatus.NotSuccessful() {
 			return
 		}
 
 		response = InfoResponse{}
 
-		_, apiStatus = repo.gateway.PerformRequestForJSONResponse(request, &response)
+		_, apiStatus = performRequestForJSONResponse(repo.gateway, request, &response)
 
 		repo.infoResponse = response
 	}

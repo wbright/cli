@@ -80,7 +80,7 @@ func TestSpacesFindAllWithIncorrectToken(t *testing.T) {
 
 	var (
 		spaces    []cf.Space
-		apiStatus net.ApiStatus
+		apiStatus ApiStatus
 	)
 
 	// Capture output so debugging info does not show up in test

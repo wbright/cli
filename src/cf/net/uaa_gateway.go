@@ -11,7 +11,7 @@ type uaaErrorResponse struct {
 	Description string `json:"error_description"`
 }
 
-var uaaErrorHandler = func(response *http.Response) errorResponse {
+var uaaErrorHandler = func(response *http.Response) ErrorResponse {
 	invalidTokenCode := "invalid_token"
 
 	jsonBytes, _ := ioutil.ReadAll(response.Body)
@@ -25,7 +25,11 @@ var uaaErrorHandler = func(response *http.Response) errorResponse {
 		code = INVALID_TOKEN_CODE
 	}
 
-	return errorResponse{Code: code, Description: uaaResp.Description}
+	return ErrorResponse{
+		StatusCode:  response.StatusCode,
+		ErrorCode:   code,
+		Description: uaaResp.Description,
+	}
 }
 
 func NewUAAGateway() Gateway {

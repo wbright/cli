@@ -3,7 +3,6 @@ package requirements
 import (
 	"cf"
 	"cf/api"
-	"cf/net"
 	"cf/terminal"
 )
 
@@ -28,7 +27,7 @@ func NewServiceInstanceRequirement(name string, ui terminal.UI, sR api.ServiceRe
 }
 
 func (req *ServiceInstanceApiRequirement) Execute() (success bool) {
-	var apiStatus net.ApiStatus
+	var apiStatus api.ApiStatus
 	req.serviceInstance, apiStatus = req.serviceRepo.FindInstanceByName(req.name)
 
 	if apiStatus.NotSuccessful() {

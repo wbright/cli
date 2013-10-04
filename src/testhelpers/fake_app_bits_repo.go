@@ -2,7 +2,7 @@ package testhelpers
 
 import (
 	"cf"
-	"cf/net"
+	"cf/api"
 )
 
 type FakeApplicationBitsRepository struct {
@@ -10,7 +10,7 @@ type FakeApplicationBitsRepository struct {
 	UploadedDir string
 }
 
-func (repo *FakeApplicationBitsRepository) UploadApp(app cf.Application, dir string) (apiStatus net.ApiStatus) {
+func (repo *FakeApplicationBitsRepository) UploadApp(app cf.Application, dir string) (apiStatus api.ApiStatus) {
 	repo.UploadedDir = dir
 	repo.UploadedApp = app
 

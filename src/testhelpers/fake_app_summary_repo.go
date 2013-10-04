@@ -2,7 +2,7 @@ package testhelpers
 
 import (
 	"cf"
-	"cf/net"
+	"cf/api"
 )
 
 type FakeAppSummaryRepo struct{
@@ -11,7 +11,7 @@ type FakeAppSummaryRepo struct{
 }
 
 
-func (repo *FakeAppSummaryRepo)GetSummary(app cf.Application) (summary cf.AppSummary, apiStatus net.ApiStatus) {
+func (repo *FakeAppSummaryRepo)GetSummary(app cf.Application) (summary cf.AppSummary, apiStatus api.ApiStatus) {
 	repo.GetSummaryApp= app
 	summary = repo.GetSummarySummary
 

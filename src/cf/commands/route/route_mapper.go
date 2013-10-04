@@ -2,7 +2,6 @@ package route
 
 import (
 	"cf/api"
-	"cf/net"
 	"cf/requirements"
 	"cf/terminal"
 	"errors"
@@ -55,7 +54,7 @@ func (cmd *RouteMapper) Run(c *cli.Context) {
 	route := cmd.routeReq.GetRoute()
 	app := cmd.appReq.GetApplication()
 
-	var apiStatus net.ApiStatus
+	var apiStatus api.ApiStatus
 
 	if cmd.bind {
 		cmd.ui.Say("Adding url route %s to app %s",

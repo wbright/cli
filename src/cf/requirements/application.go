@@ -3,7 +3,6 @@ package requirements
 import (
 	"cf"
 	"cf/api"
-	"cf/net"
 	"cf/terminal"
 )
 
@@ -28,7 +27,7 @@ func NewApplicationRequirement(name string, ui terminal.UI, aR api.ApplicationRe
 }
 
 func (req *ApplicationApiRequirement) Execute() (success bool) {
-	var apiStatus net.ApiStatus
+	var apiStatus api.ApiStatus
 	req.application, apiStatus = req.appRepo.FindByName(req.name)
 
 	if apiStatus.NotSuccessful() {

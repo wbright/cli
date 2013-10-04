@@ -3,7 +3,6 @@ package requirements
 import (
 	"cf"
 	"cf/api"
-	"cf/net"
 	"cf/terminal"
 )
 
@@ -28,7 +27,7 @@ func NewSpaceRequirement(name string, ui terminal.UI, sR api.SpaceRepository) (r
 }
 
 func (req *SpaceApiRequirement) Execute() (success bool) {
-	var apiStatus net.ApiStatus
+	var apiStatus api.ApiStatus
 	req.space, apiStatus = req.spaceRepo.FindByName(req.name)
 
 	if apiStatus.NotSuccessful() {

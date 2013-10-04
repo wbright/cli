@@ -3,7 +3,6 @@ package domain
 import (
 	"cf"
 	"cf/api"
-	"cf/net"
 	"cf/requirements"
 	"cf/terminal"
 	"errors"
@@ -55,7 +54,7 @@ func (cmd *DomainMapper) GetRequirements(reqFactory requirements.Factory, c *cli
 
 func (cmd *DomainMapper) Run(c *cli.Context) {
 	var (
-		apiStatus net.ApiStatus
+		apiStatus api.ApiStatus
 		domain    cf.Domain
 	)
 

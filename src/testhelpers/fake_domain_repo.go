@@ -2,7 +2,7 @@ package testhelpers
 
 import (
 	"cf"
-	"cf/net"
+	"cf/api"
 )
 
 type FakeDomainRepository struct {
@@ -12,7 +12,7 @@ type FakeDomainRepository struct {
 	FindAllByOrgDomains []cf.Domain
 
 	FindByNameInOrgDomain cf.Domain
-	FindByNameInOrgApiStatus net.ApiStatus
+	FindByNameInOrgApiStatus api.ApiStatus
 
 	FindByNameName string
 	FindByNameDomain cf.Domain
@@ -24,60 +24,60 @@ type FakeDomainRepository struct {
 
 	MapDomainDomain cf.Domain
 	MapDomainSpace cf.Space
-	MapDomainApiStatus net.ApiStatus
+	MapDomainApiStatus api.ApiStatus
 
 	UnmapDomainDomain cf.Domain
 	UnmapDomainSpace cf.Space
-	UnmapDomainApiStatus net.ApiStatus
+	UnmapDomainApiStatus api.ApiStatus
 }
 
-func (repo *FakeDomainRepository) FindAllInCurrentSpace() (domains []cf.Domain, apiStatus net.ApiStatus){
+func (repo *FakeDomainRepository) FindAllInCurrentSpace() (domains []cf.Domain, apiStatus api.ApiStatus){
 	domains = repo.FindAllInCurrentSpaceDomains
 	return
 }
 
-func (repo *FakeDomainRepository) FindAllByOrg(org cf.Organization)(domains []cf.Domain, apiStatus net.ApiStatus){
+func (repo *FakeDomainRepository) FindAllByOrg(org cf.Organization)(domains []cf.Domain, apiStatus api.ApiStatus){
 	repo.FindAllByOrgOrg = org
 	domains = repo.FindAllByOrgDomains
 
 	return
 }
 
-func (repo *FakeDomainRepository) FindByNameInCurrentSpace(name string) (domain cf.Domain, apiStatus net.ApiStatus){
+func (repo *FakeDomainRepository) FindByNameInCurrentSpace(name string) (domain cf.Domain, apiStatus api.ApiStatus){
 	repo.FindByNameName = name
 	domain = repo.FindByNameDomain
 
 	if repo.FindByNameNotFound {
-		apiStatus = net.NewNotFoundApiStatus("Domain", name)
+		apiStatus = api.NewNotFoundApiStatus("Domain", name)
 	}
 	if repo.FindByNameErr {
-		apiStatus = net.NewApiStatusWithMessage("Error finding domain")
+		apiStatus = api.NewApiStatusWithMessage("Error finding domain")
 	}
 
 	return
 }
 
-func (repo *FakeDomainRepository) Create(domainToCreate cf.Domain, owningOrg cf.Organization) (createdDomain cf.Domain, apiStatus net.ApiStatus){
+func (repo *FakeDomainRepository) Create(domainToCreate cf.Domain, owningOrg cf.Organization) (createdDomain cf.Domain, apiStatus api.ApiStatus){
 	repo.ReserveDomainDomainToCreate = domainToCreate
 	repo.ReserveDomainOwningOrg = owningOrg
 	return
 }
 
-func (repo *FakeDomainRepository) MapDomain(domain cf.Domain, space cf.Space) (apiStatus net.ApiStatus) {
+func (repo *FakeDomainRepository) MapDomain(domain cf.Domain, space cf.Space) (apiStatus api.ApiStatus) {
 	repo.MapDomainDomain = domain
 	repo.MapDomainSpace = space
 	apiStatus = repo.MapDomainApiStatus
 	return
 }
 
-func (repo *FakeDomainRepository) UnmapDomain(domain cf.Domain, space cf.Space) (apiStatus net.ApiStatus) {
+func (repo *FakeDomainRepository) UnmapDomain(domain cf.Domain, space cf.Space) (apiStatus api.ApiStatus) {
 	repo.UnmapDomainDomain = domain
 	repo.UnmapDomainSpace = space
 	apiStatus = repo.UnmapDomainApiStatus
 	return
 }
 
-func (repo *FakeDomainRepository) FindByNameInOrg(name string, owningOrg cf.Organization) (domain cf.Domain, apiStatus net.ApiStatus) {
+func (repo *FakeDomainRepository) FindByNameInOrg(name string, owningOrg cf.Organization) (domain cf.Domain, apiStatus api.ApiStatus) {
 
 	domain = repo.FindByNameInOrgDomain
 	apiStatus = repo.FindByNameInOrgApiStatus

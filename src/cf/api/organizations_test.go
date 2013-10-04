@@ -76,7 +76,7 @@ func TestOrganizationsFindAllWithIncorrectToken(t *testing.T) {
 
 	var (
 		organizations []cf.Organization
-		apiStatus     net.ApiStatus
+		apiStatus     ApiStatus
 	)
 
 	// Capture output so debugging info does not show up in test

@@ -2,7 +2,7 @@ package testhelpers
 
 import (
 	"cf"
-	"cf/net"
+	"cf/api"
 	"fmt"
 )
 
@@ -35,43 +35,43 @@ type FakeRouteRepository struct {
 	FindAllRoutes []cf.Route
 }
 
-func (repo *FakeRouteRepository) FindAll() (routes []cf.Route, apiStatus net.ApiStatus) {
+func (repo *FakeRouteRepository) FindAll() (routes []cf.Route, apiStatus api.ApiStatus) {
 	if repo.FindAllErr {
-		apiStatus = net.NewApiStatusWithMessage("Error finding all routes")
+		apiStatus = api.NewApiStatusWithMessage("Error finding all routes")
 	}
 
 	routes = repo.FindAllRoutes
 	return
 }
 
-func (repo *FakeRouteRepository) FindByHost(host string) (route cf.Route, apiStatus net.ApiStatus) {
+func (repo *FakeRouteRepository) FindByHost(host string) (route cf.Route, apiStatus api.ApiStatus) {
 	repo.FindByHostHost = host
 
 	if repo.FindByHostErr {
-		apiStatus = net.NewApiStatusWithMessage("Route not found")
+		apiStatus = api.NewApiStatusWithMessage("Route not found")
 	}
 
 	route = repo.FindByHostRoute
 	return
 }
 
-func (repo *FakeRouteRepository) FindByHostAndDomain(host, domain string) (route cf.Route, apiStatus net.ApiStatus) {
+func (repo *FakeRouteRepository) FindByHostAndDomain(host, domain string) (route cf.Route, apiStatus api.ApiStatus) {
 	repo.FindByHostAndDomainHost = host
 	repo.FindByHostAndDomainDomain = domain
 
 	if repo.FindByHostAndDomainErr {
-		apiStatus = net.NewApiStatusWithMessage("Error finding Route")
+		apiStatus = api.NewApiStatusWithMessage("Error finding Route")
 	}
 
 	if repo.FindByHostAndDomainNotFound {
-		apiStatus = net.NewNotFoundApiStatus("Org", fmt.Sprintf("%s.%s", host, domain))
+		apiStatus = api.NewNotFoundApiStatus("Org", fmt.Sprintf("%s.%s", host, domain))
 	}
 
 	route = repo.FindByHostAndDomainRoute
 	return
 }
 
-func (repo *FakeRouteRepository) Create(newRoute cf.Route, domain cf.Domain) (createdRoute cf.Route, apiStatus net.ApiStatus) {
+func (repo *FakeRouteRepository) Create(newRoute cf.Route, domain cf.Domain) (createdRoute cf.Route, apiStatus api.ApiStatus) {
 	repo.CreatedRoute = newRoute
 	repo.CreatedRouteDomain = domain
 
@@ -82,7 +82,7 @@ func (repo *FakeRouteRepository) Create(newRoute cf.Route, domain cf.Domain) (cr
 	return
 }
 
-func (repo *FakeRouteRepository) CreateInSpace(newRoute cf.Route, domain cf.Domain, space cf.Space) (createdRoute cf.Route, apiStatus net.ApiStatus) {
+func (repo *FakeRouteRepository) CreateInSpace(newRoute cf.Route, domain cf.Domain, space cf.Space) (createdRoute cf.Route, apiStatus api.ApiStatus) {
 	repo.CreateInSpaceRoute = newRoute
 	repo.CreateInSpaceDomain = domain
 	repo.CreateInSpaceSpace = space
@@ -91,13 +91,13 @@ func (repo *FakeRouteRepository) CreateInSpace(newRoute cf.Route, domain cf.Doma
 	return
 }
 
-func (repo *FakeRouteRepository) Bind(route cf.Route, app cf.Application) (apiStatus net.ApiStatus) {
+func (repo *FakeRouteRepository) Bind(route cf.Route, app cf.Application) (apiStatus api.ApiStatus) {
 	repo.BoundRoute = route
 	repo.BoundApp = app
 	return
 }
 
-func (repo *FakeRouteRepository) Unbind(route cf.Route, app cf.Application) (apiStatus net.ApiStatus) {
+func (repo *FakeRouteRepository) Unbind(route cf.Route, app cf.Application) (apiStatus api.ApiStatus) {
 	repo.UnboundRoute = route
 	repo.UnboundApp = app
 	return

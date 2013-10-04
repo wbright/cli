@@ -3,7 +3,6 @@ package requirements
 import (
 	"cf"
 	"cf/api"
-	"cf/net"
 	"cf/terminal"
 )
 
@@ -30,7 +29,7 @@ func NewRouteRequirement(host, domain string, ui terminal.UI, routeRepo api.Rout
 }
 
 func (req *RouteApiRequirement) Execute() bool {
-	var apiStatus net.ApiStatus
+	var apiStatus api.ApiStatus
 	req.route, apiStatus = req.routeRepo.FindByHostAndDomain(req.host, req.domain)
 
 	if apiStatus.NotSuccessful() {

@@ -3,7 +3,6 @@ package requirements
 import (
 	"cf"
 	"cf/api"
-	"cf/net"
 	"cf/terminal"
 )
 
@@ -28,7 +27,7 @@ func NewDomainRequirement(name string, ui terminal.UI, domainRepo api.DomainRepo
 }
 
 func (req *DomainApiRequirement) Execute() bool {
-	var apiStatus net.ApiStatus
+	var apiStatus api.ApiStatus
 	req.domain, apiStatus = req.domainRepo.FindByNameInCurrentSpace(req.name)
 
 	if apiStatus.NotSuccessful() {

@@ -12,8 +12,8 @@ import (
 )
 
 type AuthenticationRepository interface {
-	Authenticate(email string, password string) (apiStatus net.ApiStatus)
-	RefreshAuthToken() (updatedToken string, apiStatus net.ApiStatus)
+	Authenticate(email string, password string) (apiStatus ApiStatus)
+	RefreshAuthToken() (updatedToken string, err error)
 }
 
 type UAAAuthenticationRepository struct {
@@ -29,7 +29,7 @@ func NewUAAAuthenticationRepository(gateway net.Gateway, configRepo configuratio
 	return
 }
 
-func (uaa UAAAuthenticationRepository) Authenticate(email string, password string) (apiStatus net.ApiStatus) {
+func (uaa UAAAuthenticationRepository) Authenticate(email string, password string) (apiStatus ApiStatus) {
 	data := url.Values{
 		"username":   {email},
 		"password":   {password},
@@ -37,24 +37,24 @@ func (uaa UAAAuthenticationRepository) Authenticate(email string, password strin
 		"scope":      {""},
 	}
 
-	apiStatus = uaa.getAuthToken(data)
-	if apiStatus.NotSuccessful() && apiStatus.StatusCode == 401 {
-		apiStatus.Message = "Password is incorrect, please try again."
+	errResponse, err := uaa.getAuthToken(data)
+	if err != nil && errResponse.StatusCode == 401 {
+		apiStatus = NewApiStatusWithMessage("Password is incorrect, please try again.")
 	}
 	return
 }
 
-func (uaa UAAAuthenticationRepository) RefreshAuthToken() (updatedToken string, apiStatus net.ApiStatus) {
+func (uaa UAAAuthenticationRepository) RefreshAuthToken() (updatedToken string, err error) {
 	data := url.Values{
 		"refresh_token": {uaa.config.RefreshToken},
 		"grant_type":    {"refresh_token"},
 		"scope":         {""},
 	}
 
-	apiStatus = uaa.getAuthToken(data)
+	_, err = uaa.getAuthToken(data)
 	updatedToken = uaa.config.AccessToken
 
-	if apiStatus.IsError() {
+	if err != nil {
 		fmt.Printf("%s\n\n", terminal.NotLoggedInText())
 		os.Exit(1)
 	}
@@ -62,7 +62,7 @@ func (uaa UAAAuthenticationRepository) RefreshAuthToken() (updatedToken string, 
 	return
 }
 
-func (uaa UAAAuthenticationRepository) getAuthToken(data url.Values) (apiStatus net.ApiStatus) {
+func (uaa UAAAuthenticationRepository) getAuthToken(data url.Values) (errResponse net.ErrorResponse, err error) {
 	type uaaErrorResponse struct {
 		Code        string `json:"error"`
 		Description string `json:"error_description"`
@@ -76,29 +76,28 @@ func (uaa UAAAuthenticationRepository) getAuthToken(data url.Values) (apiStatus 
 	}
 
 	path := fmt.Sprintf("%s/oauth/token", uaa.config.AuthorizationEndpoint)
-	request, apiStatus := uaa.gateway.NewRequest("POST", path, "Basic "+base64.StdEncoding.EncodeToString([]byte("cf:")), strings.NewReader(data.Encode()))
-	if apiStatus.NotSuccessful() {
+	request, err := uaa.gateway.NewRequest("POST", path, "Basic "+base64.StdEncoding.EncodeToString([]byte("cf:")), strings.NewReader(data.Encode()))
+	if err != nil {
 		return
 	}
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	response := new(AuthenticationResponse)
-	_, apiStatus = uaa.gateway.PerformRequestForJSONResponse(request, &response)
-
-	if apiStatus.NotSuccessful() {
+	_, errResponse, err = uaa.gateway.PerformRequestForJSONResponse(request, &response)
+	if err != nil {
 		return
 	}
 
 	if response.Error.Code != "" {
-		apiStatus = net.NewApiStatusWithMessage("Authentication Server error: %s", response.Error.Description)
+		err = newError("Error setting configuration: %s", response.Error.Description)
 		return
 	}
 
 	uaa.config.AccessToken = fmt.Sprintf("%s %s", response.TokenType, response.AccessToken)
 	uaa.config.RefreshToken = response.RefreshToken
-	err := uaa.configRepo.Save()
+	err = uaa.configRepo.Save()
 	if err != nil {
-		apiStatus = net.NewApiStatusWithError("Error setting configuration", err)
+		err = wrapError("Error setting configuration", err)
 	}
 
 	return

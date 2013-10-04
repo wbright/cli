@@ -3,7 +3,6 @@ package application
 import (
 	"cf"
 	"cf/api"
-	"cf/net"
 	"cf/requirements"
 	"cf/terminal"
 	"fmt"
@@ -95,7 +94,7 @@ func (cmd Push) Run(c *cli.Context) {
 	}
 }
 
-func (cmd Push) createApp(appName string, c *cli.Context) (app cf.Application, apiStatus net.ApiStatus) {
+func (cmd Push) createApp(appName string, c *cli.Context) (app cf.Application, apiStatus api.ApiStatus) {
 	domainName := c.String("d")
 	newApp := cf.Application{
 		Name:         appName,

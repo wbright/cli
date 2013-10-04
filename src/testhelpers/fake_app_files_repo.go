@@ -2,7 +2,7 @@ package testhelpers
 
 import (
 	"cf"
-	"cf/net"
+	"cf/api"
 )
 
 type FakeAppFilesRepo struct{
@@ -12,7 +12,7 @@ type FakeAppFilesRepo struct{
 }
 
 
-func (repo *FakeAppFilesRepo)ListFiles(app cf.Application, path string) (files string, apiStatus net.ApiStatus) {
+func (repo *FakeAppFilesRepo)ListFiles(app cf.Application, path string) (files string, apiStatus api.ApiStatus) {
 	repo.Application = app
 	repo.Path = path
 

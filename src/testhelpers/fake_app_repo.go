@@ -2,7 +2,7 @@ package testhelpers
 
 import (
 	"cf"
-	"cf/net"
+	"cf/api"
 	"net/http"
 	"time"
 )
@@ -43,34 +43,34 @@ type FakeApplicationRepository struct {
 	GetInstancesErrorCodes []string
 }
 
-func (repo *FakeApplicationRepository) FindByName(name string) (app cf.Application, apiStatus net.ApiStatus) {
+func (repo *FakeApplicationRepository) FindByName(name string) (app cf.Application, apiStatus api.ApiStatus) {
 	repo.FindByNameName = name
 	app = repo.FindByNameApp
 
 	if repo.FindByNameErr {
-		apiStatus = net.NewApiStatusWithMessage("Error finding app by name.")
+		apiStatus = api.NewApiStatusWithMessage("Error finding app by name.")
 	}
 	if repo.FindByNameAuthErr {
-		apiStatus = net.NewApiStatus("Authentication failed.", "1000", 401)
+		apiStatus = api.NewApiStatus("Authentication failed.", "1000", 401)
 	}
 	if repo.FindByNameNotFound {
-		apiStatus = net.NewNotFoundApiStatus("App", name)
+		apiStatus = api.NewNotFoundApiStatus("App", name)
 	}
 
 	return
 }
 
-func (repo *FakeApplicationRepository) SetEnv(app cf.Application, envVars map[string]string) (apiStatus net.ApiStatus) {
+func (repo *FakeApplicationRepository) SetEnv(app cf.Application, envVars map[string]string) (apiStatus api.ApiStatus) {
 	repo.SetEnvApp = app
 	repo.SetEnvVars = envVars
 
 	if repo.SetEnvErr {
-		apiStatus = net.NewApiStatusWithMessage("Failed setting env")
+		apiStatus = api.NewApiStatusWithMessage("Failed setting env")
 	}
 	return
 }
 
-func (repo *FakeApplicationRepository) Create(newApp cf.Application) (createdApp cf.Application, apiStatus net.ApiStatus) {
+func (repo *FakeApplicationRepository) Create(newApp cf.Application) (createdApp cf.Application, apiStatus api.ApiStatus) {
 	repo.CreatedApp = newApp
 
 	createdApp = cf.Application{
@@ -81,41 +81,41 @@ func (repo *FakeApplicationRepository) Create(newApp cf.Application) (createdApp
 	return
 }
 
-func (repo *FakeApplicationRepository) Delete(app cf.Application) (apiStatus net.ApiStatus) {
+func (repo *FakeApplicationRepository) Delete(app cf.Application) (apiStatus api.ApiStatus) {
 	repo.DeletedApp = app
 	return
 }
 
-func (repo *FakeApplicationRepository) Rename(app cf.Application, newName string) (apiStatus net.ApiStatus) {
+func (repo *FakeApplicationRepository) Rename(app cf.Application, newName string) (apiStatus api.ApiStatus) {
 	repo.RenameApp = app
 	repo.RenameNewName = newName
 	return
 }
 
-func (repo *FakeApplicationRepository) Scale(app cf.Application) (apiStatus net.ApiStatus) {
+func (repo *FakeApplicationRepository) Scale(app cf.Application) (apiStatus api.ApiStatus) {
 	repo.ScaledApp = app
 	return
 }
 
-func (repo *FakeApplicationRepository) Start(app cf.Application) (updatedApp cf.Application, apiStatus net.ApiStatus) {
+func (repo *FakeApplicationRepository) Start(app cf.Application) (updatedApp cf.Application, apiStatus api.ApiStatus) {
 	repo.StartAppToStart = app
 	if repo.StartAppErr {
-		apiStatus = net.NewApiStatusWithMessage("Error starting application")
+		apiStatus = api.NewApiStatusWithMessage("Error starting application")
 	}
 	updatedApp = repo.StartUpdatedApp
 	return
 }
 
-func (repo *FakeApplicationRepository) Stop(appToStop cf.Application) (updatedApp cf.Application, apiStatus net.ApiStatus) {
+func (repo *FakeApplicationRepository) Stop(appToStop cf.Application) (updatedApp cf.Application, apiStatus api.ApiStatus) {
 	repo.StopAppToStop = appToStop
 	if repo.StopAppErr {
-		apiStatus = net.NewApiStatusWithMessage("Error stopping application")
+		apiStatus = api.NewApiStatusWithMessage("Error stopping application")
 	}
 	updatedApp = repo.StopUpdatedApp
 	return
 }
 
-func (repo *FakeApplicationRepository) GetInstances(app cf.Application) (instances[]cf.ApplicationInstance, apiStatus net.ApiStatus) {
+func (repo *FakeApplicationRepository) GetInstances(app cf.Application) (instances[]cf.ApplicationInstance, apiStatus api.ApiStatus) {
 	time.Sleep(1*time.Millisecond) //needed for Windows only, otherwise it thinks error codes are not assigned
 	errorCode := repo.GetInstancesErrorCodes[0]
 	repo.GetInstancesErrorCodes = repo.GetInstancesErrorCodes[1:]
@@ -124,7 +124,7 @@ func (repo *FakeApplicationRepository) GetInstances(app cf.Application) (instanc
 	repo.GetInstancesResponses = repo.GetInstancesResponses[1:]
 
 	if errorCode != "" {
-		apiStatus = net.NewApiStatus("Error staging app", errorCode, http.StatusBadRequest)
+		apiStatus = api.NewApiStatus("Error staging app", errorCode, http.StatusBadRequest)
 		return
 	}
 

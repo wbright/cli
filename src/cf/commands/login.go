@@ -4,7 +4,6 @@ import (
 	"cf"
 	"cf/api"
 	"cf/configuration"
-	"cf/net"
 	"cf/requirements"
 	"cf/terminal"
 	"github.com/codegangsta/cli"
@@ -72,7 +71,7 @@ func (cmd Login) Run(c *cli.Context) {
 	return
 }
 
-func (cmd Login) doLogin(username, password string) (apiStatus net.ApiStatus) {
+func (cmd Login) doLogin(username, password string) (apiStatus api.ApiStatus) {
 	apiStatus = cmd.authenticator.Authenticate(username, password)
 	if !apiStatus.NotSuccessful() {
 		cmd.ui.Ok()

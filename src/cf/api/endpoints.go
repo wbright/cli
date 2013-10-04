@@ -6,7 +6,7 @@ import (
 )
 
 type EndpointRepository interface {
-	UpdateEndpoint(endpoint string) (apiStatus net.ApiStatus)
+	UpdateEndpoint(endpoint string) (apiStatus ApiStatus)
 }
 
 type RemoteEndpointRepository struct {
@@ -22,15 +22,15 @@ func NewEndpointRepository(config *configuration.Configuration, gateway net.Gate
 	return
 }
 
-func (repo RemoteEndpointRepository) UpdateEndpoint(endpoint string) (apiStatus net.ApiStatus) {
-	request, apiStatus := repo.gateway.NewRequest("GET", endpoint+"/v2/info", "", nil)
+func (repo RemoteEndpointRepository) UpdateEndpoint(endpoint string) (apiStatus ApiStatus) {
+	request, apiStatus := newRequest(repo.gateway, "GET", endpoint+"/v2/info", "", nil)
 	if apiStatus.NotSuccessful() {
 		return
 	}
 
 	scheme := request.URL.Scheme
 	if scheme != "http" && scheme != "https" {
-		apiStatus = net.NewApiStatusWithMessage("API Endpoints should start with https:// or http://")
+		apiStatus = NewApiStatusWithMessage("API Endpoints should start with https:// or http://")
 		return
 	}
 
@@ -40,7 +40,7 @@ func (repo RemoteEndpointRepository) UpdateEndpoint(endpoint string) (apiStatus 
 	}
 
 	serverResponse := new(infoResponse)
-	_, apiStatus = repo.gateway.PerformRequestForJSONResponse(request, &serverResponse)
+	_, apiStatus = performRequestForJSONResponse(repo.gateway, request, &serverResponse)
 	if apiStatus.NotSuccessful() {
 		return
 	}
@@ -52,7 +52,7 @@ func (repo RemoteEndpointRepository) UpdateEndpoint(endpoint string) (apiStatus 
 
 	err := repo.configRepo.Save()
 	if err != nil {
-		apiStatus = net.NewApiStatusWithMessage(err.Error())
+		apiStatus = NewApiStatusWithMessage(err.Error())
 	}
 
 	return
