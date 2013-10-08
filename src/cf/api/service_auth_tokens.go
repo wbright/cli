@@ -10,6 +10,7 @@ import (
 
 type ServiceAuthTokenRepository interface {
 	Create(authToken cf.ServiceAuthToken) (apiResponse net.ApiResponse)
+	Update(authToken cf.ServiceAuthToken) (apiResponse net.ApiResponse)
 }
 
 type CloudControllerServiceAuthTokenRepository struct {
@@ -34,4 +35,8 @@ func (repo CloudControllerServiceAuthTokenRepository) Create(authToken cf.Servic
 
 	apiResponse = repo.gateway.PerformRequest(request)
 	return
+}
+
+func (repo CloudControllerServiceAuthTokenRepository) Update(authToken cf.ServiceAuthToken) (apiResponse net.ApiResponse) {
+	panic("NOT IMPLEMENTED")
 }

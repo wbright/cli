@@ -71,6 +71,7 @@ func NewFactory(ui terminal.UI, config *configuration.Configuration, configRepo 
 	factory.cmdsByName["unmap-domain"] = domain.NewDomainMapper(ui, repoLocator.GetDomainRepository(), false)
 	factory.cmdsByName["unmap-route"] = route.NewRouteMapper(ui, repoLocator.GetRouteRepository(), false)
 	factory.cmdsByName["unset-env"] = application.NewUnsetEnv(ui, repoLocator.GetApplicationRepository())
+	factory.cmdsByName["update-service-auth-token"] = service.NewUpdateServiceAuthToken(ui, repoLocator.GetServiceAuthTokenRepository())
 	factory.cmdsByName["update-user-provided-service"] = service.NewUpdateUserProvidedService(ui, repoLocator.GetServiceRepository())
 
 	start := application.NewStart(ui, config, repoLocator.GetApplicationRepository())
