@@ -9,6 +9,7 @@ import (
 )
 
 type ServiceBrokerRepository interface {
+	FindAll() (serviceBrokers []cf.ServiceBroker, apiResponse net.ApiResponse)
 	FindByName(name string) (serviceBroker cf.ServiceBroker, apiResponse net.ApiResponse)
 	Create(serviceBroker cf.ServiceBroker) (apiResponse net.ApiResponse)
 	Update(serviceBroker cf.ServiceBroker) (apiResponse net.ApiResponse)
@@ -24,6 +25,29 @@ type CloudControllerServiceBrokerRepository struct {
 func NewCloudControllerServiceBrokerRepository(config *configuration.Configuration, gateway net.Gateway) (repo CloudControllerServiceBrokerRepository) {
 	repo.config = config
 	repo.gateway = gateway
+	return
+}
+
+func (repo CloudControllerServiceBrokerRepository) FindAll() (serviceBrokers []cf.ServiceBroker, apiResponse net.ApiResponse) {
+	path := fmt.Sprintf("%s/v2/service_brokers", repo.config.Target)
+	req, apiResponse := repo.gateway.NewRequest("GET", path, repo.config.AccessToken, nil)
+
+	resources := new(PaginatedResources)
+	_, apiResponse = repo.gateway.PerformRequestForJSONResponse(req, resources)
+
+	for _, serviceBrokerResponse := range resources {
+
+		serviceBrokers = append(serviceBrokers,
+			cf.ServiceBroker{
+				Name:     serviceBrokerResponse.Entity.Name,
+				Guid:     serviceBrokerResponse.Metadata.Guid,
+				Url:      serviceBrokerResponse.Entity.Url,
+				Username: serviceBrokerResponse.Entity.Username,
+				Password: serviceBrokerResponse.Entity.Password,
+			},
+		)
+	}
+
 	return
 }
 
