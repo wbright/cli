@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-const MaxInt = int(^uint(0) >> 1)
+const MAX_INT64 int64 = 1<<63 - 1
 
 type Item struct {
 	message                  *logmessage.Message
@@ -55,7 +55,7 @@ func (pq *PriorityQueue) NextTimestamp() int64 {
 	currentQueue := pq.items
 	n := len(currentQueue)
 	if n == 0 {
-		return int64(MaxInt)
+		return MAX_INT64
 	}
 	item := currentQueue[0]
 	return item.timestampWhenOutputtable
