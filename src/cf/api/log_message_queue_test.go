@@ -37,7 +37,7 @@ func TestPopOnEmptyQueue(t *testing.T) {
 func TestNextTimestamp(t *testing.T) {
 	pq := NewPriorityMessageQueue(5 * time.Second)
 
-	assert.Equal(t, pq.NextTimestamp(), MAX_INT64)
+	assert.Equal(t, pq.NextTimestamp(), MaxInt)
 
 	msg2 := logMessageWithTime(t, "message 2", int64(130))
 	pq.PushMessage(msg2)
