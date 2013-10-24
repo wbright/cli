@@ -11,19 +11,21 @@ import (
 )
 
 type RouteMapper struct {
-	ui        terminal.UI
+	ui           terminal.UI
 	config    *configuration.Configuration
-	routeRepo api.RouteRepository
-	appReq    requirements.ApplicationRequirement
-	routeReq  requirements.RouteRequirement
-	bind      bool
+	routeRepo    api.RouteRepository
+	appReq       requirements.ApplicationRequirement
+	routeReq     requirements.RouteRequirement
+	reserveRoute ReserveRoute
+	bind         bool
 }
 
-func NewRouteMapper(ui terminal.UI, config *configuration.Configuration, routeRepo api.RouteRepository, bind bool) (cmd *RouteMapper) {
+func NewRouteMapper(ui terminal.UI, config *configuration.Configuration, routeRepo api.RouteRepository, reserveRoute ReserveRoute, bind bool) (cmd *RouteMapper) {
 	cmd = new(RouteMapper)
 	cmd.ui = ui
 	cmd.config = config
 	cmd.routeRepo = routeRepo
+	cmd.reserveRoute = reserveRoute
 	cmd.bind = bind
 	return
 }
