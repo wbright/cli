@@ -100,7 +100,7 @@ func NewFactory(ui terminal.UI, config *configuration.Configuration, configRepo 
 	factory.cmdsByName["update-service-auth-token"] = serviceauthtoken.NewUpdateServiceAuthToken(ui, config, repoLocator.GetServiceAuthTokenRepository())
 	factory.cmdsByName["update-user-provided-service"] = service.NewUpdateUserProvidedService(ui, config, repoLocator.GetUserProvidedServiceInstanceRepository())
 
-	start := application.NewStart(ui, config, repoLocator.GetApplicationRepository())
+	start := application.NewStart(ui, config, repoLocator.GetApplicationRepository(), repoLocator.GetLogsRepository())
 	stop := application.NewStop(ui, config, repoLocator.GetApplicationRepository())
 	restart := application.NewRestart(ui, start, stop)
 
