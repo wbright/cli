@@ -65,7 +65,7 @@ func (cmd CreateService) Run(c *cli.Context) {
 	}
 
 	var identicalAlreadyExists bool
-	identicalAlreadyExists, apiResponse = cmd.serviceRepo.CreateServiceInstance(name, plan)
+	identicalAlreadyExists, apiResponse = cmd.serviceRepo.CreateServiceInstance(name, plan.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -80,7 +80,7 @@ func (cmd CreateService) Run(c *cli.Context) {
 
 func findOffering(offerings []cf.ServiceOffering, name string) (offering cf.ServiceOffering, err error) {
 	for _, offering := range offerings {
-		if name == offering.Label {
+		if name == offering.Fields.Label {
 			return offering, nil
 		}
 	}
@@ -89,7 +89,7 @@ func findOffering(offerings []cf.ServiceOffering, name string) (offering cf.Serv
 	return
 }
 
-func findPlan(plans []cf.ServicePlan, name string) (plan cf.ServicePlan, err error) {
+func findPlan(plans []cf.ServicePlanFields, name string) (plan cf.ServicePlanFields, err error) {
 	for _, plan := range plans {
 		if name == plan.Name {
 			return plan, nil

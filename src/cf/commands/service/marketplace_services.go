@@ -6,7 +6,6 @@ import (
 	"cf/requirements"
 	"cf/terminal"
 	"github.com/codegangsta/cli"
-	"strings"
 )
 
 type MarketplaceServices struct {
@@ -52,15 +51,15 @@ func (cmd MarketplaceServices) Run(c *cli.Context) {
 	}
 
 	for _, offering := range serviceOfferings {
-		var planNames []string
+		planNames := ""
 		for _, plan := range offering.Plans {
-			planNames = append(planNames, plan.Name)
+			planNames = planNames + ", " + plan.Name
 		}
 
 		table = append(table, []string{
-			offering.Label,
-			strings.Join(planNames, ", "),
-			offering.Description,
+			offering.Fields.Label,
+			planNames,
+			offering.Fields.Description,
 		})
 	}
 

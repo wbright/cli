@@ -71,7 +71,7 @@ func (cmd *DeleteSpace) Run(c *cli.Context) {
 		}
 	}
 
-	apiResponse = cmd.spaceRepo.Delete(space)
+	apiResponse = cmd.spaceRepo.Delete(space.Fields.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -86,7 +86,7 @@ func (cmd *DeleteSpace) Run(c *cli.Context) {
 	}
 
 	if config.Space.Name == spaceName {
-		config.Space = cf.Space{}
+		config.Space = cf.SpaceFields{}
 		cmd.configRepo.Save()
 		cmd.ui.Say("TIP: No space targeted, use '%s target -s' to target a space", cf.Name())
 	}

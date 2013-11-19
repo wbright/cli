@@ -69,7 +69,7 @@ func (cmd *DeleteApp) Run(c *cli.Context) {
 		return
 	}
 
-	apiResponse = cmd.appRepo.Delete(app)
+	apiResponse = cmd.appRepo.Delete(app.Fields.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return

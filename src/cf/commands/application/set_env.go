@@ -48,7 +48,7 @@ func (cmd *SetEnv) Run(c *cli.Context) {
 
 	cmd.ui.Say("Setting env variable %s for app %s in org %s / space %s as %s...",
 		terminal.EntityNameColor(varName),
-		terminal.EntityNameColor(app.Name),
+		terminal.EntityNameColor(app.Fields.Name),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
@@ -56,8 +56,8 @@ func (cmd *SetEnv) Run(c *cli.Context) {
 
 	var envVars map[string]string
 
-	if app.EnvironmentVars != nil {
-		envVars = app.EnvironmentVars
+	if app.Fields.EnvironmentVars != nil {
+		envVars = app.Fields.EnvironmentVars
 	} else {
 		envVars = map[string]string{}
 	}
@@ -70,7 +70,7 @@ func (cmd *SetEnv) Run(c *cli.Context) {
 
 	envVars[varName] = varValue
 
-	apiResponse := cmd.appRepo.SetEnv(app, envVars)
+	apiResponse := cmd.appRepo.SetEnv(app.Fields.Guid, envVars)
 
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)

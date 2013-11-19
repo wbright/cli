@@ -11,18 +11,18 @@ var SavedConfiguration configuration.Configuration
 type FakeConfigRepository struct {
 }
 
-func (repo FakeConfigRepository) SetOrganization(org cf.Organization) (err error) {
+func (repo FakeConfigRepository) SetOrganization(org cf.OrganizationFields) (err error) {
 	config, err := repo.Get()
 	if err != nil{
 		return
 	}
 
 	config.Organization = org
-	config.Space = cf.Space{}
+	config.Space = cf.SpaceFields{}
 	return repo.Save()
 }
 
-func (repo FakeConfigRepository) SetSpace(space cf.Space) (err error) {
+func (repo FakeConfigRepository) SetSpace(space cf.SpaceFields) (err error) {
 	config, err := repo.Get()
 	if err != nil {
 		return
@@ -66,8 +66,8 @@ func (repo FakeConfigRepository) ClearSession() (err error) {
 	repo.ClearTokens()
 
 	c, _ := repo.Get()
-	c.Organization = cf.Organization{}
-	c.Space = cf.Space{}
+	c.Organization = cf.OrganizationFields{}
+	c.Space = cf.SpaceFields{}
 
 	return nil
 }

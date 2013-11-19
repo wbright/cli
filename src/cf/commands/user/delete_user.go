@@ -61,7 +61,7 @@ func (cmd DeleteUser) Run(c *cli.Context) {
 		return
 	}
 
-	apiResponse = cmd.userRepo.Delete(user)
+	apiResponse = cmd.userRepo.Delete(user.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return

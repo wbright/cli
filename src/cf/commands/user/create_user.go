@@ -43,11 +43,7 @@ func (cmd CreateUser) Run(c *cli.Context) {
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	user := cf.User{
-		Username: username,
-		Password: password,
-	}
-	apiResponse := cmd.userRepo.Create(user)
+	apiResponse := cmd.userRepo.Create(username, password)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed("Error creating user %s.\n%s", terminal.EntityNameColor(username), apiResponse.Message)
 		return

@@ -45,7 +45,7 @@ func (cmd *Files) Run(c *cli.Context) {
 	app := cmd.appReq.GetApplication()
 
 	cmd.ui.Say("Getting files for app %s in org %s / space %s as %s...",
-		terminal.EntityNameColor(app.Name),
+		terminal.EntityNameColor(app.Fields.Name),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
@@ -56,7 +56,7 @@ func (cmd *Files) Run(c *cli.Context) {
 		path = c.Args()[1]
 	}
 
-	list, apiResponse := cmd.appFilesRepo.ListFiles(app, path)
+	list, apiResponse := cmd.appFilesRepo.ListFiles(app.Fields.Guid, path)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return

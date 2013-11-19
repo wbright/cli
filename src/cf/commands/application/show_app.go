@@ -48,13 +48,13 @@ func (cmd *ShowApp) GetRequirements(reqFactory requirements.Factory, c *cli.Cont
 func (cmd *ShowApp) Run(c *cli.Context) {
 	app := cmd.appReq.GetApplication()
 	cmd.ui.Say("Showing health and status for app %s in org %s / space %s as %s...",
-		terminal.EntityNameColor(app.Name),
+		terminal.EntityNameColor(app.Fields.Name),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	summary, apiResponse := cmd.appSummaryRepo.GetSummary(app)
+	appSummary, apiResponse := cmd.appSummaryRepo.GetSummary(app.Fields.Guid)
 	appIsStopped := apiResponse.ErrorCode == cf.APP_STOPPED || apiResponse.ErrorCode == cf.APP_NOT_STAGED
 
 	if apiResponse.IsNotSuccessful() && !appIsStopped {
@@ -63,12 +63,12 @@ func (cmd *ShowApp) Run(c *cli.Context) {
 	}
 
 	cmd.ui.Ok()
-	cmd.ui.Say("\n%s %s", terminal.HeaderColor("state:"), coloredAppState(summary.App))
-	cmd.ui.Say("%s %s", terminal.HeaderColor("instances:"), coloredAppInstaces(summary.App))
-	cmd.ui.Say("%s %s x %d instances", terminal.HeaderColor("usage:"), formatters.ByteSize(summary.App.Memory*formatters.MEGABYTE), summary.App.Instances)
+	cmd.ui.Say("\n%s %s", terminal.HeaderColor("state:"), coloredAppState(appSummary.App))
+	cmd.ui.Say("%s %s", terminal.HeaderColor("instances:"), coloredAppInstaces(appSummary.App))
+	cmd.ui.Say("%s %s x %d instances", terminal.HeaderColor("usage:"), formatters.ByteSize(appSummary.App.Memory*formatters.MEGABYTE), appSummary.App.Instances)
 
 	var urls []string
-	for _, route := range summary.App.Routes {
+	for _, route := range appSummary.RouteSummary {
 		urls = append(urls, route.URL())
 	}
 	cmd.ui.Say("%s %s\n", terminal.HeaderColor("urls:"), strings.Join(urls, ", "))
@@ -81,7 +81,7 @@ func (cmd *ShowApp) Run(c *cli.Context) {
 		[]string{"", "status", "since", "cpu", "memory", "disk"},
 	}
 
-	for index, instance := range summary.Instances {
+	for index, instance := range appSummary.Instances {
 		table = append(table, []string{
 			fmt.Sprintf("#%d", index),
 			coloredInstanceState(instance),

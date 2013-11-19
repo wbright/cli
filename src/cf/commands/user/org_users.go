@@ -42,11 +42,11 @@ func (cmd *OrgUsers) Run(c *cli.Context) {
 	org := cmd.orgReq.GetOrganization()
 
 	cmd.ui.Say("Getting users in org %s as %s...",
-		terminal.EntityNameColor(org.Name),
+		terminal.EntityNameColor(org.Fields.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	usersByRole, apiResponse := cmd.userRepo.FindAllInOrgByRole(org)
+	usersByRole, apiResponse := cmd.userRepo.FindAllInOrgByRole(org.Fields.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return

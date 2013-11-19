@@ -49,7 +49,7 @@ func (cmd *ListDomains) Run(c *cli.Context) {
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	domains, apiResponse := cmd.domainRepo.FindAllByOrg(org)
+	domains, apiResponse := cmd.domainRepo.FindAllByOrg(org.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -63,7 +63,7 @@ func (cmd *ListDomains) Run(c *cli.Context) {
 	}
 	for _, domain := range domains {
 		var status string
-		if domain.Shared {
+		if domain.Fields.Shared {
 			status = "shared"
 		} else if len(domain.Spaces) == 0 {
 			status = "reserved"
@@ -72,7 +72,7 @@ func (cmd *ListDomains) Run(c *cli.Context) {
 		}
 
 		table = append(table, []string{
-			domain.Name,
+			domain.Fields.Name,
 			status,
 			strings.Join(formatters.MapStr(domain.Spaces), ", "),
 		})

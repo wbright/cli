@@ -69,28 +69,28 @@ func (cmd *DomainMapper) Run(c *cli.Context) {
 		cmd.ui.Say("Mapping domain %s to org %s / space %s as %s...",
 			terminal.EntityNameColor(domainName),
 			terminal.EntityNameColor(cmd.config.Organization.Name),
-			terminal.EntityNameColor(space.Name),
+			terminal.EntityNameColor(space.Fields.Name),
 			terminal.EntityNameColor(cmd.config.Username()),
 		)
 	} else {
 		cmd.ui.Say("Unmapping domain %s from org %s / space %s as %s...",
 			terminal.EntityNameColor(domainName),
 			terminal.EntityNameColor(cmd.config.Organization.Name),
-			terminal.EntityNameColor(space.Name),
+			terminal.EntityNameColor(space.Fields.Name),
 			terminal.EntityNameColor(cmd.config.Username()),
 		)
 	}
 
-	domain, apiResponse = cmd.domainRepo.FindByNameInOrg(domainName, org)
+	domain, apiResponse = cmd.domainRepo.FindByNameInOrg(domainName, org.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed("Error finding domain %s\n%s", terminal.EntityNameColor(domainName), apiResponse.Message)
 		return
 	}
 
 	if cmd.bind {
-		apiResponse = cmd.domainRepo.Map(domain, space)
+		apiResponse = cmd.domainRepo.Map(domain.Fields.Guid, space.Fields.Guid)
 	} else {
-		apiResponse = cmd.domainRepo.Unmap(domain, space)
+		apiResponse = cmd.domainRepo.Unmap(domain.Fields.Guid, space.Fields.Guid)
 	}
 
 	if apiResponse.IsNotSuccessful() {

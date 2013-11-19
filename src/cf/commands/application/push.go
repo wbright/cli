@@ -65,10 +65,10 @@ func (cmd Push) Run(c *cli.Context) {
 	hostName := cmd.hostName(app, c)
 	cmd.bindAppToRoute(app, domain, hostName, didCreate, c)
 
-	cmd.ui.Say("Uploading %s...", terminal.EntityNameColor(app.Name))
+	cmd.ui.Say("Uploading %s...", terminal.EntityNameColor(app.Fields.Name))
 
 	dir := cmd.path(c)
-	apiResponse = cmd.appBitsRepo.UploadApp(app, dir)
+	apiResponse = cmd.appBitsRepo.UploadApp(app.Fields.Guid, dir)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -102,24 +102,20 @@ func (cmd Push) getApp(c *cli.Context) (app cf.Application, didCreate bool) {
 }
 
 func (cmd Push) createApp(appName string, c *cli.Context) (app cf.Application, apiResponse net.ApiResponse) {
-	newApp := cf.Application{
-		Name:         appName,
-		Instances:    c.Int("i"),
-		Memory:       memoryLimit(c.String("m")),
-		BuildpackUrl: c.String("b"),
-		Command:      c.String("c"),
-	}
-
+	buildpackUrl := c.String("b")
+	instances := c.Int("i")
+	memory := memoryLimit(c.String("m"))
+	command := c.String("c")
 	stackName := c.String("s")
+
+	var stack cf.Stack
 	if stackName != "" {
-		var stack cf.Stack
 		stack, apiResponse = cmd.stackRepo.FindByName(stackName)
 
 		if apiResponse.IsNotSuccessful() {
 			cmd.ui.Failed(apiResponse.Message)
 			return
 		}
-		newApp.Stack = stack
 		cmd.ui.Say("Using stack %s...", terminal.EntityNameColor(stack.Name))
 	}
 
@@ -129,7 +125,8 @@ func (cmd Push) createApp(appName string, c *cli.Context) (app cf.Application, a
 		terminal.EntityNameColor(cmd.config.Space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
-	app, apiResponse = cmd.appRepo.Create(newApp)
+
+	app, apiResponse = cmd.appRepo.Create(appName, buildpackUrl, stack.Guid, command, memory, instances)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -162,18 +159,16 @@ func (cmd Push) hostName(app cf.Application, c *cli.Context) (hostName string) {
 	if !c.Bool("no-hostname") {
 		hostName = c.String("n")
 		if hostName == "" {
-			hostName = app.Name
+			hostName = app.Fields.Name
 		}
 	}
 	return
 }
 
-func (cmd Push) createRoute(hostName string, domain cf.Domain) (route cf.Route) {
-	newRoute := cf.Route{Host: hostName, Domain: domain}
+func (cmd Push) createRoute(hostName string, domain cf.Domain) (route cf.RouteFields) {
+	cmd.ui.Say("Creating route %s...", terminal.EntityNameColor(domain.Fields.UrlForHost(hostName)))
 
-	cmd.ui.Say("Creating route %s...", terminal.EntityNameColor(newRoute.URL()))
-
-	route, apiResponse := cmd.routeRepo.Create(newRoute, domain)
+	route, apiResponse := cmd.routeRepo.Create(hostName, domain.Fields.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -191,26 +186,28 @@ func (cmd Push) bindAppToRoute(app cf.Application, domain cf.Domain, hostName st
 	}
 
 	if len(app.Routes) == 0 && didCreate == false {
-		cmd.ui.Say("App %s currently exists as a worker, skipping route creation", terminal.EntityNameColor(app.Name))
+		cmd.ui.Say("App %s currently exists as a worker, skipping route creation", terminal.EntityNameColor(app.Fields.Name))
 		return
 	}
 
-	route, apiResponse := cmd.routeRepo.FindByHostAndDomain(hostName, domain.Name)
+	var routeFields cf.RouteFields
+	route, apiResponse := cmd.routeRepo.FindByHostAndDomain(hostName, domain.Fields.Name)
 	if apiResponse.IsNotSuccessful() {
-		route = cmd.createRoute(hostName, domain)
+		routeFields = cmd.createRoute(hostName, domain)
 	} else {
-		cmd.ui.Say("Using route %s", terminal.EntityNameColor(route.URL()))
+		routeFields = route.Fields
+		cmd.ui.Say("Using route %s", terminal.EntityNameColor(domain.Fields.UrlForHost(hostName)))
 	}
 
 	for _, boundRoute := range app.Routes {
-		if boundRoute.Guid == route.Guid {
+		if boundRoute.Fields.Guid == routeFields.Guid {
 			return
 		}
 	}
 
-	cmd.ui.Say("Binding %s to %s...", terminal.EntityNameColor(route.URL()), terminal.EntityNameColor(app.Name))
+	cmd.ui.Say("Binding %s to %s...", terminal.EntityNameColor(domain.Fields.UrlForHost(hostName)), terminal.EntityNameColor(app.Fields.Name))
 
-	apiResponse = cmd.routeRepo.Bind(route, app)
+	apiResponse = cmd.routeRepo.Bind(routeFields.Guid, app.Fields.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -239,10 +236,11 @@ func (cmd Push) restart(app cf.Application, c *cli.Context) {
 	cmd.ui.Say("")
 
 	if !c.Bool("no-start") {
-		if c.String("b") != "" {
-			updatedApp.BuildpackUrl = c.String("b")
+		if buildpackUrl := c.String("b"); buildpackUrl == "" {
+			cmd.starter.ApplicationStart(updatedApp)
+		} else {
+			cmd.starter.ApplicationStartWithBuildpack(updatedApp, buildpackUrl)
 		}
-		cmd.starter.ApplicationStart(updatedApp)
 	}
 }
 

@@ -96,7 +96,7 @@ func envVarFound(varName string, existingEnvVars map[string]string) (found bool)
 	return
 }
 
-func coloredAppState(app cf.Application) string {
+func coloredAppState(app cf.ApplicationFields) string {
 	appState := strings.ToLower(app.State)
 
 	if app.RunningInstances == 0 {
@@ -114,7 +114,7 @@ func coloredAppState(app cf.Application) string {
 	return appState
 }
 
-func coloredAppInstaces(app cf.Application) string {
+func coloredAppInstaces(app cf.ApplicationFields) string {
 	healthString := fmt.Sprintf("%d/%d", app.RunningInstances, app.Instances)
 
 	if app.RunningInstances == 0 {

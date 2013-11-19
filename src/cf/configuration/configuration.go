@@ -12,8 +12,8 @@ type Configuration struct {
 	AuthorizationEndpoint   string
 	AccessToken             string
 	RefreshToken            string
-	Organization            cf.Organization
-	Space                   cf.Space
+	Organization            cf.OrganizationFields
+	Space                   cf.SpaceFields
 	ApplicationStartTimeout time.Duration // will be used as seconds
 }
 

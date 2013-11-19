@@ -17,6 +17,13 @@ type QuotaResource struct {
 	Entity QuotaEntity
 }
 
+func (resource QuotaResource) ToFields() (quota cf.Quota) {
+	quota.Guid = resource.Metadata.Guid
+	quota.Name = resource.Entity.Name
+	quota.MemoryLimit = resource.Entity.MemoryLimit
+	return
+}
+
 type QuotaEntity struct {
 	Name        string
 	MemoryLimit uint64 `json:"memory_limit"`
@@ -25,7 +32,7 @@ type QuotaEntity struct {
 type QuotaRepository interface {
 	FindAll() (quotas []cf.Quota, apiResponse net.ApiResponse)
 	FindByName(name string) (quota cf.Quota, apiResponse net.ApiResponse)
-	Update(org cf.Organization, quota cf.Quota) (apiResponse net.ApiResponse)
+	Update(orgGuid, quotaGuid string) (apiResponse net.ApiResponse)
 }
 
 type CloudControllerQuotaRepository struct {
@@ -48,12 +55,7 @@ func (repo CloudControllerQuotaRepository) findAllWithPath(path string) (quotas 
 	}
 
 	for _, r := range resources.Resources {
-		quota := cf.Quota{
-			Guid:        r.Metadata.Guid,
-			Name:        r.Entity.Name,
-			MemoryLimit: r.Entity.MemoryLimit,
-		}
-		quotas = append(quotas, quota)
+		quotas = append(quotas, r.ToFields())
 	}
 
 	return
@@ -80,8 +82,8 @@ func (repo CloudControllerQuotaRepository) FindByName(name string) (quota cf.Quo
 	return
 }
 
-func (repo CloudControllerQuotaRepository) Update(org cf.Organization, quota cf.Quota) (apiResponse net.ApiResponse) {
-	path := fmt.Sprintf("%s/v2/organizations/%s", repo.config.Target, org.Guid)
-	data := fmt.Sprintf(`{"quota_definition_guid":"%s"}`, quota.Guid)
+func (repo CloudControllerQuotaRepository) Update(orgGuid, quotaGuid string) (apiResponse net.ApiResponse) {
+	path := fmt.Sprintf("%s/v2/organizations/%s", repo.config.Target, orgGuid)
+	data := fmt.Sprintf(`{"quota_definition_guid":"%s"}`, quotaGuid)
 	return repo.gateway.UpdateResource(path, repo.config.AccessToken, strings.NewReader(data))
 }

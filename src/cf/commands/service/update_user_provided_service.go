@@ -64,16 +64,16 @@ func (cmd *UpdateUserProvidedService) Run(c *cli.Context) {
 	}
 
 	cmd.ui.Say("Updating user provided service %s in org %s / space %s as %s...",
-		terminal.EntityNameColor(serviceInstance.Name),
+		terminal.EntityNameColor(serviceInstance.Fields.Name),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	serviceInstance.Params = paramsMap
-	serviceInstance.SysLogDrainUrl = drainUrl
+	serviceInstance.Fields.Params = paramsMap
+	serviceInstance.Fields.SysLogDrainUrl = drainUrl
 
-	apiResponse := cmd.userProvidedServiceInstanceRepo.Update(serviceInstance)
+	apiResponse := cmd.userProvidedServiceInstanceRepo.Update(serviceInstance.Fields)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return

@@ -46,13 +46,11 @@ func (cmd *CreateDomain) Run(c *cli.Context) {
 
 	cmd.ui.Say("Creating domain %s for org %s as %s...",
 		terminal.EntityNameColor(domainName),
-		terminal.EntityNameColor(owningOrg.Name),
+		terminal.EntityNameColor(owningOrg.Fields.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	domain := cf.Domain{Name: domainName}
-
-	_, apiResponse := cmd.domainRepo.Create(domain, owningOrg)
+	_, apiResponse := cmd.domainRepo.Create(domainName, owningOrg.Fields.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return

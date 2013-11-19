@@ -134,7 +134,11 @@ func (cmd Login) setOrganization(c *cli.Context, userChanged bool) (apiResponse 
 	if orgName == "" {
 		// If the user is changing, clear out the org
 		if userChanged {
-			cmd.config.Organization = cf.Organization{}
+			err := cmd.configRepo.SetOrganization(cf.OrganizationFields{})
+			if err != nil {
+				apiResponse = net.NewApiResponseWithError("%s", err)
+				return
+			}
 		}
 
 		// Reuse org in config
@@ -184,23 +188,23 @@ func (cmd Login) setOrganization(c *cli.Context, userChanged bool) (apiResponse 
 func (cmd Login) promptForOrgName(orgs []cf.Organization) string {
 	orgNames := []string{}
 	for _, org := range orgs {
-		orgNames = append(orgNames, org.Name)
+		orgNames = append(orgNames, org.Fields.Name)
 	}
 
 	return cmd.promptForName(orgNames, "Select an org:", "Org")
 }
 
 func (cmd Login) targetOrganization(org cf.Organization) (apiResponse net.ApiResponse) {
-	err := cmd.configRepo.SetOrganization(org)
+	err := cmd.configRepo.SetOrganization(org.Fields)
 	if err != nil {
 		apiResponse = net.NewApiResponseWithMessage("Error setting org %s in config file\n%s",
-			terminal.EntityNameColor(org.Name),
+			terminal.EntityNameColor(org.Fields.Name),
 			err.Error(),
 		)
 		return
 	}
 
-	cmd.ui.Say("Targeted org %s\n", terminal.EntityNameColor(org.Name))
+	cmd.ui.Say("Targeted org %s\n", terminal.EntityNameColor(org.Fields.Name))
 	return
 }
 
@@ -210,7 +214,11 @@ func (cmd Login) setSpace(c *cli.Context, userChanged bool) (apiResponse net.Api
 	if spaceName == "" {
 		// If user is changing, clear the space
 		if userChanged {
-			cmd.config.Space = cf.Space{}
+			err := cmd.configRepo.SetSpace(cf.SpaceFields{})
+			if err != nil {
+				apiResponse = net.NewApiResponseWithError("%s", err)
+				return
+			}
 		}
 		// Reuse space in config
 		if cmd.config.HasSpace() && !userChanged {
@@ -259,23 +267,23 @@ func (cmd Login) setSpace(c *cli.Context, userChanged bool) (apiResponse net.Api
 func (cmd Login) promptForSpaceName(spaces []cf.Space) string {
 	spaceNames := []string{}
 	for _, space := range spaces {
-		spaceNames = append(spaceNames, space.Name)
+		spaceNames = append(spaceNames, space.Fields.Name)
 	}
 
 	return cmd.promptForName(spaceNames, "Select a space:", "Space")
 }
 
 func (cmd Login) targetSpace(space cf.Space) (apiResponse net.ApiResponse) {
-	err := cmd.configRepo.SetSpace(space)
+	err := cmd.configRepo.SetSpace(space.Fields)
 	if err != nil {
 		apiResponse = net.NewApiResponseWithMessage("Error setting space %s in config file\n%s",
-			terminal.EntityNameColor(space.Name),
+			terminal.EntityNameColor(space.Fields.Name),
 			err.Error(),
 		)
 		return
 	}
 
-	cmd.ui.Say("Targeted space %s\n", terminal.EntityNameColor(space.Name))
+	cmd.ui.Say("Targeted space %s\n", terminal.EntityNameColor(space.Fields.Name))
 	return
 }
 

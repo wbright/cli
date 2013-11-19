@@ -52,18 +52,18 @@ func (cmd ListApps) Run(c *cli.Context) {
 		[]string{"name", "state", "instances", "memory", "disk", "urls"},
 	}
 
-	for _, app := range apps {
+	for _, appSummary := range apps {
 		var urls []string
-		for _, route := range app.Routes {
+		for _, route := range appSummary.RouteSummary {
 			urls = append(urls, route.URL())
 		}
 
 		table = append(table, []string{
-			app.Name,
-			coloredAppState(app),
-			coloredAppInstaces(app),
-			formatters.ByteSize(app.Memory * formatters.MEGABYTE),
-			formatters.ByteSize(app.DiskQuota * formatters.MEGABYTE),
+			appSummary.App.Name,
+			coloredAppState(appSummary.App),
+			coloredAppInstaces(appSummary.App),
+			formatters.ByteSize(appSummary.App.Memory * formatters.MEGABYTE),
+			formatters.ByteSize(appSummary.App.DiskQuota * formatters.MEGABYTE),
 			strings.Join(urls, ", "),
 		})
 	}

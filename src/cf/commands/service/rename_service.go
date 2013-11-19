@@ -48,7 +48,7 @@ func (cmd *RenameService) Run(c *cli.Context) {
 	serviceInstance := cmd.serviceInstanceReq.GetServiceInstance()
 
 	cmd.ui.Say("Renaming service %s to %s in org %s / space %s as %s...",
-		terminal.EntityNameColor(serviceInstance.Name),
+		terminal.EntityNameColor(serviceInstance.Fields.Name),
 		terminal.EntityNameColor(newName),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Space.Name),

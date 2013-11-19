@@ -47,14 +47,14 @@ func (cmd *BindService) Run(c *cli.Context) {
 	instance := cmd.serviceInstanceReq.GetServiceInstance()
 
 	cmd.ui.Say("Binding service %s to app %s in org %s / space %s as %s...",
-		terminal.EntityNameColor(instance.Name),
-		terminal.EntityNameColor(app.Name),
+		terminal.EntityNameColor(instance.Fields.Name),
+		terminal.EntityNameColor(app.Fields.Name),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	apiResponse := cmd.serviceBindingRepo.Create(instance, app)
+	apiResponse := cmd.serviceBindingRepo.Create(instance.Fields.Guid, app.Fields.Guid)
 	if apiResponse.IsNotSuccessful() && apiResponse.ErrorCode != "90003" {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -63,7 +63,7 @@ func (cmd *BindService) Run(c *cli.Context) {
 	cmd.ui.Ok()
 
 	if apiResponse.ErrorCode == "90003" {
-		cmd.ui.Warn("App %s is already bound to %s.", app.Name, instance.Name)
+		cmd.ui.Warn("App %s is already bound to %s.", app.Fields.Name, instance.Fields.Name)
 		return
 	}
 

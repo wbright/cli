@@ -51,7 +51,7 @@ func (cmd *SetSpaceRole) Run(c *cli.Context) {
 
 	user := cmd.userReq.GetUser()
 	org := cmd.orgReq.GetOrganization()
-	space, apiResponse := cmd.spaceRepo.FindByNameInOrg(spaceName, org)
+	space, apiResponse := cmd.spaceRepo.FindByNameInOrg(spaceName, org.Fields.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -60,12 +60,12 @@ func (cmd *SetSpaceRole) Run(c *cli.Context) {
 	cmd.ui.Say("Assigning role %s to user %s in org %s / space %s as %s...",
 		terminal.EntityNameColor(role),
 		terminal.EntityNameColor(user.Username),
-		terminal.EntityNameColor(org.Name),
-		terminal.EntityNameColor(space.Name),
+		terminal.EntityNameColor(org.Fields.Name),
+		terminal.EntityNameColor(space.Fields.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	apiResponse = cmd.userRepo.SetSpaceRole(user, space, role)
+	apiResponse = cmd.userRepo.SetSpaceRole(user.Guid, space.Fields.Guid, space.Organization.Guid, role)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return

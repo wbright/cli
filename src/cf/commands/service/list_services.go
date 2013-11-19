@@ -53,14 +53,14 @@ func (cmd ListServices) Run(c *cli.Context) {
 		if instance.IsUserProvided() {
 			serviceColumn = "user-provided"
 		} else {
-			serviceColumn = instance.ServiceOffering().Label
+			serviceColumn = instance.ServiceOffering.Label
 		}
 
 		table = append(table, []string{
-			instance.Name,
+			instance.Fields.Name,
 			serviceColumn,
 			instance.ServicePlan.Name,
-			strings.Join(instance.ApplicationNames, ", "),
+			strings.Join(instance.Fields.ApplicationNames, ", "),
 		})
 	}
 

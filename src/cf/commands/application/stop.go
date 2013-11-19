@@ -44,20 +44,20 @@ func (cmd *Stop) GetRequirements(reqFactory requirements.Factory, c *cli.Context
 }
 
 func (cmd *Stop) ApplicationStop(app cf.Application) (updatedApp cf.Application, err error) {
-	if app.State == "stopped" {
+	if app.Fields.State == "stopped" {
 		updatedApp = app
-		cmd.ui.Say(terminal.WarningColor("App " + app.Name + " is already stopped"))
+		cmd.ui.Say(terminal.WarningColor("App " + app.Fields.Name + " is already stopped"))
 		return
 	}
 
 	cmd.ui.Say("Stopping app %s in org %s / space %s as %s...",
-		terminal.EntityNameColor(app.Name),
+		terminal.EntityNameColor(app.Fields.Name),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	updatedApp, apiResponse := cmd.appRepo.Stop(app)
+	updatedApp, apiResponse := cmd.appRepo.Stop(app.Fields.Guid)
 	if apiResponse.IsNotSuccessful() {
 		err = errors.New(apiResponse.Message)
 		cmd.ui.Failed(apiResponse.Message)
