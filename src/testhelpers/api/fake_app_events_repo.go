@@ -6,13 +6,13 @@ import (
 )
 
 type FakeAppEventsRepo struct{
-	Application cf.Application
+	AppGuid string
 	Events []cf.Event
 }
 
 
-func (repo FakeAppEventsRepo)ListEvents(app cf.Application) (events chan []cf.Event, statusChan chan net.ApiResponse) {
-	repo.Application = app
+func (repo FakeAppEventsRepo)ListEvents(appGuid string) (events chan []cf.Event, statusChan chan net.ApiResponse) {
+	repo.AppGuid = appGuid
 
 	events = make(chan []cf.Event, 4)
 	statusChan = make(chan net.ApiResponse, 1)

@@ -10,7 +10,7 @@ type FakeAppSummaryRepo struct{
 	GetSummariesInCurrentSpaceApps []cf.Application
 
 	GetSummaryErrorCode string
-	GetSummaryApp cf.Application
+	GetSummaryAppGuid string
 	GetSummarySummary cf.AppSummary
 }
 
@@ -19,8 +19,8 @@ func (repo *FakeAppSummaryRepo)GetSummariesInCurrentSpace() (apps []cf.Applicati
 	return
 }
 
-func (repo *FakeAppSummaryRepo)GetSummary(app cf.Application) (summary cf.AppSummary, apiResponse net.ApiResponse) {
-	repo.GetSummaryApp= app
+func (repo *FakeAppSummaryRepo)GetSummary(appGuid string) (summary cf.AppSummary, apiResponse net.ApiResponse) {
+	repo.GetSummaryAppGuid= appGuid
 	summary = repo.GetSummarySummary
 
 	if repo.GetSummaryErrorCode != "" {

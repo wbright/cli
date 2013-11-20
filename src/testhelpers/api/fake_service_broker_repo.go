@@ -10,10 +10,10 @@ type FakeServiceBrokerRepo struct {
 	FindByNameServiceBroker cf.ServiceBroker
 	FindByNameNotFound bool
 
-	CreatedServiceBroker cf.ServiceBroker
 	UpdatedServiceBroker cf.ServiceBroker
-	RenamedServiceBroker cf.ServiceBroker
-	DeletedServiceBroker cf.ServiceBroker
+	RenamedServiceBrokerGuid string
+	RenamedServiceBrokerName string
+	DeletedServiceBrokerGuid string
 
 	ServiceBrokers []cf.ServiceBroker
 	ListErr bool
@@ -66,8 +66,7 @@ func (repo *FakeServiceBrokerRepo) ListServiceBrokers(stop chan bool) (serviceBr
 	return
 }
 
-func (repo *FakeServiceBrokerRepo) Create(serviceBroker cf.ServiceBroker) (apiResponse net.ApiResponse) {
-	repo.CreatedServiceBroker = serviceBroker
+func (repo *FakeServiceBrokerRepo) Create(name, url, username, password string) (apiResponse net.ApiResponse) {
 	return
 }
 
@@ -76,12 +75,13 @@ func (repo *FakeServiceBrokerRepo) Update(serviceBroker cf.ServiceBroker) (apiRe
 	return
 }
 
-func (repo *FakeServiceBrokerRepo) Rename(serviceBroker cf.ServiceBroker) (apiResponse net.ApiResponse) {
-	repo.RenamedServiceBroker = serviceBroker
+func (repo *FakeServiceBrokerRepo) Rename(guid, name string) (apiResponse net.ApiResponse) {
+	repo.RenamedServiceBrokerGuid = guid
+	repo.RenamedServiceBrokerName = name
 	return
 }
 
-func (repo *FakeServiceBrokerRepo) Delete(serviceBroker cf.ServiceBroker) (apiResponse net.ApiResponse) {
-	repo.DeletedServiceBroker = serviceBroker
+func (repo *FakeServiceBrokerRepo) Delete(guid string) (apiResponse net.ApiResponse) {
+	repo.DeletedServiceBrokerGuid = guid
 	return
 }
