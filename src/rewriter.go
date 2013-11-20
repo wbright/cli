@@ -149,6 +149,23 @@ func rewriteStructLiteralAsIdentifierAtTopOfBlock(newFile *ast.File, literalToRe
 			})
 	}
 
+	switch foundStmtNode := foundStmtNode.(type) {
+	case *ast.AssignStmt:
+		expr := foundStmtNode.Rhs[0]
+		if expr == literalToReplace {
+			deleteOriginalStatement = true
+
+			switch ident := foundStmtNode.Lhs[0].(type) {
+			case *ast.Ident:
+				name = ident.Name
+			}
+
+			if foundStmtNode.Tok == token.ASSIGN {
+				newAssignStmtToken = token.ASSIGN
+			}
+		}
+	}
+
 
 	lhsExpr := []ast.Expr{ast.NewIdent(name)}
 	rhsExpr := []ast.Expr{&ast.CompositeLit{Type: literalToReplace.Type}}
