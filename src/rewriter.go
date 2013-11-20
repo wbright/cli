@@ -8,69 +8,125 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
+	"flag"
 )
 
 func main() {
-	fset := token.NewFileSet()
+	var filepath string
+	flag.StringVar(&filepath, "refactor", "", "")
+	flag.Parse()
 
-	newFile, err := parser.ParseFile(fset, "src/cf/commands/foo.go", nil, 0)
+	println(filepath)
+
+	fset := token.NewFileSet()
+	newFile, err := parser.ParseFile(fset, filepath, nil, 0)
 	if err != nil {
 		panic(err)
 	}
 
-	count := 0
+	refactorings := map[string]string{
+		"Application" : "app",
+		"Domain" : "domain",
+		"Event":"event",
+		"Route":"route",
+		"RouteSummary":"routeSummary",
+		"Stack":"stack",
+		"ApplicationInstance":"appInstance",
+		"ServicePlan":"plan",
+		"ServiceOffering":"offering",
+		"ServiceInstance":"serviceInstance",
+		"ServiceBinding":"binding",
+		"Quota":"quota",
+		"ServiceAuthToken":"authToken",
+		"ServiceBroker":"broker",
+		"User":"user",
+		"Buildpack":"buildpack",
+		"Organization":"org",
+		"Space":"space",
+	}
 
-	ast.Inspect(newFile, func(n ast.Node) bool {
-			switch n := n.(type) {
-			case *ast.CompositeLit:
-				switch s := n.Type.(type){
-				case *ast.SelectorExpr:
-					if (s.Sel.Name == "Application") {
-						if len(n.Elts) == 0 {
-							return true
-						}
+	for structName, varName := range refactorings {
+		count := 1
+		ast.Inspect(newFile, func(n ast.Node) bool {
+				switch n := n.(type) {
+				case *ast.CompositeLit:
+					switch s := n.Type.(type){
+					case *ast.SelectorExpr:
+						func() {
+							defer func() {
+								if err := recover(); err != nil {
 
-						count++
-						name := fmt.Sprintf("appAuto_%d", count)
+								}
+							}()
 
-						rewriteStructLiteralAsIdentifierAtTopOfBlock(newFile, n, name)
-						replaceStructLiteralWithIdentifier(newFile, n, name)
+							if (s.Sel.Name == structName) {
+								if len(n.Elts) == 0 {
+									return
+								}
 
-						return false
+
+								var name string
+								if count == 1 {
+									name = fmt.Sprintf("%s_Auto", varName)
+								} else {
+									name = fmt.Sprintf("%s_Auto%d", varName, count)
+								}
+
+								count++
+
+								rewriteStructLiteralAsIdentifierAtTopOfBlock(newFile, n, name)
+							}
+						}()
 					}
 				}
-			}
 
-			return true
-		})
+				return true
+			})
+	}
 
 	src, err := gofmtFile(newFile, fset)
 	if err != nil {
 		println(err.Error())
 	}
-	println(string(src))
-	ioutil.WriteFile("src/cf/commands/foo1.go", src, 0666)
+
+	//	println(string(src))
+	ioutil.WriteFile(filepath, src, 0666)
 }
 
 func rewriteStructLiteralAsIdentifierAtTopOfBlock(newFile *ast.File, n *ast.CompositeLit, name string) {
-	var foundStmtNode ast.Stmt
-	var blocksSeen []*ast.BlockStmt
+	var (
+		foundStmtNode ast.Stmt
+		blocksSeen []*ast.BlockStmt
+		deleteOriginalStatement bool
+		newAssignStmtToken = token.DEFINE
+	)
+
 	ast.Inspect(newFile, func(node ast.Node) bool {
 			switch node := node.(type) {
 			case *ast.AssignStmt:
 				expr := node.Rhs[0]
 				if expr == n {
 					foundStmtNode = node
+					deleteOriginalStatement = true
+
+					switch ident := node.Lhs[0].(type) {
+					case *ast.Ident:
+						name = ident.Name
+					}
+
+					if node.Tok == token.ASSIGN {
+						newAssignStmtToken = token.ASSIGN
+					}
 				}
 				ast.Inspect(expr, func(parentNode ast.Node) bool {
-					switch parentNode := parentNode.(type) {
-					case *ast.KeyValueExpr:
-						if parentNode.Value == n {
-							foundStmtNode = node
+						switch parentNode := parentNode.(type) {
+						case *ast.KeyValueExpr:
+							if parentNode.Value == n {
+								foundStmtNode = node
+							}
 						}
-					}
-					return true
-				})
+						return true
+					})
 			case *ast.ExprStmt:
 				if node.X == n {
 					foundStmtNode = node
@@ -105,13 +161,13 @@ func rewriteStructLiteralAsIdentifierAtTopOfBlock(newFile *ast.File, n *ast.Comp
 	rhsExpr := []ast.Expr{&ast.CompositeLit{Type: n.Type}}
 
 	block.List = insert(block.List, insertionIndex, ast.AssignStmt{
-			Lhs: lhsExpr,
-			Rhs: rhsExpr,
-			Tok: token.DEFINE,
-		})
+				Lhs: lhsExpr,
+				Rhs: rhsExpr,
+				Tok: newAssignStmtToken,
+			})
+	insertionIndex++
 
-
-	for i, elt := range n.Elts {
+	for _, elt := range n.Elts {
 		keyVal := elt.(*ast.KeyValueExpr)
 		fieldName := keyVal.Key.(*ast.Ident)
 
@@ -122,11 +178,21 @@ func rewriteStructLiteralAsIdentifierAtTopOfBlock(newFile *ast.File, n *ast.Comp
 		innerLhs := []ast.Expr{selector}
 		innerRhs := []ast.Expr{keyVal.Value}
 
-		block.List = insert(block.List, i + insertionIndex + 1, ast.AssignStmt{
+		block.List = insert(block.List, insertionIndex, ast.AssignStmt{
 				Lhs: innerLhs,
 				Rhs: innerRhs,
 				Tok: token.ASSIGN,
 			})
+
+		insertionIndex++
+	}
+
+	if deleteOriginalStatement {
+		copy(block.List[insertionIndex:], block.List[insertionIndex+1:])
+		block.List[len(block.List)-1] = &ast.EmptyStmt{}
+		block.List = block.List[:len(block.List)-1]
+	} else {
+		replaceStructLiteralWithIdentifier(newFile, n, name)
 	}
 }
 
