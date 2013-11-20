@@ -93,54 +93,24 @@ func main() {
 	ioutil.WriteFile(filepath, src, 0666)
 }
 
-func rewriteStructLiteralAsIdentifierAtTopOfBlock(newFile *ast.File, n *ast.CompositeLit, name string) {
+func rewriteStructLiteralAsIdentifierAtTopOfBlock(newFile *ast.File, literalToReplace *ast.CompositeLit, name string) {
 	var (
 		foundStmtNode ast.Stmt
 		blocksSeen []*ast.BlockStmt
+		stmtsSeen []ast.Stmt
 		deleteOriginalStatement bool
 		newAssignStmtToken = token.DEFINE
 	)
 
 	ast.Inspect(newFile, func(node ast.Node) bool {
 			switch node := node.(type) {
-			case *ast.AssignStmt:
-				expr := node.Rhs[0]
-				if expr == n {
-					foundStmtNode = node
-					deleteOriginalStatement = true
-
-					switch ident := node.Lhs[0].(type) {
-					case *ast.Ident:
-						name = ident.Name
-					}
-
-					if node.Tok == token.ASSIGN {
-						newAssignStmtToken = token.ASSIGN
-					}
-				}
-				ast.Inspect(expr, func(parentNode ast.Node) bool {
-						switch parentNode := parentNode.(type) {
-						case *ast.KeyValueExpr:
-							if parentNode.Value == n {
-								foundStmtNode = node
-							}
-						}
-						return true
-					})
-			case *ast.ExprStmt:
-				if node.X == n {
-					foundStmtNode = node
-				}
-			case *ast.ReturnStmt:
-				for _, expr := range node.Results {
-					if expr == n {
-						foundStmtNode = node
-					}
-				}
 			case *ast.BlockStmt:
 				if foundStmtNode == nil {
 					blocksSeen = append(blocksSeen, node)
 				}
+
+			case ast.Stmt:
+				stmtsSeen = append(stmtsSeen, node)
 			}
 			return true
 		})
@@ -148,26 +118,49 @@ func rewriteStructLiteralAsIdentifierAtTopOfBlock(newFile *ast.File, n *ast.Comp
 	var block *ast.BlockStmt
 	var insertionIndex int
 
-	for _, b := range blocksSeen {
-		for i, stmt := range b.List {
-			if stmt == foundStmtNode {
-				block = b
-				insertionIndex = i
-			}
+	for i := len(blocksSeen) - 1; i >= 0; i-- {
+		b := blocksSeen[i]
+		for j, stmt := range b.List {
+			ast.Inspect(stmt, func(parentNode ast.Node) bool {
+					switch parentNode := parentNode.(type) {
+					case *ast.CompositeLit:
+						if parentNode == literalToReplace {
+							block = b
+							insertionIndex = j
+							return false
+						}
+					}
+					return true
+				})
 		}
 	}
 
+	for i := len(stmtsSeen) - 1; i >= 0; i-- {
+		s := stmtsSeen[i]
+		ast.Inspect(s, func(node ast.Node) bool {
+				switch node := node.(type) {
+				case *ast.CompositeLit:
+					if node == literalToReplace {
+						foundStmtNode = s
+						return false
+					}
+				}
+				return true
+			})
+	}
+
+
 	lhsExpr := []ast.Expr{ast.NewIdent(name)}
-	rhsExpr := []ast.Expr{&ast.CompositeLit{Type: n.Type}}
+	rhsExpr := []ast.Expr{&ast.CompositeLit{Type: literalToReplace.Type}}
 
 	block.List = insert(block.List, insertionIndex, ast.AssignStmt{
-				Lhs: lhsExpr,
-				Rhs: rhsExpr,
-				Tok: newAssignStmtToken,
-			})
+			Lhs: lhsExpr,
+			Rhs: rhsExpr,
+			Tok: newAssignStmtToken,
+		})
 	insertionIndex++
 
-	for _, elt := range n.Elts {
+	for _, elt := range literalToReplace.Elts {
 		keyVal := elt.(*ast.KeyValueExpr)
 		fieldName := keyVal.Key.(*ast.Ident)
 
@@ -188,20 +181,26 @@ func rewriteStructLiteralAsIdentifierAtTopOfBlock(newFile *ast.File, n *ast.Comp
 	}
 
 	if deleteOriginalStatement {
-		copy(block.List[insertionIndex:], block.List[insertionIndex+1:])
-		block.List[len(block.List)-1] = &ast.EmptyStmt{}
-		block.List = block.List[:len(block.List)-1]
+		copy(block.List[insertionIndex:], block.List[insertionIndex + 1:])
+		block.List[len(block.List) - 1] = &ast.EmptyStmt{}
+		block.List = block.List[:len(block.List) - 1]
 	} else {
-		replaceStructLiteralWithIdentifier(newFile, n, name)
+		replaceStructLiteralWithIdentifier(foundStmtNode, literalToReplace, name)
 	}
 }
 
-func replaceStructLiteralWithIdentifier(file *ast.File, n *ast.CompositeLit, name string) {
-	ast.Inspect(file, func(parentNode ast.Node) bool {
+func replaceStructLiteralWithIdentifier(statement ast.Node, n *ast.CompositeLit, name string) {
+	ast.Inspect(statement, func(parentNode ast.Node) bool {
 			switch parentNode := parentNode.(type){
 			case *ast.KeyValueExpr:
 				if parentNode.Value == n {
 					parentNode.Value = ast.NewIdent(name)
+				}
+			case *ast.CallExpr:
+				for i, expr := range parentNode.Args {
+					if expr == n {
+						parentNode.Args[i] = ast.NewIdent(name)
+					}
 				}
 			case *ast.AssignStmt:
 				if parentNode.Rhs[0] == n {
@@ -213,7 +212,14 @@ func replaceStructLiteralWithIdentifier(file *ast.File, n *ast.CompositeLit, nam
 						parentNode.Results[i] = ast.NewIdent(name)
 					}
 				}
+			case *ast.CompositeLit:
+				for i, expr := range parentNode.Elts {
+					if expr == n {
+						parentNode.Elts[i] = ast.NewIdent(name)
+					}
+				}
 			}
+
 			return true
 		})
 }
