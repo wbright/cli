@@ -15,7 +15,7 @@ import (
 )
 
 func TestRecentLogsFor(t *testing.T) {
-	// out of order messages we will send
+
 	messagesSent := [][]byte{
 		marshalledLogMessageWithTime(t, "My message", int64(3000)),
 	}
@@ -38,8 +38,9 @@ func TestRecentLogsFor(t *testing.T) {
 
 	expectedMessage, err := logmessage.ParseMessage(messagesSent[0])
 	assert.NoError(t, err)
-
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
 	config := &configuration.Configuration{AccessToken: "BEARER my_access_token", Target: "https://localhost"}
 
 	endpointRepo := &testapi.FakeEndpointRepo{GetEndpointEndpoints: map[cf.EndpointType]string{
@@ -58,7 +59,6 @@ func TestRecentLogsFor(t *testing.T) {
 	err = logsRepo.RecentLogsFor(app, onConnect, logChan)
 	close(logChan)
 
-	// ordered messages we expect to receive
 	dumpedMessages := []*logmessage.Message{}
 	for msg := range logChan {
 		dumpedMessages = append(dumpedMessages, msg)
@@ -73,7 +73,7 @@ func TestRecentLogsFor(t *testing.T) {
 }
 
 func TestTailsLogsFor(t *testing.T) {
-	// out of order messages we will send
+
 	messagesSent := [][]byte{
 		marshalledLogMessageWithTime(t, "My message 3", int64(300000)),
 		marshalledLogMessageWithTime(t, "My message 1", int64(100000)),
@@ -95,8 +95,9 @@ func TestTailsLogsFor(t *testing.T) {
 	}
 	websocketServer := httptest.NewTLSServer(websocket.Handler(websocketEndpoint))
 	defer websocketServer.Close()
-
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
 	config := &configuration.Configuration{AccessToken: "BEARER my_access_token", Target: "https://localhost"}
 	endpointRepo := &testapi.FakeEndpointRepo{GetEndpointEndpoints: map[cf.EndpointType]string{
 		cf.LoggregatorEndpointKey: strings.Replace(websocketServer.URL, "https", "wss", 1),
@@ -109,14 +110,12 @@ func TestTailsLogsFor(t *testing.T) {
 		connected = true
 	}
 
-	// ordered messages we expect to receive
 	tailedMessages := []*logmessage.Message{}
 
 	logChan := make(chan *logmessage.Message, 1000)
 
 	controlChan := make(chan bool)
 
-	// method under test
 	logsRepo.TailLogsFor(app, onConnect, logChan, controlChan, time.Duration(1))
 	close(logChan)
 
@@ -145,10 +144,10 @@ func TestTailsLogsFor(t *testing.T) {
 }
 
 func TestMessageOutputTimesDuringNormalFlow(t *testing.T) {
-	// out of order messages we will send
+
 	startTime := time.Now()
 	messagesSent := [][]byte{
-		marshalledLogMessageWithTime(t, "My message 1", startTime.Add(-9*time.Second).UnixNano()), //really really late message
+		marshalledLogMessageWithTime(t, "My message 1", startTime.Add(-9*time.Second).UnixNano()),
 		marshalledLogMessageWithTime(t, "My message 2", startTime.Add(-2*time.Second).UnixNano()),
 		marshalledLogMessageWithTime(t, "My message 3", startTime.Add(-1*time.Second).UnixNano()),
 	}
@@ -169,8 +168,9 @@ func TestMessageOutputTimesDuringNormalFlow(t *testing.T) {
 	}
 	websocketServer := httptest.NewTLSServer(websocket.Handler(websocketEndpoint))
 	defer websocketServer.Close()
-
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
 	config := &configuration.Configuration{AccessToken: "BEARER my_access_token", Target: "https://localhost"}
 	endpointRepo := &testapi.FakeEndpointRepo{GetEndpointEndpoints: map[cf.EndpointType]string{
 		cf.LoggregatorEndpointKey: strings.Replace(websocketServer.URL, "https", "wss", 1),
@@ -187,7 +187,7 @@ func TestMessageOutputTimesDuringNormalFlow(t *testing.T) {
 	}()
 
 	for msg := range logChan {
-		//assertions about the arrival times of the messages
+
 		timeWhenOutputtable := startTime.Add(1 * time.Second).UnixNano()
 		timeNow := time.Now().UnixNano()
 
@@ -206,10 +206,10 @@ func TestMessageOutputTimesDuringNormalFlow(t *testing.T) {
 }
 
 func TestMessageOutputWhenFlushingAfterServerDeath(t *testing.T) {
-	// out of order messages we will send
+
 	startTime := time.Now()
 	messagesSent := [][]byte{
-		marshalledLogMessageWithTime(t, "My message 1", startTime.Add(-9*time.Second).UnixNano()), //really really late message
+		marshalledLogMessageWithTime(t, "My message 1", startTime.Add(-9*time.Second).UnixNano()),
 		marshalledLogMessageWithTime(t, "My message 2", startTime.Add(-2*time.Second).UnixNano()),
 		marshalledLogMessageWithTime(t, "My message 3", startTime.Add(-1*time.Second).UnixNano()),
 	}
@@ -229,8 +229,9 @@ func TestMessageOutputWhenFlushingAfterServerDeath(t *testing.T) {
 	}
 	websocketServer := httptest.NewTLSServer(websocket.Handler(websocketEndpoint))
 	defer websocketServer.Close()
-
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
 	config := &configuration.Configuration{AccessToken: "BEARER my_access_token", Target: "https://localhost"}
 	endpointRepo := &testapi.FakeEndpointRepo{GetEndpointEndpoints: map[cf.EndpointType]string{
 		cf.LoggregatorEndpointKey: strings.Replace(websocketServer.URL, "https", "wss", 1),

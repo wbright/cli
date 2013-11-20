@@ -45,22 +45,22 @@ func TestUpdateServiceAuthTokenRequirements(t *testing.T) {
 }
 
 func TestUpdateServiceAuthToken(t *testing.T) {
-	foundAuthToken := cf.ServiceAuthToken{
-		Guid:     "found-auth-token-guid",
-		Label:    "found label",
-		Provider: "found provider",
-	}
+	foundAuthToken := cf.ServiceAuthToken{}
+	foundAuthToken.Guid = "found-auth-token-guid"
+	foundAuthToken.Label = "found label"
+	foundAuthToken.Provider = "found provider"
+
 	authTokenRepo := &testapi.FakeAuthTokenRepo{FindByLabelAndProviderServiceAuthToken: foundAuthToken}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
 	args := []string{"a label", "a provider", "a value"}
 
 	ui := callUpdateServiceAuthToken(t, args, reqFactory, authTokenRepo)
-	expectedAuthToken := cf.ServiceAuthToken{
-		Guid:     "found-auth-token-guid",
-		Label:    "found label",
-		Provider: "found provider",
-		Token:    "a value",
-	}
+	expectedAuthToken := cf.ServiceAuthToken{}
+	expectedAuthToken.Guid = "found-auth-token-guid"
+	expectedAuthToken.Label = "found label"
+	expectedAuthToken.Provider = "found provider"
+	expectedAuthToken.Token = "a value"
+
 	assert.Contains(t, ui.Outputs[0], "Updating service auth token as")
 	assert.Contains(t, ui.Outputs[0], "my-user")
 	assert.Contains(t, ui.Outputs[1], "OK")
@@ -78,10 +78,13 @@ func callUpdateServiceAuthToken(t *testing.T, args []string, reqFactory *testreq
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

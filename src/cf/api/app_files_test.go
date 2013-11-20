@@ -56,8 +56,9 @@ func TestListFiles(t *testing.T) {
 
 	gateway := net.NewCloudControllerGateway()
 	repo := NewCloudControllerAppFilesRepository(config, gateway)
-
-	list, err := repo.ListFiles(cf.Application{Guid: "my-app-guid"}, "some/path")
+	app_Auto := cf.Application{}
+	app_Auto.Guid = "my-app-guid"
+	list, err := repo.ListFiles(app_Auto, "some/path")
 
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, err.IsNotSuccessful())

@@ -43,41 +43,43 @@ func TestAppFailsWithUsage(t *testing.T) {
 }
 
 func TestDisplayingAppSummary(t *testing.T) {
-	reqApp := cf.Application{Name: "my-app"}
+	reqApp := cf.Application{}
+	reqApp.Name = "my-app"
+	domain_Auto := cf.Domain{}
+	domain_Auto.Name = "example.com"
+	domain_Auto2 := cf.Domain{}
+	domain_Auto2.Name = "example.com"
 	routes := []cf.Route{
-		{Host: "my-app", Domain: cf.Domain{Name: "example.com"}},
-		{Host: "foo", Domain: cf.Domain{Name: "example.com"}},
+		{Host: "my-app", Domain: domain_Auto},
+		{Host: "foo", Domain: domain_Auto2},
 	}
-	app := cf.Application{
-		State:            "started",
-		Instances:        2,
-		RunningInstances: 2,
-		Memory:           256,
-		Routes:           routes,
-	}
+	app := cf.Application{}
+	app.State = "started"
+	app.Instances = 2
+	app.RunningInstances = 2
+	app.Memory = 256
+	app.Routes = routes
 
 	time1, err := time.Parse("Mon Jan 2 15:04:05 -0700 MST 2006", "Mon Jan 2 15:04:05 -0700 MST 2012")
 	assert.NoError(t, err)
 
 	time2, err := time.Parse("Mon Jan 2 15:04:05 -0700 MST 2006", "Mon Apr 1 15:04:05 -0700 MST 2012")
 	assert.NoError(t, err)
-
-	instances := []cf.ApplicationInstance{
-		cf.ApplicationInstance{
-			State:     cf.InstanceRunning,
-			Since:     time1,
-			CpuUsage:  1.0,
-			DiskQuota: 1 * formatters.GIGABYTE,
-			DiskUsage: 32 * formatters.MEGABYTE,
-			MemQuota:  64 * formatters.MEGABYTE,
-			MemUsage:  13 * formatters.BYTE,
-		},
-		cf.ApplicationInstance{
-			State: cf.InstanceDown,
-			Since: time2,
-		},
-	}
-	appSummary := cf.AppSummary{App: app, Instances: instances}
+	appInstance_Auto := cf.ApplicationInstance{}
+	appInstance_Auto.State = cf.InstanceRunning
+	appInstance_Auto.Since = time1
+	appInstance_Auto.CpuUsage = 1.0
+	appInstance_Auto.DiskQuota = 1 * formatters.GIGABYTE
+	appInstance_Auto.DiskUsage = 32 * formatters.MEGABYTE
+	appInstance_Auto.MemQuota = 64 * formatters.MEGABYTE
+	appInstance_Auto.MemUsage = 13 * formatters.BYTE
+	appInstance_Auto2 := cf.ApplicationInstance{}
+	appInstance_Auto2.State = cf.InstanceDown
+	appInstance_Auto2.Since = time2
+	instances := []cf.ApplicationInstance{appInstance_Auto, appInstance_Auto2}
+	appSummary := cf.AppSummary{}
+	appSummary.App = app
+	appSummary.Instances = instances
 
 	appSummaryRepo := &testapi.FakeAppSummaryRepo{GetSummarySummary: appSummary}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, TargetedSpaceSuccess: true, Application: reqApp}
@@ -124,20 +126,24 @@ func TestDisplayingNotStagedAppSummary(t *testing.T) {
 }
 
 func testDisplayingAppSummaryWithErrorCode(t *testing.T, errorCode string) {
-	reqApp := cf.Application{Name: "my-app"}
+	reqApp := cf.Application{}
+	reqApp.Name = "my-app"
+	domain_Auto3 := cf.Domain{}
+	domain_Auto3.Name = "example.com"
+	domain_Auto4 := cf.Domain{}
+	domain_Auto4.Name = "example.com"
 	routes := []cf.Route{
-		{Host: "my-app", Domain: cf.Domain{Name: "example.com"}},
-		{Host: "foo", Domain: cf.Domain{Name: "example.com"}},
+		{Host: "my-app", Domain: domain_Auto3},
+		{Host: "foo", Domain: domain_Auto4},
 	}
-	app := cf.Application{
-		State:            "stopped",
-		Instances:        2,
-		RunningInstances: 0,
-		Memory:           256,
-		Routes:           routes,
-	}
-
-	appSummary := cf.AppSummary{App: app}
+	app := cf.Application{}
+	app.State = "stopped"
+	app.Instances = 2
+	app.RunningInstances = 0
+	app.Memory = 256
+	app.Routes = routes
+	appSummary := cf.AppSummary{}
+	appSummary.App = app
 
 	appSummaryRepo := &testapi.FakeAppSummaryRepo{GetSummarySummary: appSummary, GetSummaryErrorCode: errorCode}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, TargetedSpaceSuccess: true, Application: reqApp}
@@ -173,10 +179,13 @@ func callApp(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory, ap
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

@@ -15,7 +15,9 @@ import (
 )
 
 func TestDeleteServiceCommandWithY(t *testing.T) {
-	serviceInstance := cf.ServiceInstance{Name: "my-service", Guid: "my-service-guid"}
+	serviceInstance := cf.ServiceInstance{}
+	serviceInstance.Name = "my-service"
+	serviceInstance.Guid = "my-service-guid"
 	reqFactory := &testreq.FakeReqFactory{}
 	serviceRepo := &testapi.FakeServiceRepo{FindInstanceByNameServiceInstance: serviceInstance}
 	fakeUI := callDeleteService(t, "Y", []string{"my-service"}, reqFactory, serviceRepo)
@@ -33,7 +35,9 @@ func TestDeleteServiceCommandWithY(t *testing.T) {
 }
 
 func TestDeleteServiceCommandWithYes(t *testing.T) {
-	serviceInstance := cf.ServiceInstance{Name: "my-service", Guid: "my-service-guid"}
+	serviceInstance := cf.ServiceInstance{}
+	serviceInstance.Name = "my-service"
+	serviceInstance.Guid = "my-service-guid"
 	reqFactory := &testreq.FakeReqFactory{}
 	serviceRepo := &testapi.FakeServiceRepo{FindInstanceByNameServiceInstance: serviceInstance}
 	fakeUI := callDeleteService(t, "Yes", []string{"my-service"}, reqFactory, serviceRepo)
@@ -96,10 +100,13 @@ func callDeleteService(t *testing.T, confirmation string, args []string, reqFact
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

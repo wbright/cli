@@ -181,8 +181,9 @@ func TestAppSummaryGetSummary(t *testing.T) {
 		appStatsRequest,
 	})
 	defer ts.Close()
-
-	app := cf.Application{Name: "my-cool-app", Guid: "my-cool-app-guid"}
+	app := cf.Application{}
+	app.Name = "my-cool-app"
+	app.Guid = "my-cool-app-guid"
 
 	summary, err := repo.GetSummary(app)
 	assert.True(t, handler.AllRequestsCalled())
@@ -208,9 +209,10 @@ func TestAppSummaryGetSummary(t *testing.T) {
 
 func createAppSummaryRepo(t *testing.T, requests []testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo AppSummaryRepository) {
 	ts, handler = testnet.NewTLSServer(t, requests)
-
+	space_Auto := cf.Space{}
+	space_Auto.Guid = "my-space-guid"
 	config := &configuration.Configuration{
-		Space:       cf.Space{Guid: "my-space-guid"},
+		Space:       space_Auto,
 		AccessToken: "BEARER my_access_token",
 		Target:      ts.URL,
 	}

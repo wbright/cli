@@ -22,7 +22,9 @@ func TestRestartCommandFailsWithUsage(t *testing.T) {
 }
 
 func TestRestartRequirements(t *testing.T) {
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
 	starter := &testcmd.FakeAppStarter{}
 	stopper := &testcmd.FakeAppStopper{}
 
@@ -40,8 +42,12 @@ func TestRestartRequirements(t *testing.T) {
 }
 
 func TestRestartApplication(t *testing.T) {
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid"}
-	stoppedApp := cf.Application{Name: "my-stopped-app", Guid: "my-app-guid"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
+	stoppedApp := cf.Application{}
+	stoppedApp.Name = "my-stopped-app"
+	stoppedApp.Guid = "my-app-guid"
 	reqFactory := &testreq.FakeReqFactory{Application: app, LoginSuccess: true, TargetedSpaceSuccess: true}
 	starter := &testcmd.FakeAppStarter{}
 	stopper := &testcmd.FakeAppStopper{StoppedApp: stoppedApp}

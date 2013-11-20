@@ -49,15 +49,19 @@ func TestUnsetSpaceRoleRequirements(t *testing.T) {
 }
 
 func TestUnsetSpaceRole(t *testing.T) {
-	user := cf.User{Username: "some-user", Guid: "some-user-guid"}
-	org := cf.Organization{Name: "some-org", Guid: "some-org-guid"}
+	user := cf.User{}
+	user.Username = "some-user"
+	user.Guid = "some-user-guid"
+	org := cf.Organization{}
+	org.Name = "some-org"
+	org.Guid = "some-org-guid"
 
 	reqFactory, spaceRepo, userRepo := getUnsetSpaceRoleDeps()
 	reqFactory.LoginSuccess = true
 	reqFactory.User = user
 	reqFactory.Organization = org
-
-	spaceRepo.FindByNameInOrgSpace = cf.Space{Name: "some-space"}
+	space_Auto = cf.Space{}
+	space_Auto.Name = "some-space"
 
 	args := []string{"my-username", "my-org", "my-space", "my-role"}
 
@@ -95,10 +99,13 @@ func callUnsetSpaceRole(t *testing.T, args []string, spaceRepo *testapi.FakeSpac
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-
+	space_Auto2 := cf.Space{}
+	space_Auto2.Name = "my-space"
+	org_Auto2 := cf.Organization{}
+	org_Auto2.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto2,
+		Organization: org_Auto2,
 		AccessToken:  token,
 	}
 

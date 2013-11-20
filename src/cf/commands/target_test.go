@@ -57,7 +57,6 @@ func TestTargetWithoutArgumentAndLoggedIn(t *testing.T) {
 	assert.Contains(t, ui.Outputs[1], "No space targeted")
 }
 
-// Start test with organization option
 func TestTargetOrganizationWhenUserHasAccess(t *testing.T) {
 	orgRepo, spaceRepo, configRepo, reqFactory := getTargetDependencies()
 
@@ -131,10 +130,6 @@ func TestTargetOrganizationWhenOrgNotFound(t *testing.T) {
 	assert.Contains(t, ui.Outputs[1], "my-organization")
 	assert.Contains(t, ui.Outputs[1], "not found")
 }
-
-// End test with organization option
-
-// Start test with space option
 
 func TestTargetSpaceWhenNoOrganizationIsSelected(t *testing.T) {
 	orgRepo, spaceRepo, configRepo, reqFactory := getTargetDependencies()
@@ -213,10 +208,6 @@ func TestTargetSpaceWhenSpaceNotFound(t *testing.T) {
 	assert.Contains(t, ui.Outputs[1], "not found")
 }
 
-// End test with space option
-
-// Targeting both org and space
-
 func TestTargetOrganizationAndSpace(t *testing.T) {
 	orgRepo, spaceRepo, configRepo, reqFactory := getTargetDependencies()
 	configRepo.Delete()
@@ -267,8 +258,6 @@ func TestTargetOrganizationAndSpaceWhenSpaceFails(t *testing.T) {
 	assert.Equal(t, savedConfig.Space.Guid, "")
 	assert.Contains(t, ui.Outputs[0], "FAILED")
 }
-
-// End test with org and space options
 
 func callTarget(args []string,
 	reqFactory *testreq.FakeReqFactory,

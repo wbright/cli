@@ -22,9 +22,10 @@ func TestCreateServiceBinding(t *testing.T) {
 
 	ts, handler, repo := createServiceBindingRepo(t, req)
 	defer ts.Close()
-
-	serviceInstance := cf.ServiceInstance{Guid: "my-service-instance-guid"}
-	app := cf.Application{Guid: "my-app-guid"}
+	serviceInstance := cf.ServiceInstance{}
+	serviceInstance.Guid = "my-service-instance-guid"
+	app := cf.Application{}
+	app.Guid = "my-app-guid"
 	apiResponse := repo.Create(serviceInstance, app)
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
@@ -43,9 +44,10 @@ func TestCreateServiceBindingIfError(t *testing.T) {
 
 	ts, handler, repo := createServiceBindingRepo(t, req)
 	defer ts.Close()
-
-	serviceInstance := cf.ServiceInstance{Guid: "my-service-instance-guid"}
-	app := cf.Application{Guid: "my-app-guid"}
+	serviceInstance := cf.ServiceInstance{}
+	serviceInstance.Guid = "my-service-instance-guid"
+	app := cf.Application{}
+	app.Guid = "my-app-guid"
 	apiResponse := repo.Create(serviceInstance, app)
 
 	assert.True(t, handler.AllRequestsCalled())
@@ -62,17 +64,18 @@ var deleteBindingReq = testapi.NewCloudControllerTestRequest(testnet.TestRequest
 func TestDeleteServiceBinding(t *testing.T) {
 	ts, handler, repo := createServiceBindingRepo(t, deleteBindingReq)
 	defer ts.Close()
-
-	serviceBindings := []cf.ServiceBinding{
-		cf.ServiceBinding{Url: "/v2/service_bindings/service-binding-1-guid", AppGuid: "app-1-guid"},
-		cf.ServiceBinding{Url: "/v2/service_bindings/service-binding-2-guid", AppGuid: "app-2-guid"},
-	}
-
-	serviceInstance := cf.ServiceInstance{
-		Guid:            "my-service-instance-guid",
-		ServiceBindings: serviceBindings,
-	}
-	app := cf.Application{Guid: "app-2-guid"}
+	binding_Auto := cf.ServiceBinding{}
+	binding_Auto.Url = "/v2/service_bindings/service-binding-1-guid"
+	binding_Auto.AppGuid = "app-1-guid"
+	binding_Auto2 := cf.ServiceBinding{}
+	binding_Auto2.Url = "/v2/service_bindings/service-binding-2-guid"
+	binding_Auto2.AppGuid = "app-2-guid"
+	serviceBindings := []cf.ServiceBinding{binding_Auto, binding_Auto2}
+	serviceInstance := cf.ServiceInstance{}
+	serviceInstance.Guid = "my-service-instance-guid"
+	serviceInstance.ServiceBindings = serviceBindings
+	app := cf.Application{}
+	app.Guid = "app-2-guid"
 	found, apiResponse := repo.Delete(serviceInstance, app)
 
 	assert.True(t, handler.AllRequestsCalled())
@@ -85,12 +88,11 @@ func TestDeleteServiceBindingWhenBindingDoesNotExist(t *testing.T) {
 	defer ts.Close()
 
 	serviceBindings := []cf.ServiceBinding{}
-
-	serviceInstance := cf.ServiceInstance{
-		Guid:            "my-service-instance-guid",
-		ServiceBindings: serviceBindings,
-	}
-	app := cf.Application{Guid: "app-2-guid"}
+	serviceInstance := cf.ServiceInstance{}
+	serviceInstance.Guid = "my-service-instance-guid"
+	serviceInstance.ServiceBindings = serviceBindings
+	app := cf.Application{}
+	app.Guid = "app-2-guid"
 	found, apiResponse := repo.Delete(serviceInstance, app)
 
 	assert.False(t, handler.AllRequestsCalled())
@@ -100,10 +102,11 @@ func TestDeleteServiceBindingWhenBindingDoesNotExist(t *testing.T) {
 
 func createServiceBindingRepo(t *testing.T, req testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo ServiceBindingRepository) {
 	ts, handler = testnet.NewTLSServer(t, []testnet.TestRequest{req})
-
+	space_Auto := cf.Space{}
+	space_Auto.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
-		Space:       cf.Space{Guid: "my-space-guid"},
+		Space:       space_Auto,
 		Target:      ts.URL,
 	}
 

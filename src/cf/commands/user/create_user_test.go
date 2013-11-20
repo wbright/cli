@@ -77,10 +77,13 @@ func callCreateUser(t *testing.T, args []string, reqFactory *testreq.FakeReqFact
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

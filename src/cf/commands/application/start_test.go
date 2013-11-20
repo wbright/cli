@@ -55,10 +55,13 @@ func startAppWithInstancesAndErrors(t *testing.T, app cf.Application, instances 
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:                   cf.Space{Name: "my-space"},
-		Organization:            cf.Organization{Name: "my-org"},
+		Space:                   space_Auto,
+		Organization:            org_Auto,
 		AccessToken:             token,
 		ApplicationStartTimeout: 2,
 	}
@@ -115,7 +118,7 @@ func TestStartCommandFailsWithUsage(t *testing.T) {
 
 	reqFactory := &testreq.FakeReqFactory{}
 
-	ui := callStart([]string{}, config, reqFactory, appRepo, logRepo) //
+	ui := callStart([]string{}, config, reqFactory, appRepo, logRepo)
 	assert.True(t, ui.FailedWithUsage)
 
 	ui = callStart([]string{"my-app"}, config, reqFactory, appRepo, logRepo)
@@ -146,11 +149,10 @@ func TestStartApplicationWhenAppHasNoURL(t *testing.T) {
 
 	app := defaultAppForStart
 	app.Routes = []cf.Route{}
-
+	appInstance_Auto5 := cf.ApplicationInstance{}
+	appInstance_Auto5.State = cf.InstanceRunning
 	instances := [][]cf.ApplicationInstance{
-		[]cf.ApplicationInstance{
-			cf.ApplicationInstance{State: cf.InstanceRunning},
-		},
+		[]cf.ApplicationInstance{appInstance_Auto5},
 	}
 
 	errorCodes := []string{""}
@@ -166,22 +168,24 @@ func TestStartApplicationWhenAppHasNoURL(t *testing.T) {
 
 func TestStartApplicationWhenAppIsStillStaging(t *testing.T) {
 	t.Parallel()
-
+	appInstance_Auto6 := cf.ApplicationInstance{}
+	appInstance_Auto6.State = cf.InstanceDown
+	appInstance_Auto7 := cf.ApplicationInstance{}
+	appInstance_Auto7.State = cf.InstanceStarting
+	appInstance_Auto8 := cf.ApplicationInstance{}
+	appInstance_Auto8.State = cf.InstanceStarting
+	appInstance_Auto9 := cf.ApplicationInstance{}
+	appInstance_Auto9.State = cf.InstanceStarting
+	appInstance_Auto10 := cf.ApplicationInstance{}
+	appInstance_Auto10.State = cf.InstanceRunning
+	appInstance_Auto11 := cf.ApplicationInstance{}
+	appInstance_Auto11.State = cf.InstanceRunning
 	instances := [][]cf.ApplicationInstance{
 		[]cf.ApplicationInstance{},
 		[]cf.ApplicationInstance{},
-		[]cf.ApplicationInstance{
-			cf.ApplicationInstance{State: cf.InstanceDown},
-			cf.ApplicationInstance{State: cf.InstanceStarting},
-		},
-		[]cf.ApplicationInstance{
-			cf.ApplicationInstance{State: cf.InstanceStarting},
-			cf.ApplicationInstance{State: cf.InstanceStarting},
-		},
-		[]cf.ApplicationInstance{
-			cf.ApplicationInstance{State: cf.InstanceRunning},
-			cf.ApplicationInstance{State: cf.InstanceRunning},
-		},
+		[]cf.ApplicationInstance{appInstance_Auto6, appInstance_Auto7},
+		[]cf.ApplicationInstance{appInstance_Auto8, appInstance_Auto9},
+		[]cf.ApplicationInstance{appInstance_Auto10, appInstance_Auto11},
 	}
 
 	errorCodes := []string{cf.APP_NOT_STAGED, cf.APP_NOT_STAGED, "", "", ""}
@@ -212,16 +216,17 @@ func TestStartApplicationWhenStagingFails(t *testing.T) {
 
 func TestStartApplicationWhenOneInstanceFlaps(t *testing.T) {
 	t.Parallel()
-
+	appInstance_Auto12 := cf.ApplicationInstance{}
+	appInstance_Auto12.State = cf.InstanceStarting
+	appInstance_Auto13 := cf.ApplicationInstance{}
+	appInstance_Auto13.State = cf.InstanceStarting
+	appInstance_Auto14 := cf.ApplicationInstance{}
+	appInstance_Auto14.State = cf.InstanceStarting
+	appInstance_Auto15 := cf.ApplicationInstance{}
+	appInstance_Auto15.State = cf.InstanceFlapping
 	instances := [][]cf.ApplicationInstance{
-		[]cf.ApplicationInstance{
-			cf.ApplicationInstance{State: cf.InstanceStarting},
-			cf.ApplicationInstance{State: cf.InstanceStarting},
-		},
-		[]cf.ApplicationInstance{
-			cf.ApplicationInstance{State: cf.InstanceStarting},
-			cf.ApplicationInstance{State: cf.InstanceFlapping},
-		},
+		[]cf.ApplicationInstance{appInstance_Auto12, appInstance_Auto13},
+		[]cf.ApplicationInstance{appInstance_Auto14, appInstance_Auto15},
 	}
 
 	errorCodes := []string{"", ""}
@@ -237,20 +242,22 @@ func TestStartApplicationWhenOneInstanceFlaps(t *testing.T) {
 
 func TestStartApplicationWhenStartTimesOut(t *testing.T) {
 	t.Parallel()
-
+	appInstance_Auto16 := cf.ApplicationInstance{}
+	appInstance_Auto16.State = cf.InstanceStarting
+	appInstance_Auto17 := cf.ApplicationInstance{}
+	appInstance_Auto17.State = cf.InstanceStarting
+	appInstance_Auto18 := cf.ApplicationInstance{}
+	appInstance_Auto18.State = cf.InstanceStarting
+	appInstance_Auto19 := cf.ApplicationInstance{}
+	appInstance_Auto19.State = cf.InstanceDown
+	appInstance_Auto20 := cf.ApplicationInstance{}
+	appInstance_Auto20.State = cf.InstanceDown
+	appInstance_Auto21 := cf.ApplicationInstance{}
+	appInstance_Auto21.State = cf.InstanceDown
 	instances := [][]cf.ApplicationInstance{
-		[]cf.ApplicationInstance{
-			cf.ApplicationInstance{State: cf.InstanceStarting},
-			cf.ApplicationInstance{State: cf.InstanceStarting},
-		},
-		[]cf.ApplicationInstance{
-			cf.ApplicationInstance{State: cf.InstanceStarting},
-			cf.ApplicationInstance{State: cf.InstanceDown},
-		},
-		[]cf.ApplicationInstance{
-			cf.ApplicationInstance{State: cf.InstanceDown},
-			cf.ApplicationInstance{State: cf.InstanceDown},
-		},
+		[]cf.ApplicationInstance{appInstance_Auto16, appInstance_Auto17},
+		[]cf.ApplicationInstance{appInstance_Auto18, appInstance_Auto19},
+		[]cf.ApplicationInstance{appInstance_Auto20, appInstance_Auto21},
 	}
 
 	errorCodes := []string{"", "", ""}
@@ -270,7 +277,9 @@ func TestStartApplicationWhenStartFails(t *testing.T) {
 	t.Parallel()
 
 	config := &configuration.Configuration{}
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
 	appRepo := &testapi.FakeApplicationRepository{FindByNameApp: app, StartAppErr: true}
 	logRepo := &testapi.FakeLogsRepository{}
 	args := []string{"my-app"}
@@ -287,7 +296,10 @@ func TestStartApplicationIsAlreadyStarted(t *testing.T) {
 	t.Parallel()
 
 	config := &configuration.Configuration{}
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid", State: "started"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
+	app.State = "started"
 	appRepo := &testapi.FakeApplicationRepository{FindByNameApp: app}
 	logRepo := &testapi.FakeLogsRepository{}
 
@@ -306,9 +318,13 @@ func TestStartApplicationWithLoggingFailure(t *testing.T) {
 
 	token, err := testconfig.CreateAccessTokenWithTokenInfo(configuration.TokenInfo{Username: "my-user"})
 	assert.NoError(t, err)
+	space_Auto2 := cf.Space{}
+	space_Auto2.Name = "my-space"
+	org_Auto2 := cf.Organization{}
+	org_Auto2.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:                   cf.Space{Name: "my-space"},
-		Organization:            cf.Organization{Name: "my-org"},
+		Space:                   space_Auto2,
+		Organization:            org_Auto2,
 		AccessToken:             token,
 		ApplicationStartTimeout: 2,
 	}

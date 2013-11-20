@@ -47,8 +47,12 @@ func TestCreateRouteFailsWithUsage(t *testing.T) {
 }
 
 func TestCreateRoute(t *testing.T) {
-	space := cf.Space{Guid: "my-space-guid", Name: "my-space"}
-	domain := cf.Domain{Guid: "domain-guid", Name: "example.com"}
+	space := cf.Space{}
+	space.Guid = "my-space-guid"
+	space.Name = "my-space"
+	domain := cf.Domain{}
+	domain.Guid = "domain-guid"
+	domain.Name = "example.com"
 	reqFactory := &testreq.FakeReqFactory{
 		LoginSuccess: true,
 		Domain:       domain,
@@ -64,29 +68,35 @@ func TestCreateRoute(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-space")
 	assert.Contains(t, ui.Outputs[0], "my-user")
 	assert.Contains(t, ui.Outputs[1], "OK")
-
-	assert.Equal(t, routeRepo.CreateInSpaceRoute, cf.Route{Host: "host", Domain: domain})
+	route_Auto := cf.Route{}
+	route_Auto.Host = "host"
+	route_Auto.Domain = domain
+	assert.Equal(t, routeRepo.CreateInSpaceRoute, route_Auto)
 	assert.Equal(t, routeRepo.CreateInSpaceDomain, domain)
 	assert.Equal(t, routeRepo.CreateInSpaceSpace, space)
 
 }
 
 func TestCreateRouteIsIdempotent(t *testing.T) {
-	space := cf.Space{Guid: "my-space-guid", Name: "my-space"}
-	domain := cf.Domain{Guid: "domain-guid", Name: "example.com"}
+	space := cf.Space{}
+	space.Guid = "my-space-guid"
+	space.Name = "my-space"
+	domain := cf.Domain{}
+	domain.Guid = "domain-guid"
+	domain.Name = "example.com"
 	reqFactory := &testreq.FakeReqFactory{
 		LoginSuccess: true,
 		Domain:       domain,
 		Space:        space,
 	}
+	route_Auto2 := cf.Route{}
+	route_Auto2.Guid = "my-route-guid"
+	route_Auto2.Host = "host"
+	route_Auto2.Domain = domain
+	route_Auto2.Space = space
 	routeRepo := &testapi.FakeRouteRepository{
-		CreateInSpaceErr: true,
-		FindByHostAndDomainRoute: cf.Route{
-			Guid:   "my-route-guid",
-			Host:   "host",
-			Domain: domain,
-			Space:  space,
-		},
+		CreateInSpaceErr:         true,
+		FindByHostAndDomainRoute: route_Auto2,
 	}
 
 	ui := callCreateRoute(t, []string{"-n", "host", "my-space", "example.com"}, reqFactory, routeRepo)
@@ -94,23 +104,30 @@ func TestCreateRouteIsIdempotent(t *testing.T) {
 	assert.Contains(t, ui.Outputs[1], "OK")
 	assert.Contains(t, ui.Outputs[2], "host.example.com")
 	assert.Contains(t, ui.Outputs[2], "already exists")
-	assert.Equal(t, routeRepo.CreateInSpaceRoute, cf.Route{Host: "host", Domain: domain})
+	route_Auto := cf.Route{}
+	route_Auto.Host = "host"
+	route_Auto.Domain = domain
+	assert.Equal(t, routeRepo.CreateInSpaceRoute, route_Auto)
 	assert.Equal(t, routeRepo.CreateInSpaceDomain, domain)
 	assert.Equal(t, routeRepo.CreateInSpaceSpace, space)
 
 }
 
 func TestRouteCreator(t *testing.T) {
-	space := cf.Space{Guid: "my-space-guid", Name: "my-space"}
-	domain := cf.Domain{Guid: "domain-guid", Name: "example.com"}
+	space := cf.Space{}
+	space.Guid = "my-space-guid"
+	space.Name = "my-space"
+	domain := cf.Domain{}
+	domain.Guid = "domain-guid"
+	domain.Name = "example.com"
+	domain_Auto5 := cf.Domain{}
+	domain_Auto5.Name = "example.com"
+	route_Auto3 := cf.Route{}
+	route_Auto3.Host = "my-host"
+	route_Auto3.Guid = "my-route-guid"
+	route_Auto3.Domain = domain_Auto5
 	routeRepo := &testapi.FakeRouteRepository{
-		CreateInSpaceCreatedRoute: cf.Route{
-			Host: "my-host",
-			Guid: "my-route-guid",
-			Domain: cf.Domain{
-				Name: "example.com",
-			},
-		},
+		CreateInSpaceCreatedRoute: route_Auto3,
 	}
 
 	ui := new(testterm.FakeUI)
@@ -118,8 +135,10 @@ func TestRouteCreator(t *testing.T) {
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
-		Organization: cf.Organization{Name: "my-org"},
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 
@@ -148,10 +167,13 @@ func callCreateRoute(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	org_Auto2 := cf.Organization{}
+	org_Auto2.Name = "my-org"
+	space_Auto5 := cf.Space{}
+	space_Auto5.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto5,
+		Organization: org_Auto2,
 		AccessToken:  token,
 	}
 

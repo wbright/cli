@@ -76,11 +76,12 @@ func TestServiceSummaryGetSummariesInCurrentSpace(t *testing.T) {
 
 func createServiceSummaryRepo(t *testing.T, req testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo ServiceSummaryRepository) {
 	ts, handler = testnet.NewTLSServer(t, []testnet.TestRequest{req})
-
+	space_Auto := cf.Space{}
+	space_Auto.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
 		Target:      ts.URL,
-		Space:       cf.Space{Guid: "my-space-guid"},
+		Space:       space_Auto,
 	}
 	gateway := net.NewCloudControllerGateway()
 	repo = NewCloudControllerServiceSummaryRepository(config, gateway)

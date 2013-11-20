@@ -46,8 +46,10 @@ func TestSpaceUsersRequirements(t *testing.T) {
 }
 
 func TestSpaceUsers(t *testing.T) {
-	org := cf.Organization{Name: "Org1"}
-	space := cf.Space{Name: "Space1"}
+	org := cf.Organization{}
+	org.Name = "Org1"
+	space := cf.Space{}
+	space.Name = "Space1"
 
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Organization: org}
 	spaceRepo := &testapi.FakeSpaceRepository{FindByNameInOrgSpace: space}
@@ -92,10 +94,13 @@ func callSpaceUsers(t *testing.T, args []string, reqFactory *testreq.FakeReqFact
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	org_Auto2 := cf.Organization{}
+	org_Auto2.Name = "my-org"
+	space_Auto2 := cf.Space{}
+	space_Auto2.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto2,
+		Organization: org_Auto2,
 		AccessToken:  token,
 	}
 

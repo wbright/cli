@@ -53,10 +53,15 @@ func TestSetSpaceRole(t *testing.T) {
 	reqFactory, spaceRepo, userRepo := getSetSpaceRoleDeps()
 
 	reqFactory.LoginSuccess = true
-	reqFactory.User = cf.User{Guid: "my-user-guid", Username: "my-user"}
-	reqFactory.Organization = cf.Organization{Guid: "my-org-guid", Name: "my-org"}
-
-	spaceRepo.FindByNameInOrgSpace = cf.Space{Guid: "my-space-guid", Name: "my-space"}
+	user_Auto = cf.User{}
+	user_Auto.Guid = "my-user-guid"
+	user_Auto.Username = "my-user"
+	org_Auto = cf.Organization{}
+	org_Auto.Guid = "my-org-guid"
+	org_Auto.Name = "my-org"
+	space_Auto = cf.Space{}
+	space_Auto.Guid = "my-space-guid"
+	space_Auto.Name = "my-space"
 
 	ui := callSetSpaceRole(t, args, reqFactory, spaceRepo, userRepo)
 
@@ -92,10 +97,13 @@ func callSetSpaceRole(t *testing.T, args []string, reqFactory *testreq.FakeReqFa
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-
+	space_Auto2 := cf.Space{}
+	space_Auto2.Name = "my-space"
+	org_Auto2 := cf.Organization{}
+	org_Auto2.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto2,
+		Organization: org_Auto2,
 		AccessToken:  token,
 	}
 

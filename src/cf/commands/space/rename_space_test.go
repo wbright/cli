@@ -35,8 +35,9 @@ func TestRenameSpaceRequirements(t *testing.T) {
 
 func TestRenameSpaceRun(t *testing.T) {
 	spaceRepo := &testapi.FakeSpaceRepository{}
-
-	space := cf.Space{Name: "my-space", Guid: "my-space-guid"}
+	space := cf.Space{}
+	space.Name = "my-space"
+	space.Guid = "my-space-guid"
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Space: space}
 	ui := callRenameSpace(t, []string{"my-space", "my-new-space"}, reqFactory, spaceRepo)
 
@@ -58,10 +59,13 @@ func callRenameSpace(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	space_Auto2 := cf.Space{}
+	space_Auto2.Name = "my-space"
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto2,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

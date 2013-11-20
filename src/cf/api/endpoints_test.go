@@ -39,9 +39,12 @@ func TestUpdateEndpointWhenUrlIsValidHttpsInfoEndpoint(t *testing.T) {
 
 	ts, repo := createEndpointRepoForUpdate(configRepo, validApiInfoEndpoint)
 	defer ts.Close()
-
-	org := cf.Organization{Name: "my-org", Guid: "my-org-guid"}
-	space := cf.Space{Name: "my-space", Guid: "my-space-guid"}
+	org := cf.Organization{}
+	org.Name = "my-org"
+	org.Guid = "my-org-guid"
+	space := cf.Space{}
+	space.Name = "my-space"
+	space.Guid = "my-space-guid"
 
 	config, _ := configRepo.Get()
 	config.Organization = org
@@ -66,9 +69,12 @@ func TestUpdateEndpointWhenUrlIsAlreadyTargeted(t *testing.T) {
 
 	ts, repo := createEndpointRepoForUpdate(configRepo, validApiInfoEndpoint)
 	defer ts.Close()
-
-	org := cf.Organization{Name: "my-org", Guid: "my-org-guid"}
-	space := cf.Space{Name: "my-space", Guid: "my-space-guid"}
+	org := cf.Organization{}
+	org.Name = "my-org"
+	org.Guid = "my-org-guid"
+	space := cf.Space{}
+	space.Name = "my-space"
+	space.Guid = "my-space-guid"
 
 	config, _ := configRepo.Get()
 	config.Target = ts.URL
@@ -182,8 +188,6 @@ func makeRepo(configRepo testconfig.FakeConfigRepository) (repo EndpointReposito
 	return NewEndpointRepository(config, gateway, configRepo)
 }
 
-// Tests for GetEndpoint
-
 func TestGetEndpointForCloudController(t *testing.T) {
 	configRepo := testconfig.FakeConfigRepository{}
 	config := &configuration.Configuration{
@@ -212,7 +216,7 @@ func TestGetEndpointForLoggregatorSecure(t *testing.T) {
 }
 
 func TestGetEndpointForLoggregatorInsecure(t *testing.T) {
-	//This is current behavior, which will probably need to be changed to properly support unsecure websocket connections (SH)
+
 	config := &configuration.Configuration{
 		Target: "http://bar.run.pivotal.io",
 	}

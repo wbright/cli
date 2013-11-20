@@ -14,23 +14,25 @@ import (
 )
 
 func TestListingRoutes(t *testing.T) {
-	routes := []cf.Route{
-		cf.Route{
-			Host:     "hostname-1",
-			Domain:   cf.Domain{Name: "example.com"},
-			AppNames: []string{"dora", "dora2"},
-		},
-		cf.Route{
-			Host:     "hostname-2",
-			Domain:   cf.Domain{Name: "cfapps.com"},
-			AppNames: []string{"my-app", "my-app2"},
-		},
-		cf.Route{
-			Host:     "hostname-3",
-			Domain:   cf.Domain{Name: "another-example.com"},
-			AppNames: []string{"july", "june"},
-		},
-	}
+	domain_Auto := cf.Domain{}
+	domain_Auto.Name = "example.com"
+	domain_Auto2 := cf.Domain{}
+	domain_Auto2.Name = "cfapps.com"
+	domain_Auto3 := cf.Domain{}
+	domain_Auto3.Name = "another-example.com"
+	route_Auto := cf.Route{}
+	route_Auto.Host = "hostname-1"
+	route_Auto.Domain = domain_Auto
+	route_Auto.AppNames = []string{"dora", "dora2"}
+	route_Auto2 := cf.Route{}
+	route_Auto2.Host = "hostname-2"
+	route_Auto2.Domain = domain_Auto2
+	route_Auto2.AppNames = []string{"my-app", "my-app2"}
+	route_Auto3 := cf.Route{}
+	route_Auto3.Host = "hostname-3"
+	route_Auto3.Domain = domain_Auto3
+	route_Auto3.AppNames = []string{"july", "june"}
+	routes := []cf.Route{route_Auto, route_Auto2, route_Auto3}
 
 	routeRepo := &testapi.FakeRouteRepository{Routes: routes}
 
@@ -86,10 +88,13 @@ func callListRoutes(t *testing.T, args []string, reqFactory *testreq.FakeReqFact
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

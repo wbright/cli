@@ -49,9 +49,12 @@ func TestUnsetOrgRoleRequirements(t *testing.T) {
 
 func TestUnsetOrgRole(t *testing.T) {
 	userRepo := &testapi.FakeUserRepository{}
-
-	user := cf.User{Username: "some-user", Guid: "some-user-guid"}
-	org := cf.Organization{Name: "some-org", Guid: "some-org-guid"}
+	user := cf.User{}
+	user.Username = "some-user"
+	user.Guid = "some-user-guid"
+	org := cf.Organization{}
+	org.Name = "some-org"
+	org.Guid = "some-org-guid"
 	reqFactory := &testreq.FakeReqFactory{
 		LoginSuccess: true,
 		User:         user,
@@ -82,10 +85,13 @@ func callUnsetOrgRole(t *testing.T, args []string, userRepo *testapi.FakeUserRep
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-
+	org_Auto2 := cf.Organization{}
+	org_Auto2.Name = "my-org"
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto2,
 		AccessToken:  token,
 	}
 

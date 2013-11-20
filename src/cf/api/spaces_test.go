@@ -123,7 +123,8 @@ func TestSpacesFindByName(t *testing.T) {
 }
 
 func TestSpacesFindByNameInOrg(t *testing.T) {
-	org := cf.Organization{Guid: "another-org-guid"}
+	org := cf.Organization{}
+	org.Guid = "another-org-guid"
 
 	testSpacesFindByNameWithOrg(t,
 		"another-org-guid",
@@ -204,18 +205,24 @@ func testSpacesFindByNameWithOrg(t *testing.T, orgGuid string, findByName func(S
 
 	ts, handler, repo := createSpacesRepo(t, request)
 	defer ts.Close()
-
-	existingOrg := cf.Organization{Guid: "org1-guid", Name: "Org1"}
-	apps := []cf.Application{
-		cf.Application{Name: "app1", Guid: "app1-guid"},
-		cf.Application{Name: "app2", Guid: "app2-guid"},
-	}
-	domains := []cf.Domain{
-		cf.Domain{Name: "domain1", Guid: "domain1-guid"},
-	}
-	services := []cf.ServiceInstance{
-		cf.ServiceInstance{Name: "service1", Guid: "service1-guid"},
-	}
+	existingOrg := cf.Organization{}
+	existingOrg.Guid = "org1-guid"
+	existingOrg.Name = "Org1"
+	app_Auto := cf.Application{}
+	app_Auto.Name = "app1"
+	app_Auto.Guid = "app1-guid"
+	app_Auto2 := cf.Application{}
+	app_Auto2.Name = "app2"
+	app_Auto2.Guid = "app2-guid"
+	apps := []cf.Application{app_Auto, app_Auto2}
+	domain_Auto := cf.Domain{}
+	domain_Auto.Name = "domain1"
+	domain_Auto.Guid = "domain1-guid"
+	domains := []cf.Domain{domain_Auto}
+	serviceInstance_Auto := cf.ServiceInstance{}
+	serviceInstance_Auto.Name = "service1"
+	serviceInstance_Auto.Guid = "service1-guid"
+	services := []cf.ServiceInstance{serviceInstance_Auto}
 
 	space, apiResponse := findByName(repo, "Space1")
 	assert.True(t, handler.AllRequestsCalled())
@@ -242,7 +249,8 @@ func TestSpacesDidNotFindByName(t *testing.T) {
 }
 
 func TestSpacesDidNotFindByNameInOrg(t *testing.T) {
-	org := cf.Organization{Guid: "another-org-guid"}
+	org := cf.Organization{}
+	org.Guid = "another-org-guid"
 
 	testSpacesDidNotFindByNameWithOrg(t,
 		"another-org-guid",
@@ -297,8 +305,8 @@ func TestRenameSpace(t *testing.T) {
 
 	ts, handler, repo := createSpacesRepo(t, request)
 	defer ts.Close()
-
-	space := cf.Space{Guid: "my-space-guid"}
+	space := cf.Space{}
+	space.Guid = "my-space-guid"
 	apiResponse := repo.Rename(space, "new-space-name")
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
@@ -313,8 +321,8 @@ func TestDeleteSpace(t *testing.T) {
 
 	ts, handler, repo := createSpacesRepo(t, request)
 	defer ts.Close()
-
-	space := cf.Space{Guid: "my-space-guid"}
+	space := cf.Space{}
+	space.Guid = "my-space-guid"
 	apiResponse := repo.Delete(space)
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
@@ -322,12 +330,15 @@ func TestDeleteSpace(t *testing.T) {
 
 func createSpacesRepo(t *testing.T, reqs ...testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo SpaceRepository) {
 	ts, handler = testnet.NewTLSServer(t, reqs)
-
+	org_Auto4 := cf.Organization{}
+	org_Auto4.Guid = "some-org-guid"
+	space_Auto5 := cf.Space{}
+	space_Auto5.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken:  "BEARER my_access_token",
 		Target:       ts.URL,
-		Organization: cf.Organization{Guid: "some-org-guid"},
-		Space:        cf.Space{Guid: "my-space-guid"},
+		Organization: org_Auto4,
+		Space:        space_Auto5,
 	}
 	gateway := net.NewCloudControllerGateway()
 	repo = NewCloudControllerSpaceRepository(config, gateway)

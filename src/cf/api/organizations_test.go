@@ -105,8 +105,9 @@ func TestOrganizationsFindByName(t *testing.T) {
 
 	ts, handler, repo := createOrganizationRepo(t, req)
 	defer ts.Close()
-
-	existingOrg := cf.Organization{Guid: "org1-guid", Name: "Org1"}
+	existingOrg := cf.Organization{}
+	existingOrg.Guid = "org1-guid"
+	existingOrg.Name = "Org1"
 
 	org, apiResponse := repo.FindByName("Org1")
 	assert.True(t, handler.AllRequestsCalled())
@@ -164,8 +165,8 @@ func TestRenameOrganization(t *testing.T) {
 
 	ts, handler, repo := createOrganizationRepo(t, req)
 	defer ts.Close()
-
-	org := cf.Organization{Guid: "my-org-guid"}
+	org := cf.Organization{}
+	org.Guid = "my-org-guid"
 	apiResponse := repo.Rename(org, "my-new-org")
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
@@ -180,8 +181,8 @@ func TestDeleteOrganization(t *testing.T) {
 
 	ts, handler, repo := createOrganizationRepo(t, req)
 	defer ts.Close()
-
-	org := cf.Organization{Guid: "my-org-guid"}
+	org := cf.Organization{}
+	org.Guid = "my-org-guid"
 	apiResponse := repo.Delete(org)
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())

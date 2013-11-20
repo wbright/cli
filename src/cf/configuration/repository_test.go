@@ -40,11 +40,12 @@ func TestSetOrganization(t *testing.T) {
 	repo := NewConfigurationDiskRepository()
 	config := repo.loadDefaultConfig(t)
 	defer repo.restoreConfig(t)
-
-	config.Space = cf.Space{Guid: "my-space-guid"}
+	space_Auto = cf.Space{}
+	space_Auto.Guid = "my-space-guid"
 	config.Organization = cf.Organization{}
-
-	org := cf.Organization{Name: "my-org", Guid: "my-org-guid"}
+	org := cf.Organization{}
+	org.Name = "my-org"
+	org.Guid = "my-org-guid"
 	err := repo.SetOrganization(org)
 	assert.NoError(t, err)
 
@@ -60,8 +61,9 @@ func TestSetSpace(t *testing.T) {
 	repo := NewConfigurationDiskRepository()
 	repo.loadDefaultConfig(t)
 	defer repo.restoreConfig(t)
-
-	space := cf.Space{Name: "my-space", Guid: "my-space-guid"}
+	space := cf.Space{}
+	space.Name = "my-space"
+	space.Guid = "my-space-guid"
 	err := repo.SetSpace(space)
 	assert.NoError(t, err)
 
@@ -73,8 +75,10 @@ func TestSetSpace(t *testing.T) {
 }
 
 func TestClearTokens(t *testing.T) {
-	org := cf.Organization{Name: "my-org"}
-	space := cf.Space{Name: "my-space"}
+	org := cf.Organization{}
+	org.Name = "my-org"
+	space := cf.Space{}
+	space.Name = "my-space"
 
 	repo := NewConfigurationDiskRepository()
 	config := repo.loadDefaultConfig(t)
@@ -109,8 +113,10 @@ func TestClearSession(t *testing.T) {
 	config.Target = "http://api.example.com"
 	config.RefreshToken = "some old refresh token"
 	config.AccessToken = "some old access token"
-	config.Organization = cf.Organization{Name: "my-org"}
-	config.Space = cf.Space{Name: "my-space"}
+	org_Auto3 = cf.Organization{}
+	org_Auto3.Name = "my-org"
+	space_Auto5 = cf.Space{}
+	space_Auto5.Name = "my-space"
 	repo.Save()
 
 	err := repo.ClearSession()

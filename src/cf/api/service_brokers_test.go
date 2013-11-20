@@ -147,13 +147,12 @@ func TestFindServiceBrokerByName(t *testing.T) {
 	defer ts.Close()
 
 	foundBroker, apiResponse := repo.FindByName("my-broker")
-	expectedBroker := cf.ServiceBroker{
-		Name:     "found-name",
-		Url:      "http://found.example.com",
-		Username: "found-username",
-		Password: "found-password",
-		Guid:     "found-guid",
-	}
+	expectedBroker := cf.ServiceBroker{}
+	expectedBroker.Name = "found-name"
+	expectedBroker.Url = "http://found.example.com"
+	expectedBroker.Username = "found-username"
+	expectedBroker.Password = "found-password"
+	expectedBroker.Guid = "found-guid"
 
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
@@ -189,13 +188,12 @@ func TestCreateServiceBroker(t *testing.T) {
 
 	ts, handler, repo := createServiceBrokerRepo(t, req)
 	defer ts.Close()
+	serviceBroker := cf.ServiceBroker{}
+	serviceBroker.Name = "foobroker"
+	serviceBroker.Url = "http://example.com"
+	serviceBroker.Username = "foouser"
+	serviceBroker.Password = "password"
 
-	serviceBroker := cf.ServiceBroker{
-		Name:     "foobroker",
-		Url:      "http://example.com",
-		Username: "foouser",
-		Password: "password",
-	}
 	apiResponse := repo.Create(serviceBroker)
 
 	assert.True(t, handler.AllRequestsCalled())
@@ -214,14 +212,13 @@ func TestUpdateServiceBroker(t *testing.T) {
 
 	ts, handler, repo := createServiceBrokerRepo(t, req)
 	defer ts.Close()
+	serviceBroker := cf.ServiceBroker{}
+	serviceBroker.Guid = "my-guid"
+	serviceBroker.Name = "foobroker"
+	serviceBroker.Url = "http://update.example.com"
+	serviceBroker.Username = "update-foouser"
+	serviceBroker.Password = "update-password"
 
-	serviceBroker := cf.ServiceBroker{
-		Guid:     "my-guid",
-		Name:     "foobroker",
-		Url:      "http://update.example.com",
-		Username: "update-foouser",
-		Password: "update-password",
-	}
 	apiResponse := repo.Update(serviceBroker)
 
 	assert.True(t, handler.AllRequestsCalled())
@@ -238,11 +235,10 @@ func TestRenameServiceBroker(t *testing.T) {
 
 	ts, handler, repo := createServiceBrokerRepo(t, req)
 	defer ts.Close()
+	serviceBroker := cf.ServiceBroker{}
+	serviceBroker.Guid = "my-guid"
+	serviceBroker.Name = "update-foobroker"
 
-	serviceBroker := cf.ServiceBroker{
-		Guid: "my-guid",
-		Name: "update-foobroker",
-	}
 	apiResponse := repo.Rename(serviceBroker)
 
 	assert.True(t, handler.AllRequestsCalled())
@@ -258,10 +254,9 @@ func TestDeleteServiceBroker(t *testing.T) {
 
 	ts, handler, repo := createServiceBrokerRepo(t, req)
 	defer ts.Close()
+	serviceBroker := cf.ServiceBroker{}
+	serviceBroker.Guid = "my-guid"
 
-	serviceBroker := cf.ServiceBroker{
-		Guid: "my-guid",
-	}
 	apiResponse := repo.Delete(serviceBroker)
 
 	assert.True(t, handler.AllRequestsCalled())

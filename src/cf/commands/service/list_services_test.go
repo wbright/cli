@@ -13,33 +13,27 @@ import (
 )
 
 func TestServices(t *testing.T) {
-	serviceInstances := []cf.ServiceInstance{
-		cf.ServiceInstance{
-			Name: "my-service-1",
-			ServicePlan: cf.ServicePlan{
-				Guid: "spark-guid",
-				Name: "spark",
-				ServiceOffering: cf.ServiceOffering{
-					Label: "cleardb",
-				},
-			},
-			ApplicationNames: []string{"cli1", "cli2"},
-		},
-		cf.ServiceInstance{
-			Name: "my-service-2",
-			ServicePlan: cf.ServicePlan{
-				Guid: "spark-guid",
-				Name: "spark",
-				ServiceOffering: cf.ServiceOffering{
-					Label: "cleardb",
-				},
-			},
-			ApplicationNames: []string{"cli1"},
-		},
-		cf.ServiceInstance{
-			Name: "my-service-provided-by-user",
-		},
-	}
+	plan_Auto := cf.ServicePlan{}
+	plan_Auto.Guid = "spark-guid"
+	plan_Auto.Name = "spark"
+	offering_Auto = cf.ServiceOffering{}
+	offering_Auto.Label = "cleardb"
+	plan_Auto2 := cf.ServicePlan{}
+	plan_Auto2.Guid = "spark-guid"
+	plan_Auto2.Name = "spark"
+	offering_Auto2 = cf.ServiceOffering{}
+	offering_Auto2.Label = "cleardb"
+	serviceInstance_Auto := cf.ServiceInstance{}
+	serviceInstance_Auto.Name = "my-service-1"
+	serviceInstance_Auto.ServicePlan = plan_Auto
+	serviceInstance_Auto.ApplicationNames = []string{"cli1", "cli2"}
+	serviceInstance_Auto2 := cf.ServiceInstance{}
+	serviceInstance_Auto2.Name = "my-service-2"
+	serviceInstance_Auto2.ServicePlan = plan_Auto2
+	serviceInstance_Auto2.ApplicationNames = []string{"cli1"}
+	serviceInstance_Auto3 := cf.ServiceInstance{}
+	serviceInstance_Auto3.Name = "my-service-provided-by-user"
+	serviceInstances := []cf.ServiceInstance{serviceInstance_Auto, serviceInstance_Auto2, serviceInstance_Auto3}
 	serviceSummaryRepo := &testapi.FakeServiceSummaryRepo{
 		GetSummariesInCurrentSpaceInstances: serviceInstances,
 	}
@@ -49,10 +43,13 @@ func TestServices(t *testing.T) {
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

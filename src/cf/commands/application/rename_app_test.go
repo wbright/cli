@@ -35,8 +35,9 @@ func TestRenameRequirements(t *testing.T) {
 
 func TestRenameRun(t *testing.T) {
 	appRepo := &testapi.FakeApplicationRepository{}
-
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Application: app}
 	ui := callRename(t, []string{"my-app", "my-new-app"}, reqFactory, appRepo)
 
@@ -59,10 +60,13 @@ func callRename(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory,
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

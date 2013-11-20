@@ -15,13 +15,10 @@ import (
 )
 
 type LoginTestContext struct {
-
-	// test-specific setup
 	Flags  []string
 	Inputs []string
 	Config configuration.Configuration
 
-	// fakes created by callLogin
 	configRepo   testconfig.FakeConfigRepository
 	ui           *testterm.FakeUI
 	authRepo     *testapi.FakeAuthenticationRepository
@@ -30,12 +27,10 @@ type LoginTestContext struct {
 	spaceRepo    *testapi.FakeSpaceRepository
 }
 
-// pass defaultBeforeBlock to callLogin instead of nil
 func defaultBeforeBlock(*LoginTestContext) {}
 
 func callLogin(t *testing.T, c *LoginTestContext, beforeBlock func(*LoginTestContext)) {
 
-	// setup test fakes
 	c.configRepo = testconfig.FakeConfigRepository{}
 	c.ui = &testterm.FakeUI{
 		Inputs: c.Inputs,
@@ -63,17 +58,14 @@ func callLogin(t *testing.T, c *LoginTestContext, beforeBlock func(*LoginTestCon
 		FindByNameSpace: space,
 	}
 
-	// initialize config
 	c.configRepo.Delete()
 	config, _ := c.configRepo.Get()
 	config.Target = c.Config.Target
 	config.Organization = c.Config.Organization
 	config.Space = c.Config.Space
 
-	// run any test-specific setup
 	beforeBlock(c)
 
-	// run login command
 	l := NewLogin(c.ui, c.configRepo, c.authRepo, c.endpointRepo, c.orgRepo, c.spaceRepo)
 	l.Run(testcmd.NewContext("login", c.Flags))
 }

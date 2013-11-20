@@ -100,7 +100,6 @@ var uploadBodyMatcher = func(t *testing.T, request *http.Request) {
 	}
 	defer request.MultipartForm.RemoveAll()
 
-	// assert resource manifest is present and correct
 	assert.Equal(t, len(request.MultipartForm.Value), 1, "Should have 1 value")
 	valuePart, ok := request.MultipartForm.Value["resources"]
 	assert.True(t, ok, "Resource manifest not present")
@@ -110,7 +109,6 @@ var uploadBodyMatcher = func(t *testing.T, request *http.Request) {
 	chompedResourceManifest := strings.Replace(resourceManifest, "\n", "", -1)
 	assert.Equal(t, chompedResourceManifest, matchedResources, "Resources do not match")
 
-	// assert zip file is present and correct
 	assert.Equal(t, len(request.MultipartForm.File), 1, "Wrong number of files")
 
 	fileHeaders, ok := request.MultipartForm.File["application"]
@@ -226,8 +224,9 @@ func testUploadApp(t *testing.T, dir string, requests []testnet.TestRequest) (ap
 	gateway := net.NewCloudControllerGateway()
 	zipper := cf.ApplicationZipper{}
 	repo := NewCloudControllerApplicationBitsRepository(config, gateway, zipper)
-
-	app = cf.Application{Name: "my-cool-app", Guid: "my-cool-app-guid"}
+	app = cf.Application{}
+	app.Name = "my-cool-app"
+	app.Guid = "my-cool-app-guid"
 
 	apiResponse = repo.UploadApp(app, dir)
 	assert.True(t, handler.AllRequestsCalled())

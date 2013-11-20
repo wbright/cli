@@ -15,8 +15,12 @@ import (
 )
 
 func TestUnbindCommand(t *testing.T) {
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid"}
-	serviceInstance := cf.ServiceInstance{Name: "my-service", Guid: "my-service-guid"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
+	serviceInstance := cf.ServiceInstance{}
+	serviceInstance.Name = "my-service"
+	serviceInstance.Guid = "my-service-guid"
 	reqFactory := &testreq.FakeReqFactory{
 		Application:     app,
 		ServiceInstance: serviceInstance,
@@ -41,8 +45,12 @@ func TestUnbindCommand(t *testing.T) {
 }
 
 func TestUnbindCommandWhenBindingIsNonExistent(t *testing.T) {
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid"}
-	serviceInstance := cf.ServiceInstance{Name: "my-service", Guid: "my-service-guid"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
+	serviceInstance := cf.ServiceInstance{}
+	serviceInstance.Name = "my-service"
+	serviceInstance.Guid = "my-service-guid"
 	reqFactory := &testreq.FakeReqFactory{
 		Application:     app,
 		ServiceInstance: serviceInstance,
@@ -88,10 +96,13 @@ func callUnbindService(t *testing.T, args []string, reqFactory *testreq.FakeReqF
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

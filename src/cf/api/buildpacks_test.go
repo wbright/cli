@@ -138,8 +138,9 @@ func TestBuildpacksFindByName(t *testing.T) {
 
 	ts, handler, repo := createBuildpackRepo(t, req)
 	defer ts.Close()
-
-	existingBuildpack := cf.Buildpack{Guid: "buildpack1-guid", Name: "Buildpack1"}
+	existingBuildpack := cf.Buildpack{}
+	existingBuildpack.Guid = "buildpack1-guid"
+	existingBuildpack.Name = "Buildpack1"
 
 	buildpack, apiResponse := repo.FindByName("Buildpack1")
 
@@ -179,8 +180,9 @@ func TestBuildpackCreateRejectsImproperNames(t *testing.T) {
 
 	ts, _, repo := createBuildpackRepo(t, badRequest)
 	defer ts.Close()
-
-	createdBuildpack, apiResponse := repo.Create(cf.Buildpack{Name: "name with space"})
+	buildpack_Auto2 := cf.Buildpack{}
+	buildpack_Auto2.Name = "name with space"
+	createdBuildpack, apiResponse := repo.Create(buildpack_Auto2)
 	assert.True(t, apiResponse.IsNotSuccessful())
 	assert.Equal(t, createdBuildpack, cf.Buildpack{})
 	assert.Equal(t, apiResponse.ErrorCode, "290003")
@@ -207,8 +209,8 @@ func TestCreateBuildpack(t *testing.T) {
 
 	ts, handler, repo := createBuildpackRepo(t, req)
 	defer ts.Close()
-
-	buildpack := cf.Buildpack{Name: "my-cool-buildpack"}
+	buildpack := cf.Buildpack{}
+	buildpack.Name = "my-cool-buildpack"
 
 	created, apiResponse := repo.Create(buildpack)
 
@@ -242,7 +244,9 @@ func TestCreateBuildpackWithPosition(t *testing.T) {
 	defer ts.Close()
 
 	position := 999
-	buildpack := cf.Buildpack{Name: "my-cool-buildpack", Position: &position}
+	buildpack := cf.Buildpack{}
+	buildpack.Name = "my-cool-buildpack"
+	buildpack.Position = &position
 	created, apiResponse := repo.Create(buildpack)
 
 	assert.True(t, handler.AllRequestsCalled())
@@ -263,8 +267,9 @@ func TestDeleteBuildpack(t *testing.T) {
 
 	ts, handler, repo := createBuildpackRepo(t, req)
 	defer ts.Close()
-
-	buildpack := cf.Buildpack{Name: "my-cool-buildpack", Guid: "my-cool-buildpack-guid"}
+	buildpack := cf.Buildpack{}
+	buildpack.Name = "my-cool-buildpack"
+	buildpack.Guid = "my-cool-buildpack-guid"
 	apiResponse := repo.Delete(buildpack)
 
 	assert.True(t, handler.AllRequestsCalled())
@@ -294,7 +299,10 @@ func TestUpdateBuildpack(t *testing.T) {
 	defer ts.Close()
 
 	position := 555
-	buildpack := cf.Buildpack{Name: "my-cool-buildpack", Guid: "my-cool-buildpack-guid", Position: &position}
+	buildpack := cf.Buildpack{}
+	buildpack.Name = "my-cool-buildpack"
+	buildpack.Guid = "my-cool-buildpack-guid"
+	buildpack.Position = &position
 	updated, apiResponse := repo.Update(buildpack)
 
 	assert.True(t, handler.AllRequestsCalled())
@@ -305,11 +313,13 @@ func TestUpdateBuildpack(t *testing.T) {
 
 func createBuildpackRepo(t *testing.T, requests ...testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo BuildpackRepository) {
 	ts, handler = testnet.NewTLSServer(t, requests)
-
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
+	space_Auto.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
 		Target:      ts.URL,
-		Space:       cf.Space{Name: "my-space", Guid: "my-space-guid"},
+		Space:       space_Auto,
 	}
 	gateway := net.NewCloudControllerGateway()
 	repo = NewCloudControllerBuildpackRepository(config, gateway)

@@ -63,10 +63,9 @@ func TestDeleteConfirmingWithYes(t *testing.T) {
 }
 
 func TestDeleteWithForceOption(t *testing.T) {
-	serviceBroker := cf.ServiceBroker{
-		Name: "service-broker-to-delete",
-		Guid: "service-broker-to-delete-guid",
-	}
+	serviceBroker := cf.ServiceBroker{}
+	serviceBroker.Name = "service-broker-to-delete"
+	serviceBroker.Guid = "service-broker-to-delete-guid"
 
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
 	repo := &testapi.FakeServiceBrokerRepo{FindByNameServiceBroker: serviceBroker}
@@ -104,10 +103,13 @@ func callDeleteServiceBroker(t *testing.T, args []string, reqFactory *testreq.Fa
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 
@@ -117,10 +119,9 @@ func callDeleteServiceBroker(t *testing.T, args []string, reqFactory *testreq.Fa
 }
 
 func deleteServiceBroker(t *testing.T, confirmation string, args []string) (ui *testterm.FakeUI, reqFactory *testreq.FakeReqFactory, repo *testapi.FakeServiceBrokerRepo) {
-	serviceBroker := cf.ServiceBroker{
-		Name: "service-broker-to-delete",
-		Guid: "service-broker-to-delete-guid",
-	}
+	serviceBroker := cf.ServiceBroker{}
+	serviceBroker.Name = "service-broker-to-delete"
+	serviceBroker.Guid = "service-broker-to-delete-guid"
 
 	reqFactory = &testreq.FakeReqFactory{LoginSuccess: true}
 	repo = &testapi.FakeServiceBrokerRepo{FindByNameServiceBroker: serviceBroker}
@@ -132,10 +133,13 @@ func deleteServiceBroker(t *testing.T, confirmation string, args []string) (ui *
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	space_Auto2 := cf.Space{}
+	space_Auto2.Name = "my-space"
+	org_Auto2 := cf.Organization{}
+	org_Auto2.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto2,
+		Organization: org_Auto2,
 		AccessToken:  token,
 	}
 

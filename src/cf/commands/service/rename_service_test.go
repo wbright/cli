@@ -39,7 +39,9 @@ func TestRenameServiceRequirements(t *testing.T) {
 }
 
 func TestRenameService(t *testing.T) {
-	serviceInstance := cf.ServiceInstance{Name: "different-name", Guid: "different-name-guid"}
+	serviceInstance := cf.ServiceInstance{}
+	serviceInstance.Name = "different-name"
+	serviceInstance.Guid = "different-name-guid"
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, TargetedSpaceSuccess: true, ServiceInstance: serviceInstance}
 	fakeUI, fakeServiceRepo := callRenameService(t, []string{"my-service", "new-name"}, reqFactory)
 
@@ -63,10 +65,13 @@ func callRenameService(t *testing.T, args []string, reqFactory *testreq.FakeReqF
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

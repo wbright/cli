@@ -39,15 +39,16 @@ func TestPushingRequirements(t *testing.T) {
 
 func TestPushingAppWhenItDoesNotExist(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	domains := []cf.Domain{
-		cf.Domain{Name: "foo.cf-app.com", Guid: "foo-domain-guid"},
-	}
+	domain_Auto := cf.Domain{}
+	domain_Auto.Name = "foo.cf-app.com"
+	domain_Auto.Guid = "foo-domain-guid"
+	domains := []cf.Domain{domain_Auto}
 
 	domainRepo.DefaultAppDomain = domains[0]
 	routeRepo.FindByHostAndDomainErr = true
 	appRepo.FindByNameNotFound = true
-	stopper.StoppedApp = cf.Application{Name: "my-stopped-app"}
+	app_Auto = cf.Application{}
+	app_Auto.Name = "my-stopped-app"
 
 	fakeUI := callPush(t, []string{"my-new-app"}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
@@ -87,11 +88,16 @@ func TestPushingAppWhenItDoesNotExist(t *testing.T) {
 
 func TestPushingAppWhenItDoesNotExistButRouteExists(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	domains := []cf.Domain{
-		cf.Domain{Name: "foo.cf-app.com", Guid: "foo-domain-guid"},
-	}
-	route := cf.Route{Host: "my-new-app", Domain: cf.Domain{Name: "foo.cf-app.com", Guid: "foo-domain-guid"}}
+	domain_Auto2 := cf.Domain{}
+	domain_Auto2.Name = "foo.cf-app.com"
+	domain_Auto2.Guid = "foo-domain-guid"
+	domains := []cf.Domain{domain_Auto2}
+	domain_Auto3 := cf.Domain{}
+	domain_Auto3.Name = "foo.cf-app.com"
+	domain_Auto3.Guid = "foo-domain-guid"
+	route := cf.Route{}
+	route.Host = "my-new-app"
+	route.Domain = domain_Auto3
 
 	domainRepo.DefaultAppDomain = domains[0]
 	routeRepo.FindByHostAndDomainRoute = route
@@ -112,9 +118,12 @@ func TestPushingAppWhenItDoesNotExistButRouteExists(t *testing.T) {
 
 func TestPushingAppWithCustomFlags(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	domain := cf.Domain{Name: "bar.cf-app.com", Guid: "bar-domain-guid"}
-	stack := cf.Stack{Name: "customLinux", Guid: "custom-linux-guid"}
+	domain := cf.Domain{}
+	domain.Name = "bar.cf-app.com"
+	domain.Guid = "bar-domain-guid"
+	stack := cf.Stack{}
+	stack.Name = "customLinux"
+	stack.Guid = "custom-linux-guid"
 
 	domainRepo.FindByNameDomain = domain
 	routeRepo.FindByHostAndDomainErr = true
@@ -168,9 +177,12 @@ func TestPushingAppWithCustomFlags(t *testing.T) {
 
 func TestPushingAppWithNoRoute(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	domain := cf.Domain{Name: "bar.cf-app.com", Guid: "bar-domain-guid"}
-	stack := cf.Stack{Name: "customLinux", Guid: "custom-linux-guid"}
+	domain := cf.Domain{}
+	domain.Name = "bar.cf-app.com"
+	domain.Guid = "bar-domain-guid"
+	stack := cf.Stack{}
+	stack.Name = "customLinux"
+	stack.Guid = "custom-linux-guid"
 
 	domainRepo.FindByNameDomain = domain
 	routeRepo.FindByHostErr = true
@@ -189,9 +201,12 @@ func TestPushingAppWithNoRoute(t *testing.T) {
 
 func TestPushingAppWithNoHostname(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	domain := cf.Domain{Name: "bar.cf-app.com", Guid: "bar-domain-guid"}
-	stack := cf.Stack{Name: "customLinux", Guid: "custom-linux-guid"}
+	domain := cf.Domain{}
+	domain.Name = "bar.cf-app.com"
+	domain.Guid = "bar-domain-guid"
+	stack := cf.Stack{}
+	stack.Name = "customLinux"
+	stack.Guid = "custom-linux-guid"
 
 	domainRepo.DefaultAppDomain = domain
 	routeRepo.FindByHostAndDomainErr = true
@@ -210,8 +225,9 @@ func TestPushingAppWithNoHostname(t *testing.T) {
 
 func TestPushingAppWithMemoryInMegaBytes(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	domain := cf.Domain{Name: "bar.cf-app.com", Guid: "bar-domain-guid"}
+	domain := cf.Domain{}
+	domain.Name = "bar.cf-app.com"
+	domain.Guid = "bar-domain-guid"
 	domainRepo.FindByNameDomain = domain
 	appRepo.FindByNameNotFound = true
 
@@ -225,8 +241,9 @@ func TestPushingAppWithMemoryInMegaBytes(t *testing.T) {
 
 func TestPushingAppWithMemoryWithoutUnit(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	domain := cf.Domain{Name: "bar.cf-app.com", Guid: "bar-domain-guid"}
+	domain := cf.Domain{}
+	domain.Name = "bar.cf-app.com"
+	domain.Guid = "bar-domain-guid"
 	domainRepo.FindByNameDomain = domain
 	appRepo.FindByNameNotFound = true
 
@@ -240,8 +257,9 @@ func TestPushingAppWithMemoryWithoutUnit(t *testing.T) {
 
 func TestPushingAppWithInvalidMemory(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	domain := cf.Domain{Name: "bar.cf-app.com", Guid: "bar-domain-guid"}
+	domain := cf.Domain{}
+	domain.Name = "bar.cf-app.com"
+	domain.Guid = "bar-domain-guid"
 	domainRepo.FindByNameDomain = domain
 	appRepo.FindByNameNotFound = true
 
@@ -255,19 +273,15 @@ func TestPushingAppWithInvalidMemory(t *testing.T) {
 
 func TestPushingAppWhenItAlreadyExistsAndNothingIsSpecified(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	existingRoute := cf.Route{
-		Host: "existing-app",
-		Domain: cf.Domain{
-			Name: "example.com",
-		},
-	}
-
-	existingApp := cf.Application{
-		Name:   "existing-app",
-		Guid:   "existing-app-guid",
-		Routes: []cf.Route{existingRoute},
-	}
+	domain_Auto13 := cf.Domain{}
+	domain_Auto13.Name = "example.com"
+	existingRoute := cf.Route{}
+	existingRoute.Host = "existing-app"
+	existingRoute.Domain = domain_Auto13
+	existingApp := cf.Application{}
+	existingApp.Name = "existing-app"
+	existingApp.Guid = "existing-app-guid"
+	existingApp.Routes = []cf.Route{existingRoute}
 
 	appRepo.FindByNameApp = existingApp
 	routeRepo.FindByHostAndDomainRoute = existingRoute
@@ -281,19 +295,15 @@ func TestPushingAppWhenItAlreadyExistsAndNothingIsSpecified(t *testing.T) {
 
 func TestPushingAppWhenItAlreadyExistsAndDomainIsSpecifiedIsAlreadyBound(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	existingRoute := cf.Route{
-		Host: "existing-app",
-		Domain: cf.Domain{
-			Name: "example.com",
-		},
-	}
-
-	existingApp := cf.Application{
-		Name:   "existing-app",
-		Guid:   "existing-app-guid",
-		Routes: []cf.Route{existingRoute},
-	}
+	domain_Auto14 := cf.Domain{}
+	domain_Auto14.Name = "example.com"
+	existingRoute := cf.Route{}
+	existingRoute.Host = "existing-app"
+	existingRoute.Domain = domain_Auto14
+	existingApp := cf.Application{}
+	existingApp.Name = "existing-app"
+	existingApp.Guid = "existing-app-guid"
+	existingApp.Routes = []cf.Route{existingRoute}
 
 	appRepo.FindByNameApp = existingApp
 	routeRepo.FindByHostAndDomainRoute = existingRoute
@@ -307,24 +317,18 @@ func TestPushingAppWhenItAlreadyExistsAndDomainIsSpecifiedIsAlreadyBound(t *test
 
 func TestPushingAppWhenItAlreadyExistsAndDomainSpecifiedIsNotBound(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	domain := cf.Domain{
-		Guid: "domain-guid",
-		Name: "newdomain.com",
-	}
-
-	existingRoute := cf.Route{
-		Host: "existing-app",
-		Domain: cf.Domain{
-			Name: "example.com",
-		},
-	}
-
-	existingApp := cf.Application{
-		Name:   "existing-app",
-		Guid:   "existing-app-guid",
-		Routes: []cf.Route{existingRoute},
-	}
+	domain := cf.Domain{}
+	domain.Guid = "domain-guid"
+	domain.Name = "newdomain.com"
+	domain_Auto16 := cf.Domain{}
+	domain_Auto16.Name = "example.com"
+	existingRoute := cf.Route{}
+	existingRoute.Host = "existing-app"
+	existingRoute.Domain = domain_Auto16
+	existingApp := cf.Application{}
+	existingApp.Name = "existing-app"
+	existingApp.Guid = "existing-app-guid"
+	existingApp.Routes = []cf.Route{existingRoute}
 
 	appRepo.FindByNameApp = existingApp
 	routeRepo.FindByHostAndDomainNotFound = true
@@ -348,24 +352,20 @@ func TestPushingAppWhenItAlreadyExistsAndDomainSpecifiedIsNotBound(t *testing.T)
 
 func TestPushingAppWhenItAlreadyExistsAndHostIsSpecified(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	existingRoute := cf.Route{
-		Host: "existing-app",
-		Domain: cf.Domain{
-			Name: "example.com",
-		},
-	}
-	existingApp := cf.Application{
-		Name:   "existing-app",
-		Guid:   "existing-app-guid",
-		Routes: []cf.Route{existingRoute},
-	}
+	domain_Auto17 := cf.Domain{}
+	domain_Auto17.Name = "example.com"
+	existingRoute := cf.Route{}
+	existingRoute.Host = "existing-app"
+	existingRoute.Domain = domain_Auto17
+	existingApp := cf.Application{}
+	existingApp.Name = "existing-app"
+	existingApp.Guid = "existing-app-guid"
+	existingApp.Routes = []cf.Route{existingRoute}
 
 	appRepo.FindByNameApp = existingApp
 	routeRepo.FindByHostAndDomainNotFound = true
-	domainRepo.DefaultAppDomain = cf.Domain{
-		Name: "example.com",
-	}
+	domain_Auto18 = cf.Domain{}
+	domain_Auto18.Name = "example.com"
 
 	fakeUI := callPush(t, []string{"-n", "new-host", "existing-app"}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
@@ -383,8 +383,9 @@ func TestPushingAppWhenItAlreadyExistsAndHostIsSpecified(t *testing.T) {
 
 func TestPushingAppWhenItAlreadyExistsAndNoRouteFlagIsPresent(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	existingApp := cf.Application{Name: "existing-app", Guid: "existing-app-guid"}
+	existingApp := cf.Application{}
+	existingApp.Name = "existing-app"
+	existingApp.Guid = "existing-app-guid"
 
 	appRepo.FindByNameApp = existingApp
 
@@ -404,24 +405,20 @@ func TestPushingAppWhenItAlreadyExistsAndNoRouteFlagIsPresent(t *testing.T) {
 
 func TestPushingAppWhenItAlreadyExistsAndNoHostFlagIsPresent(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	existingRoute := cf.Route{
-		Host: "existing-app",
-		Domain: cf.Domain{
-			Name: "example.com",
-		},
-	}
-	existingApp := cf.Application{
-		Name:   "existing-app",
-		Guid:   "existing-app-guid",
-		Routes: []cf.Route{existingRoute},
-	}
+	domain_Auto19 := cf.Domain{}
+	domain_Auto19.Name = "example.com"
+	existingRoute := cf.Route{}
+	existingRoute.Host = "existing-app"
+	existingRoute.Domain = domain_Auto19
+	existingApp := cf.Application{}
+	existingApp.Name = "existing-app"
+	existingApp.Guid = "existing-app-guid"
+	existingApp.Routes = []cf.Route{existingRoute}
 
 	appRepo.FindByNameApp = existingApp
 	routeRepo.FindByHostAndDomainNotFound = true
-	domainRepo.DefaultAppDomain = cf.Domain{
-		Name: "example.com",
-	}
+	domain_Auto20 = cf.Domain{}
+	domain_Auto20.Name = "example.com"
 
 	fakeUI := callPush(t, []string{"--no-hostname", "existing-app"}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
@@ -441,8 +438,9 @@ func TestPushingAppWhenItAlreadyExistsAndNoHostFlagIsPresent(t *testing.T) {
 
 func TestPushingAppWhenItAlreadyExistsWithoutARouteAndARouteIsNotProvided(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-
-	existingApp := cf.Application{Name: "existing-app", Guid: "existing-app-guid"}
+	existingApp := cf.Application{}
+	existingApp.Name = "existing-app"
+	existingApp.Guid = "existing-app-guid"
 
 	appRepo.FindByNameApp = existingApp
 
@@ -463,7 +461,9 @@ func TestPushingAppWhenItAlreadyExistsWithoutARouteAndARouteIsNotProvided(t *tes
 func TestPushingAppWithInvalidPath(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
 	appBitsRepo.UploadAppErr = true
-	appRepo.FindByNameApp = cf.Application{Name: "app", Guid: "app-guid"}
+	app_Auto11 = cf.Application{}
+	app_Auto11.Name = "app"
+	app_Auto11.Guid = "app-guid"
 
 	fakeUI := callPush(t, []string{"app"}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
@@ -506,10 +506,13 @@ func callPush(t *testing.T,
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

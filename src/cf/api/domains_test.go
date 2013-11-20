@@ -97,8 +97,8 @@ func TestDomainFindAllByOrg(t *testing.T) {
 
 	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{orgDomainsReq, sharedDomainsReq})
 	defer ts.Close()
-
-	org := cf.Organization{Guid: "my-org-guid"}
+	org := cf.Organization{}
+	org.Guid = "my-org-guid"
 	domains, apiResponse := repo.FindAllByOrg(org)
 
 	assert.True(t, handler.AllRequestsCalled())
@@ -303,8 +303,9 @@ func TestDomainFindByNameInOrg(t *testing.T) {
 
 	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{req})
 	defer ts.Close()
-
-	domain, apiResponse := repo.FindByNameInOrg("domain2.cf-app.com", cf.Organization{Guid: "my-org-guid"})
+	org_Auto2 := cf.Organization{}
+	org_Auto2.Guid = "my-org-guid"
+	domain, apiResponse := repo.FindByNameInOrg("domain2.cf-app.com", org_Auto2)
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
 
@@ -329,8 +330,9 @@ func TestDomainFindByNameInOrgWhenNotFoundOnBothEndpoints(t *testing.T) {
 
 	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{orgDomainsReq, sharedDomainsReq})
 	defer ts.Close()
-
-	_, apiResponse := repo.FindByNameInOrg("domain2.cf-app.com", cf.Organization{Guid: "my-org-guid"})
+	org_Auto3 := cf.Organization{}
+	org_Auto3.Guid = "my-org-guid"
+	_, apiResponse := repo.FindByNameInOrg("domain2.cf-app.com", org_Auto3)
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsError())
 	assert.True(t, apiResponse.IsNotFound())
@@ -361,8 +363,9 @@ func TestDomainFindByNameInOrgWhenFoundAsSharedDomain(t *testing.T) {
 
 	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{orgDomainsReq, sharedDomainsReq})
 	defer ts.Close()
-
-	domain, apiResponse := repo.FindByNameInOrg("domain2.cf-app.com", cf.Organization{Guid: "my-org-guid"})
+	org_Auto4 := cf.Organization{}
+	org_Auto4.Guid = "my-org-guid"
+	domain, apiResponse := repo.FindByNameInOrg("domain2.cf-app.com", org_Auto4)
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
 
@@ -396,8 +399,9 @@ func TestDomainFindByNameInOrgWhenFoundInDomainsButNotShared(t *testing.T) {
 
 	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{orgDomainsReq, sharedDomainsReq})
 	defer ts.Close()
-
-	_, apiResponse := repo.FindByNameInOrg("domain2.cf-app.com", cf.Organization{Guid: "my-org-guid"})
+	org_Auto5 := cf.Organization{}
+	org_Auto5.Guid = "my-org-guid"
+	_, apiResponse := repo.FindByNameInOrg("domain2.cf-app.com", org_Auto5)
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsError())
 	assert.True(t, apiResponse.IsNotFound())
@@ -416,9 +420,10 @@ func TestCreateDomain(t *testing.T) {
 
 	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{req})
 	defer ts.Close()
-
-	domainToCreate := cf.Domain{Name: "example.com"}
-	owningOrg := cf.Organization{Guid: "domain1-guid"}
+	domainToCreate := cf.Domain{}
+	domainToCreate.Name = "example.com"
+	owningOrg := cf.Organization{}
+	owningOrg.Guid = "domain1-guid"
 	createdDomain, apiResponse := repo.Create(domainToCreate, owningOrg)
 
 	assert.True(t, handler.AllRequestsCalled())
@@ -439,8 +444,9 @@ func TestShareDomain(t *testing.T) {
 
 	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{req})
 	defer ts.Close()
-
-	apiResponse := repo.CreateSharedDomain(cf.Domain{Name: "example.com"})
+	domain_Auto2 := cf.Domain{}
+	domain_Auto2.Name = "example.com"
+	apiResponse := repo.CreateSharedDomain(domain_Auto2)
 
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
@@ -459,8 +465,9 @@ func TestDeleteDomainSuccess(t *testing.T) {
 
 	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{req})
 	defer ts.Close()
-
-	domain := cf.Domain{Name: "example.com", Guid: "my-domain-guid"}
+	domain := cf.Domain{}
+	domain.Name = "example.com"
+	domain.Guid = "my-domain-guid"
 
 	apiResponse := repo.Delete(domain)
 
@@ -473,8 +480,9 @@ func TestDeleteDomainFailure(t *testing.T) {
 
 	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{req})
 	defer ts.Close()
-
-	domain := cf.Domain{Name: "example.com", Guid: "my-domain-guid"}
+	domain := cf.Domain{}
+	domain.Name = "example.com"
+	domain.Guid = "my-domain-guid"
 
 	apiResponse := repo.Delete(domain)
 
@@ -495,9 +503,12 @@ func TestMapDomainSuccess(t *testing.T) {
 
 	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{req})
 	defer ts.Close()
-
-	space := cf.Space{Name: "my-space", Guid: "my-space-guid"}
-	domain := cf.Domain{Name: "example.com", Guid: "my-domain-guid"}
+	space := cf.Space{}
+	space.Name = "my-space"
+	space.Guid = "my-space-guid"
+	domain := cf.Domain{}
+	domain.Name = "example.com"
+	domain.Guid = "my-domain-guid"
 
 	apiResponse := repo.Map(domain, space)
 
@@ -510,9 +521,12 @@ func TestMapDomainWhenServerError(t *testing.T) {
 
 	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{req})
 	defer ts.Close()
-
-	space := cf.Space{Name: "my-space", Guid: "my-space-guid"}
-	domain := cf.Domain{Name: "example.com", Guid: "my-domain-guid"}
+	space := cf.Space{}
+	space.Name = "my-space"
+	space.Guid = "my-space-guid"
+	domain := cf.Domain{}
+	domain.Name = "example.com"
+	domain.Guid = "my-domain-guid"
 
 	apiResponse := repo.Map(domain, space)
 
@@ -533,9 +547,12 @@ func TestUnmapDomainSuccess(t *testing.T) {
 
 	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{req})
 	defer ts.Close()
-
-	space := cf.Space{Name: "my-space", Guid: "my-space-guid"}
-	domain := cf.Domain{Name: "example.com", Guid: "my-domain-guid"}
+	space := cf.Space{}
+	space.Name = "my-space"
+	space.Guid = "my-space-guid"
+	domain := cf.Domain{}
+	domain.Name = "example.com"
+	domain.Guid = "my-domain-guid"
 
 	apiResponse := repo.Unmap(domain, space)
 
@@ -545,12 +562,15 @@ func TestUnmapDomainSuccess(t *testing.T) {
 
 func createDomainRepo(t *testing.T, reqs []testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo DomainRepository) {
 	ts, handler = testnet.NewTLSServer(t, reqs)
-
+	org_Auto7 := cf.Organization{}
+	org_Auto7.Guid = "my-org-guid"
+	space_Auto4 := cf.Space{}
+	space_Auto4.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken:  "BEARER my_access_token",
 		Target:       ts.URL,
-		Space:        cf.Space{Guid: "my-space-guid"},
-		Organization: cf.Organization{Guid: "my-org-guid"},
+		Space:        space_Auto4,
+		Organization: org_Auto7,
 	}
 	gateway := net.NewCloudControllerGateway()
 	repo = NewCloudControllerDomainRepository(config, gateway)

@@ -39,10 +39,15 @@ func TestDeleteRouteFailsWithUsage(t *testing.T) {
 }
 
 func TestDeleteRouteWithConfirmation(t *testing.T) {
-	domain := cf.Domain{Guid: "domain-guid", Name: "example.com"}
+	domain := cf.Domain{}
+	domain.Guid = "domain-guid"
+	domain.Name = "example.com"
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
+	route_Auto := cf.Route{}
+	route_Auto.Host = "my-host"
+	route_Auto.Domain = domain
 	routeRepo := &testapi.FakeRouteRepository{
-		FindByHostAndDomainRoute: cf.Route{Host: "my-host", Domain: domain},
+		FindByHostAndDomainRoute: route_Auto,
 	}
 
 	ui := callDeleteRoute(t, "y", []string{"-n", "my-host", "example.com"}, reqFactory, routeRepo)
@@ -51,17 +56,24 @@ func TestDeleteRouteWithConfirmation(t *testing.T) {
 
 	assert.Contains(t, ui.Outputs[0], "Deleting route")
 	assert.Contains(t, ui.Outputs[0], "my-host.example.com")
-
-	assert.Equal(t, routeRepo.DeleteRoute, cf.Route{Host: "my-host", Domain: domain})
+	route_Auto := cf.Route{}
+	route_Auto.Host = "my-host"
+	route_Auto.Domain = domain
+	assert.Equal(t, routeRepo.DeleteRoute, route_Auto)
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
 
 func TestDeleteRouteWithForce(t *testing.T) {
-	domain := cf.Domain{Guid: "domain-guid", Name: "example.com"}
+	domain := cf.Domain{}
+	domain.Guid = "domain-guid"
+	domain.Name = "example.com"
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
+	route_Auto2 := cf.Route{}
+	route_Auto2.Host = "my-host"
+	route_Auto2.Domain = domain
 	routeRepo := &testapi.FakeRouteRepository{
-		FindByHostAndDomainRoute: cf.Route{Host: "my-host", Domain: domain},
+		FindByHostAndDomainRoute: route_Auto2,
 	}
 
 	ui := callDeleteRoute(t, "", []string{"-f", "-n", "my-host", "example.com"}, reqFactory, routeRepo)
@@ -70,8 +82,10 @@ func TestDeleteRouteWithForce(t *testing.T) {
 
 	assert.Contains(t, ui.Outputs[0], "Deleting")
 	assert.Contains(t, ui.Outputs[0], "my-host.example.com")
-
-	assert.Equal(t, routeRepo.DeleteRoute, cf.Route{Host: "my-host", Domain: domain})
+	route_Auto2 := cf.Route{}
+	route_Auto2.Host = "my-host"
+	route_Auto2.Domain = domain
+	assert.Equal(t, routeRepo.DeleteRoute, route_Auto2)
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
@@ -102,10 +116,13 @@ func callDeleteRoute(t *testing.T, confirmation string, args []string, reqFactor
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

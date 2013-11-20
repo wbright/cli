@@ -41,7 +41,9 @@ func TestFilesFailsWithUsage(t *testing.T) {
 }
 
 func TestListingDirectoryEntries(t *testing.T) {
-	app := cf.Application{Name: "my-found-app", Guid: "my-app-guid"}
+	app := cf.Application{}
+	app.Name = "my-found-app"
+	app.Guid = "my-app-guid"
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, TargetedSpaceSuccess: true, Application: app}
 	appFilesRepo := &testapi.FakeAppFilesRepo{FileList: "file 1\nfile 2"}
 
@@ -67,10 +69,13 @@ func callFiles(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory, 
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

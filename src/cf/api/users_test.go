@@ -71,16 +71,22 @@ func TestFindAllInOrgByRole(t *testing.T) {
 	cc, ccHandler, uaa, uaaHandler, repo := createUsersRepo(t, ccReqs, uaaReqs)
 	defer cc.Close()
 	defer uaa.Close()
-
-	usersByRole, apiResponse := repo.FindAllInOrgByRole(cf.Organization{Guid: "my-org-guid"})
+	org_Auto := cf.Organization{}
+	org_Auto.Guid = "my-org-guid"
+	usersByRole, apiResponse := repo.FindAllInOrgByRole(org_Auto)
 
 	assert.True(t, ccHandler.AllRequestsCalled())
 	assert.True(t, uaaHandler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
-
-	expectedUser1 := cf.User{Guid: "user-1-guid", Username: "Super user 1"}
-	expectedUser2 := cf.User{Guid: "user-2-guid", Username: "Super user 2"}
-	expectedUser3 := cf.User{Guid: "user-3-guid", Username: "Super user 3"}
+	expectedUser1 := cf.User{}
+	expectedUser1.Guid = "user-1-guid"
+	expectedUser1.Username = "Super user 1"
+	expectedUser2 := cf.User{}
+	expectedUser2.Guid = "user-2-guid"
+	expectedUser2.Username = "Super user 2"
+	expectedUser3 := cf.User{}
+	expectedUser3.Guid = "user-3-guid"
+	expectedUser3.Username = "Super user 3"
 
 	assert.Equal(t, 1, len(usersByRole["ORG MANAGER"]))
 	assert.Equal(t, expectedUser1, usersByRole["ORG MANAGER"][0])
@@ -103,16 +109,22 @@ func TestFindAllInSpaceByRole(t *testing.T) {
 	cc, ccHandler, uaa, uaaHandler, repo := createUsersRepo(t, ccReqs, uaaReqs)
 	defer cc.Close()
 	defer uaa.Close()
-
-	usersByRole, apiResponse := repo.FindAllInSpaceByRole(cf.Space{Guid: "my-space-guid"})
+	space_Auto := cf.Space{}
+	space_Auto.Guid = "my-space-guid"
+	usersByRole, apiResponse := repo.FindAllInSpaceByRole(space_Auto)
 
 	assert.True(t, ccHandler.AllRequestsCalled())
 	assert.True(t, uaaHandler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
-
-	expectedUser1 := cf.User{Guid: "user-1-guid", Username: "Super user 1"}
-	expectedUser2 := cf.User{Guid: "user-2-guid", Username: "Super user 2"}
-	expectedUser3 := cf.User{Guid: "user-3-guid", Username: "Super user 3"}
+	expectedUser1 := cf.User{}
+	expectedUser1.Guid = "user-1-guid"
+	expectedUser1.Username = "Super user 1"
+	expectedUser2 := cf.User{}
+	expectedUser2.Guid = "user-2-guid"
+	expectedUser2.Username = "Super user 2"
+	expectedUser3 := cf.User{}
+	expectedUser3.Guid = "user-3-guid"
+	expectedUser3.Username = "Super user 3"
 
 	assert.Equal(t, 1, len(usersByRole["SPACE MANAGER"]))
 	assert.Equal(t, expectedUser1, usersByRole["SPACE MANAGER"][0])
@@ -141,7 +153,10 @@ func TestFindByUsername(t *testing.T) {
 	user, apiResponse := repo.FindByUsername("damien+user1@pivotallabs.com")
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
-	assert.Equal(t, user, cf.User{Username: "my-full-username", Guid: "my-guid"})
+	user_Auto7 := cf.User{}
+	user_Auto7.Username = "my-full-username"
+	user_Auto7.Guid = "my-guid"
+	assert.Equal(t, user, user_Auto7)
 }
 
 func TestFindByUsernameWhenNotFound(t *testing.T) {
@@ -188,11 +203,10 @@ func TestCreateUser(t *testing.T) {
 	cc, ccHandler, uaa, uaaHandler, repo := createUsersRepo(t, []testnet.TestRequest{ccReq}, []testnet.TestRequest{uaaReq})
 	defer cc.Close()
 	defer uaa.Close()
+	user := cf.User{}
+	user.Username = "my-user"
+	user.Password = "my-password"
 
-	user := cf.User{
-		Username: "my-user",
-		Password: "my-password",
-	}
 	apiResponse := repo.Create(user)
 	assert.True(t, ccHandler.AllRequestsCalled())
 	assert.True(t, uaaHandler.AllRequestsCalled())
@@ -215,8 +229,9 @@ func TestDeleteUser(t *testing.T) {
 	cc, ccHandler, uaa, uaaHandler, repo := createUsersRepo(t, []testnet.TestRequest{ccReq}, []testnet.TestRequest{uaaReq})
 	defer cc.Close()
 	defer uaa.Close()
-
-	apiResponse := repo.Delete(cf.User{Guid: "my-user-guid"})
+	user_Auto9 := cf.User{}
+	user_Auto9.Guid = "my-user-guid"
+	apiResponse := repo.Delete(user_Auto9)
 	assert.True(t, ccHandler.AllRequestsCalled())
 	assert.True(t, uaaHandler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
@@ -240,8 +255,9 @@ func TestDeleteUserWhenNotFoundOnTheCloudController(t *testing.T) {
 	cc, ccHandler, uaa, uaaHandler, repo := createUsersRepo(t, []testnet.TestRequest{ccReq}, []testnet.TestRequest{uaaReq})
 	defer cc.Close()
 	defer uaa.Close()
-
-	apiResponse := repo.Delete(cf.User{Guid: "my-user-guid"})
+	user_Auto10 := cf.User{}
+	user_Auto10.Guid = "my-user-guid"
+	apiResponse := repo.Delete(user_Auto10)
 	assert.True(t, ccHandler.AllRequestsCalled())
 	assert.True(t, uaaHandler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
@@ -283,9 +299,10 @@ func testSetOrgRoleWithValidRole(t *testing.T, role string, path string) {
 
 	cc, handler, repo := createUsersRepoWithoutUAAEndpoints(t, []testnet.TestRequest{req, userReq})
 	defer cc.Close()
-
-	user := cf.User{Guid: "my-user-guid"}
-	org := cf.Organization{Guid: "my-org-guid"}
+	user := cf.User{}
+	user.Guid = "my-user-guid"
+	org := cf.Organization{}
+	org.Guid = "my-org-guid"
 	apiResponse := repo.SetOrgRole(user, org, role)
 
 	assert.True(t, handler.AllRequestsCalled())
@@ -321,9 +338,10 @@ func testUnsetOrgRoleWithValidRole(t *testing.T, role string, path string) {
 
 	cc, handler, repo := createUsersRepoWithoutUAAEndpoints(t, []testnet.TestRequest{req})
 	defer cc.Close()
-
-	user := cf.User{Guid: "my-user-guid"}
-	org := cf.Organization{Guid: "my-org-guid"}
+	user := cf.User{}
+	user.Guid = "my-user-guid"
+	org := cf.Organization{}
+	org.Guid = "my-org-guid"
 	apiResponse := repo.UnsetOrgRole(user, org, role)
 
 	assert.True(t, handler.AllRequestsCalled())
@@ -366,9 +384,13 @@ func testSetSpaceRoleWithValidRole(t *testing.T, role string, path string) {
 
 	cc, handler, repo := createUsersRepoWithoutUAAEndpoints(t, []testnet.TestRequest{addToOrgReq, setRoleReq})
 	defer cc.Close()
-
-	user := cf.User{Guid: "my-user-guid"}
-	space := cf.Space{Guid: "my-space-guid", Organization: cf.Organization{Guid: "my-org-guid"}}
+	user := cf.User{}
+	user.Guid = "my-user-guid"
+	org_Auto4 := cf.Organization{}
+	org_Auto4.Guid = "my-org-guid"
+	space := cf.Space{}
+	space.Guid = "my-space-guid"
+	space.Organization = org_Auto4
 	apiResponse := repo.SetSpaceRole(user, space, role)
 
 	assert.True(t, handler.AllRequestsCalled())
@@ -404,11 +426,12 @@ func createUsersRepo(t *testing.T, ccReqs []testnet.TestRequest, uaaReqs []testn
 		uaa, uaaHandler = testnet.NewTLSServer(t, uaaReqs)
 		uaaTarget = uaa.URL
 	}
-
+	org_Auto5 := cf.Organization{}
+	org_Auto5.Guid = "some-org-guid"
 	config := &configuration.Configuration{
 		AccessToken:  "BEARER my_access_token",
 		Target:       ccTarget,
-		Organization: cf.Organization{Guid: "some-org-guid"},
+		Organization: org_Auto5,
 	}
 	ccGateway := net.NewCloudControllerGateway()
 	uaaGateway := net.NewUAAGateway()

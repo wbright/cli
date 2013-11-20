@@ -45,7 +45,9 @@ func TestScaleFailsWithUsage(t *testing.T) {
 }
 
 func TestScaleAll(t *testing.T) {
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
 	reqFactory, restarter, appRepo := getScaleDependencies()
 	reqFactory.Application = app
 
@@ -63,7 +65,9 @@ func TestScaleAll(t *testing.T) {
 }
 
 func TestScaleOnlyInstances(t *testing.T) {
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
 	reqFactory, restarter, appRepo := getScaleDependencies()
 	reqFactory.Application = app
 
@@ -76,7 +80,9 @@ func TestScaleOnlyInstances(t *testing.T) {
 }
 
 func TestScaleOnlyMemory(t *testing.T) {
-	app := cf.Application{Name: "my-app", Guid: "my-app-guid"}
+	app := cf.Application{}
+	app.Name = "my-app"
+	app.Guid = "my-app-guid"
 	reqFactory, restarter, appRepo := getScaleDependencies()
 	reqFactory.Application = app
 
@@ -103,10 +109,13 @@ func callScale(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory, 
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

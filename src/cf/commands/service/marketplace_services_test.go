@@ -14,34 +14,38 @@ import (
 )
 
 func TestMarketplaceServices(t *testing.T) {
-	serviceOfferings := []cf.ServiceOffering{
-		cf.ServiceOffering{
-			Label:       "my-service-offering-1",
-			Description: "service offering 1 description",
-			Plans: []cf.ServicePlan{
-				cf.ServicePlan{Name: "service-plan-a"},
-				cf.ServicePlan{Name: "service-plan-b"},
-			},
-		},
-		cf.ServiceOffering{
-			Label:       "my-service-offering-2",
-			Description: "service offering 2 description",
-			Plans: []cf.ServicePlan{
-				cf.ServicePlan{Name: "service-plan-c"},
-				cf.ServicePlan{Name: "service-plan-d"},
-			},
-		},
-	}
+	plan_Auto := cf.ServicePlan{}
+	plan_Auto.Name = "service-plan-a"
+	plan_Auto2 := cf.ServicePlan{}
+	plan_Auto2.Name = "service-plan-b"
+	plan_Auto3 := cf.ServicePlan{}
+	plan_Auto3.Name = "service-plan-c"
+	plan_Auto4 := cf.ServicePlan{}
+	plan_Auto4.Name = "service-plan-d"
+	offering_Auto := cf.ServiceOffering{}
+	offering_Auto.Label = "my-service-offering-1"
+	offering_Auto.Description = "service offering 1 description"
+	offering_Auto.Plans = []cf.ServicePlan{plan_Auto, plan_Auto2}
+	offering_Auto2 := cf.ServiceOffering{}
+	offering_Auto2.Label = "my-service-offering-2"
+	offering_Auto2.Description = "service offering 2 description"
+	offering_Auto2.Plans = []cf.ServicePlan{plan_Auto3, plan_Auto4}
+	serviceOfferings := []cf.ServiceOffering{offering_Auto, offering_Auto2}
 	serviceRepo := &testapi.FakeServiceRepo{ServiceOfferings: serviceOfferings}
 
 	token, err := testconfig.CreateAccessTokenWithTokenInfo(configuration.TokenInfo{
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
+	org_Auto.Guid = "my-org-guid"
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
+	space_Auto.Guid = "my-space-guid"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space", Guid: "my-space-guid"},
-		Organization: cf.Organization{Name: "my-org", Guid: "my-org-guid"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

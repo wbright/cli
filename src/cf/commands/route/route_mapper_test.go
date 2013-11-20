@@ -39,12 +39,15 @@ func TestRouteMapperRequirements(t *testing.T) {
 }
 
 func TestRouteMapperWhenBinding(t *testing.T) {
-	route := cf.Route{
-		Guid:   "my-route-guid",
-		Host:   "foo",
-		Domain: cf.Domain{Guid: "my-domain-guid", Name: "example.com"},
-	}
-	app := cf.Application{Guid: "my-app-guid", Name: "my-app"}
+	route := cf.Route{}
+	route.Guid = "my-route-guid"
+	route.Host = "foo"
+	domain_Auto = cf.Domain{}
+	domain_Auto.Guid = "my-domain-guid"
+	domain_Auto.Name = "example.com"
+	app := cf.Application{}
+	app.Guid = "my-app-guid"
+	app.Name = "my-app"
 
 	routeRepo := &testapi.FakeRouteRepository{}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Application: app}
@@ -66,12 +69,15 @@ func TestRouteMapperWhenBinding(t *testing.T) {
 }
 
 func TestRouteMapperWhenUnbinding(t *testing.T) {
-	route := cf.Route{
-		Guid:   "my-route-guid",
-		Host:   "foo",
-		Domain: cf.Domain{Guid: "my-domain-guid", Name: "example.com"},
-	}
-	app := cf.Application{Guid: "my-app-guid", Name: "my-app"}
+	route := cf.Route{}
+	route.Guid = "my-route-guid"
+	route.Host = "foo"
+	domain_Auto2 = cf.Domain{}
+	domain_Auto2.Guid = "my-domain-guid"
+	domain_Auto2.Name = "example.com"
+	app := cf.Application{}
+	app.Guid = "my-app-guid"
+	app.Name = "my-app"
 
 	routeRepo := &testapi.FakeRouteRepository{}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Application: app}
@@ -93,9 +99,15 @@ func TestRouteMapperWhenUnbinding(t *testing.T) {
 }
 
 func TestRouteMapperWhenRouteNotReserved(t *testing.T) {
-	domain := cf.Domain{Name: "my-domain.com"}
-	route := cf.Route{Guid: "my-app-guid", Host: "my-host", Domain: domain}
-	app := cf.Application{Guid: "my-app-guid", Name: "my-app"}
+	domain := cf.Domain{}
+	domain.Name = "my-domain.com"
+	route := cf.Route{}
+	route.Guid = "my-app-guid"
+	route.Host = "my-host"
+	route.Domain = domain
+	app := cf.Application{}
+	app.Guid = "my-app-guid"
+	app.Name = "my-app"
 
 	routeRepo := &testapi.FakeRouteRepository{}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Application: app}
@@ -119,10 +131,13 @@ func callRouteMapper(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

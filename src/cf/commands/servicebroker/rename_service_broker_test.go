@@ -43,8 +43,11 @@ func TestRenameServiceBrokerRequirements(t *testing.T) {
 
 func TestRenameServiceBroker(t *testing.T) {
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
+	broker_Auto := cf.ServiceBroker{}
+	broker_Auto.Name = "my-found-broker"
+	broker_Auto.Guid = "my-found-broker-guid"
 	repo := &testapi.FakeServiceBrokerRepo{
-		FindByNameServiceBroker: cf.ServiceBroker{Name: "my-found-broker", Guid: "my-found-broker-guid"},
+		FindByNameServiceBroker: broker_Auto,
 	}
 	args := []string{"my-broker", "my-new-broker"}
 
@@ -56,11 +59,9 @@ func TestRenameServiceBroker(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-found-broker")
 	assert.Contains(t, ui.Outputs[0], "my-new-broker")
 	assert.Contains(t, ui.Outputs[0], "my-user")
-
-	expectedServiceBroker := cf.ServiceBroker{
-		Name: "my-new-broker",
-		Guid: "my-found-broker-guid",
-	}
+	expectedServiceBroker := cf.ServiceBroker{}
+	expectedServiceBroker.Name = "my-new-broker"
+	expectedServiceBroker.Guid = "my-found-broker-guid"
 
 	assert.Equal(t, repo.RenamedServiceBroker, expectedServiceBroker)
 
@@ -74,10 +75,13 @@ func callRenameServiceBroker(t *testing.T, args []string, reqFactory *testreq.Fa
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

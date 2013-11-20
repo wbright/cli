@@ -44,7 +44,9 @@ func TestDeleteConfirmingWithYes(t *testing.T) {
 }
 
 func TestDeleteWithForceOption(t *testing.T) {
-	app := cf.Application{Name: "app-to-delete", Guid: "app-to-delete-guid"}
+	app := cf.Application{}
+	app.Name = "app-to-delete"
+	app.Guid = "app-to-delete-guid"
 	reqFactory := &testreq.FakeReqFactory{}
 	appRepo := &testapi.FakeApplicationRepository{FindByNameApp: app}
 
@@ -91,7 +93,9 @@ func TestDeleteCommandFailsWithUsage(t *testing.T) {
 }
 
 func deleteApp(t *testing.T, confirmation string, args []string) (ui *testterm.FakeUI, reqFactory *testreq.FakeReqFactory, appRepo *testapi.FakeApplicationRepository) {
-	app := cf.Application{Name: "app-to-delete", Guid: "app-to-delete-guid"}
+	app := cf.Application{}
+	app.Name = "app-to-delete"
+	app.Guid = "app-to-delete-guid"
 	reqFactory = &testreq.FakeReqFactory{}
 	appRepo = &testapi.FakeApplicationRepository{FindByNameApp: app}
 	ui = &testterm.FakeUI{
@@ -102,10 +106,13 @@ func deleteApp(t *testing.T, confirmation string, args []string) (ui *testterm.F
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
+	space_Auto := cf.Space{}
+	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 
