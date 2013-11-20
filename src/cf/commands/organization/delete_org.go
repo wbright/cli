@@ -72,7 +72,7 @@ func (cmd *DeleteOrg) Run(c *cli.Context) {
 		return
 	}
 
-	apiResponse = cmd.orgRepo.Delete(org.Fields.Guid)
+	apiResponse = cmd.orgRepo.Delete(org.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -83,7 +83,7 @@ func (cmd *DeleteOrg) Run(c *cli.Context) {
 		return
 	}
 
-	if org.Fields.Guid == config.Organization.Guid {
+	if org.Guid == config.Organization.Guid {
 		config.Organization = cf.OrganizationFields{}
 		config.Space = cf.SpaceFields{}
 		cmd.configRepo.Save()

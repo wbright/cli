@@ -41,12 +41,12 @@ func (cmd *Env) Run(c *cli.Context) {
 	app := cmd.appReq.GetApplication()
 
 	cmd.ui.Say("Getting env variables for app %s in org %s / space %s as %s...",
-		terminal.EntityNameColor(app.Fields.Name),
+		terminal.EntityNameColor(app.Name),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
-	envVars := app.Fields.EnvironmentVars
+	envVars := app.EnvironmentVars
 
 	cmd.ui.Ok()
 	cmd.ui.Say("")

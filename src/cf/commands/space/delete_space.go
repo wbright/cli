@@ -71,7 +71,7 @@ func (cmd *DeleteSpace) Run(c *cli.Context) {
 		}
 	}
 
-	apiResponse = cmd.spaceRepo.Delete(space.Fields.Guid)
+	apiResponse = cmd.spaceRepo.Delete(space.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return

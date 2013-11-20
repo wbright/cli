@@ -44,19 +44,19 @@ func (cmd *RenameSpace) Run(c *cli.Context) {
 	space := cmd.spaceReq.GetSpace()
 	newName := c.Args()[1]
 	cmd.ui.Say("Renaming space %s to %s in org %s as %s...",
-		terminal.EntityNameColor(space.Fields.Name),
+		terminal.EntityNameColor(space.Name),
 		terminal.EntityNameColor(newName),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	apiResponse := cmd.spaceRepo.Rename(space.Fields.Guid, newName)
+	apiResponse := cmd.spaceRepo.Rename(space.Guid, newName)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return
 	}
 
-	if cmd.config.Space.Guid == space.Fields.Guid {
+	if cmd.config.Space.Guid == space.Guid {
 		cmd.config.Space.Name = newName
 		cmd.configRepo.Save()
 	}

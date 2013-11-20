@@ -47,14 +47,14 @@ func (cmd *UnbindService) Run(c *cli.Context) {
 	instance := cmd.serviceInstanceReq.GetServiceInstance()
 
 	cmd.ui.Say("Unbinding app %s from service %s in org %s / space %s as %s...",
-		terminal.EntityNameColor(app.Fields.Name),
-		terminal.EntityNameColor(instance.Fields.Name),
+		terminal.EntityNameColor(app.Name),
+		terminal.EntityNameColor(instance.Name),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	found, apiResponse := cmd.serviceBindingRepo.Delete(instance, app.Fields.Guid)
+	found, apiResponse := cmd.serviceBindingRepo.Delete(instance, app.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -63,7 +63,7 @@ func (cmd *UnbindService) Run(c *cli.Context) {
 	cmd.ui.Ok()
 
 	if !found {
-		cmd.ui.Warn("Binding between %s and %s did not exist", instance.Fields.Name, app.Fields.Name)
+		cmd.ui.Warn("Binding between %s and %s did not exist", instance.Name, app.Name)
 	}
 
 }

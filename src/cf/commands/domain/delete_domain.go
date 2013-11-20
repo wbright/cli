@@ -51,7 +51,7 @@ func (cmd *DeleteDomain) Run(c *cli.Context) {
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	domain, apiResponse := cmd.domainRepo.FindByNameInOrg(domainName, cmd.orgReq.GetOrganization().Guid)
+	domain, apiResponse := cmd.domainRepo.FindByNameInOrg(domainName, cmd.orgReq.GetOrganizationFields().Guid)
 	if apiResponse.IsError() {
 		cmd.ui.Failed("Error finding domain %s\n%s", domainName, apiResponse.Message)
 		return
@@ -64,7 +64,7 @@ func (cmd *DeleteDomain) Run(c *cli.Context) {
 
 	if !force {
 		var answer bool
-		if domain.Fields.Shared {
+		if domain.Shared {
 			answer = cmd.ui.Confirm("This domain is shared across all orgs.\nDeleting it will remove all associated routes, and will make any app with this domain unreachable.\nAre you sure you want to delete the domain %s? ", domainName)
 		} else {
 			answer = cmd.ui.Confirm("Are you sure you want to delete the domain %s and all of its associations?", domainName)
@@ -75,7 +75,7 @@ func (cmd *DeleteDomain) Run(c *cli.Context) {
 		}
 	}
 
-	apiResponse = cmd.domainRepo.Delete(domain.Fields.Guid)
+	apiResponse = cmd.domainRepo.Delete(domain.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed("Error deleting domain %s\n%s", domainName, apiResponse.Message)
 		return

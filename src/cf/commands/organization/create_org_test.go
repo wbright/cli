@@ -69,9 +69,15 @@ func callCreateOrg(t *testing.T, args []string, reqFactory *testreq.FakeReqFacto
 	})
 	assert.NoError(t, err)
 
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
+
+	organization := cf.OrganizationFields{}
+	organization.Name = "my-org"
+
 	config := &configuration.Configuration{
-		Space:        cf.Space{Name: "my-space"},
-		Organization: cf.Organization{Name: "my-org"},
+		Space:        space,
+		Organization: organization,
 		AccessToken:  token,
 	}
 

@@ -52,11 +52,11 @@ func (cmd *SetQuota) Run(c *cli.Context) {
 
 	cmd.ui.Say("Setting quota %s to org %s as %s...",
 		terminal.EntityNameColor(quota.Name),
-		terminal.EntityNameColor(org.Fields.Name),
+		terminal.EntityNameColor(org.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	apiResponse = cmd.quotaRepo.Update(org.Fields.Guid, quota.Guid)
+	apiResponse = cmd.quotaRepo.Update(org.Guid, quota.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return

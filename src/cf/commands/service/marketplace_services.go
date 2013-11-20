@@ -57,9 +57,9 @@ func (cmd MarketplaceServices) Run(c *cli.Context) {
 		}
 
 		table = append(table, []string{
-			offering.Fields.Label,
+			offering.Label,
 			planNames,
-			offering.Fields.Description,
+			offering.Description,
 		})
 	}
 

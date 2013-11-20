@@ -22,7 +22,8 @@ type FakeReqFactory struct {
 	Space     cf.Space
 
 	OrganizationName string
-	Organization     cf.Organization
+	Organization cf.Organization
+	OrganizationFields cf.OrganizationFields
 
 	RouteHost   string
 	RouteDomain string
@@ -111,6 +112,10 @@ func (r FakeRequirement) GetSpace() cf.Space {
 
 func (r FakeRequirement) GetOrganization() cf.Organization {
 	return r.factory.Organization
+}
+
+func (r FakeRequirement) GetOrganizationFields() cf.OrganizationFields {
+	return r.factory.OrganizationFields
 }
 
 func (r FakeRequirement) GetRoute() cf.Route {

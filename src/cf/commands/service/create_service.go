@@ -80,7 +80,7 @@ func (cmd CreateService) Run(c *cli.Context) {
 
 func findOffering(offerings []cf.ServiceOffering, name string) (offering cf.ServiceOffering, err error) {
 	for _, offering := range offerings {
-		if name == offering.Fields.Label {
+		if name == offering.Label {
 			return offering, nil
 		}
 	}

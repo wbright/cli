@@ -49,14 +49,14 @@ func (cmd *Scale) GetRequirements(reqFactory requirements.Factory, c *cli.Contex
 func (cmd *Scale) Run(c *cli.Context) {
 	currentApp := cmd.appReq.GetApplication()
 	cmd.ui.Say("Scaling app %s in org %s / space %s as %s...",
-		terminal.EntityNameColor(currentApp.Fields.Name),
+		terminal.EntityNameColor(currentApp.Name),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
 	changedAppFields := cf.ApplicationFields{}
-	changedAppFields.Guid = currentApp.Fields.Guid
+	changedAppFields.Guid = currentApp.Guid
 
 	memory, err := extractMegaBytes(c.String("m"))
 	if err != nil {

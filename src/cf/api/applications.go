@@ -35,7 +35,7 @@ func (resource ApplicationResource) ToFields() (app cf.ApplicationFields) {
 }
 
 func (resource ApplicationResource) ToModel() (app cf.Application) {
-	app.Fields = resource.ToFields()
+	app.ApplicationFields = resource.ToFields()
 
 	for _, routeResource := range resource.Entity.Routes {
 		app.Routes = append(app.Routes, routeResource.ToModel())
@@ -64,7 +64,7 @@ func (resource AppRouteResource) ToFields() (route cf.RouteFields) {
 }
 
 func (resource AppRouteResource) ToModel() (route cf.RouteSummary) {
-	route.Fields = resource.ToFields()
+	route.RouteFields = resource.ToFields()
 	route.Domain.Guid = resource.Entity.Domain.Metadata.Guid
 	route.Domain.Name = resource.Entity.Domain.Entity.Name
 	return

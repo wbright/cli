@@ -47,7 +47,7 @@ func (cmd ListRoutes) Run(c *cli.Context) {
 				appNames = appNames + ", " + app.Name
 			}
 			rows = append(rows, []string{
-				route.Fields.Host,
+				route.Host,
 				route.Domain.Name,
 				appNames,
 			})

@@ -57,10 +57,10 @@ func (cmd ListServices) Run(c *cli.Context) {
 		}
 
 		table = append(table, []string{
-			instance.Fields.Name,
+			instance.Name,
 			serviceColumn,
 			instance.ServicePlan.Name,
-			strings.Join(instance.Fields.ApplicationNames, ", "),
+			strings.Join(instance.ApplicationNames, ", "),
 		})
 	}
 

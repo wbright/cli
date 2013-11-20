@@ -70,14 +70,11 @@ func (repo *FakeApplicationRepository) SetEnv(app cf.Application, envVars map[st
 	return
 }
 
-func (repo *FakeApplicationRepository) Create(newApp cf.Application) (createdApp cf.Application, apiResponse net.ApiResponse) {
+func (repo *FakeApplicationRepository) Create(newApp cf.Application) (resultApp cf.Application, apiResponse net.ApiResponse) {
 	repo.CreatedApp = newApp
 
-	createdApp = cf.Application{
-		Name: newApp.Name,
-		Guid: newApp.Name + "-guid",
-	}
-
+	resultApp = newApp
+	resultApp.Guid = resultApp.Name + "-guid"
 	return
 }
 

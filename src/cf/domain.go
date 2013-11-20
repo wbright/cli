@@ -26,7 +26,7 @@ func (model BasicFields) String() string {
 type OrganizationFields BasicFields
 
 type Organization struct {
-	Fields  OrganizationFields
+	OrganizationFields
 	Spaces  []SpaceFields
 	Domains []DomainFields
 }
@@ -34,7 +34,7 @@ type Organization struct {
 type SpaceFields BasicFields
 
 type Space struct {
-	Fields           SpaceFields
+	SpaceFields
 	Organization     OrganizationFields
 	Applications     []ApplicationFields
 	ServiceInstances []ServiceInstanceFields
@@ -54,7 +54,7 @@ type ApplicationFields struct {
 }
 
 type Application struct {
-	Fields ApplicationFields
+	ApplicationFields
 	Stack  Stack
 	Routes []RouteSummary
 }
@@ -85,7 +85,7 @@ func (model DomainFields) UrlForHost(host string) string {
 }
 
 type Domain struct {
-	Fields DomainFields
+	DomainFields
 	Spaces []SpaceFields
 }
 
@@ -108,15 +108,15 @@ type Route struct {
 }
 
 type RouteSummary struct {
-	Fields RouteFields
+	RouteFields
 	Domain DomainFields
 }
 
 func (model RouteSummary) URL() string {
-	if model.Fields.Host == "" {
+	if model.Host == "" {
 		return model.Domain.Name
 	}
-	return fmt.Sprintf("%s.%s", model.Fields.Host, model.Domain.Name)
+	return fmt.Sprintf("%s.%s", model.Host, model.Domain.Name)
 }
 
 type Stack struct {
@@ -151,8 +151,8 @@ type ServiceOfferingFields struct {
 }
 
 type ServiceOffering struct {
-	Fields ServiceOfferingFields
-	Plans  []ServicePlanFields
+	ServiceOfferingFields
+	Plans []ServicePlanFields
 }
 
 type ServiceInstanceFields struct {
@@ -163,7 +163,7 @@ type ServiceInstanceFields struct {
 }
 
 type ServiceInstance struct {
-	Fields          ServiceInstanceFields
+	ServiceInstanceFields
 	ServiceBindings []ServiceBinding
 	ServicePlan     ServicePlanFields
 	ServiceOffering ServiceOfferingFields

@@ -104,11 +104,10 @@ func (repo *FakeRouteRepository) Create(newRoute cf.Route, domain cf.Domain) (cr
 	repo.CreatedRoute = newRoute
 	repo.CreatedRouteDomain = domain
 
-	createdRoute = cf.Route{
-		Host: newRoute.Host,
-		Guid: newRoute.Host + "-guid",
-		Domain: domain,
-	}
+	createdRoute = newRoute
+	createdRoute.Guid = newRoute.Host + "-guid"
+	createdRoute.Domain = domain.DomainFields
+
 	return
 }
 

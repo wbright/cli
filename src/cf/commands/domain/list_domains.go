@@ -42,7 +42,7 @@ func (cmd *ListDomains) GetRequirements(reqFactory requirements.Factory, c *cli.
 }
 
 func (cmd *ListDomains) Run(c *cli.Context) {
-	org := cmd.orgReq.GetOrganization()
+	org := cmd.orgReq.GetOrganizationFields()
 
 	cmd.ui.Say("Getting domains in org %s as %s...",
 		terminal.EntityNameColor(org.Name),
@@ -63,7 +63,7 @@ func (cmd *ListDomains) Run(c *cli.Context) {
 	}
 	for _, domain := range domains {
 		var status string
-		if domain.Fields.Shared {
+		if domain.Shared {
 			status = "shared"
 		} else if len(domain.Spaces) == 0 {
 			status = "reserved"
@@ -72,7 +72,7 @@ func (cmd *ListDomains) Run(c *cli.Context) {
 		}
 
 		table = append(table, []string{
-			domain.Fields.Name,
+			domain.Name,
 			status,
 			strings.Join(formatters.MapStr(domain.Spaces), ", "),
 		})

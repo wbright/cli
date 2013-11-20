@@ -63,14 +63,14 @@ func (cmd *Logs) Run(c *cli.Context) {
 func (cmd *Logs) recentLogsFor(app cf.Application, logChan chan *logmessage.Message) {
 	onConnect := func() {
 		cmd.ui.Say("Connected, dumping recent logs for app %s in org %s / space %s as %s...\n",
-			terminal.EntityNameColor(app.Fields.Name),
+			terminal.EntityNameColor(app.Name),
 			terminal.EntityNameColor(cmd.config.Organization.Name),
 			terminal.EntityNameColor(cmd.config.Space.Name),
 			terminal.EntityNameColor(cmd.config.Username()),
 		)
 	}
 
-	err := cmd.logsRepo.RecentLogsFor(app.Fields.Guid, onConnect, logChan)
+	err := cmd.logsRepo.RecentLogsFor(app.Guid, onConnect, logChan)
 	if err != nil {
 		cmd.ui.Failed(err.Error())
 		return
@@ -80,7 +80,7 @@ func (cmd *Logs) recentLogsFor(app cf.Application, logChan chan *logmessage.Mess
 func (cmd *Logs) tailLogsFor(app cf.Application, logChan chan *logmessage.Message) {
 	onConnect := func() {
 		cmd.ui.Say("Connected, tailing logs for app %s in org %s / space %s as %s...\n",
-			terminal.EntityNameColor(app.Fields.Name),
+			terminal.EntityNameColor(app.Name),
 			terminal.EntityNameColor(cmd.config.Organization.Name),
 			terminal.EntityNameColor(cmd.config.Space.Name),
 			terminal.EntityNameColor(cmd.config.Username()),
@@ -91,7 +91,7 @@ func (cmd *Logs) tailLogsFor(app cf.Application, logChan chan *logmessage.Messag
 	stopLoggingChan := make(chan bool)
 	defer close(stopLoggingChan)
 
-	err := cmd.logsRepo.TailLogsFor(app.Fields.Guid, onConnect, logChan, stopLoggingChan, 5*time.Second)
+	err := cmd.logsRepo.TailLogsFor(app.Guid, onConnect, logChan, stopLoggingChan, 5*time.Second)
 	if err != nil {
 		cmd.ui.Failed(err.Error())
 		return

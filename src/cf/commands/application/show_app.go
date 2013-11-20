@@ -48,13 +48,13 @@ func (cmd *ShowApp) GetRequirements(reqFactory requirements.Factory, c *cli.Cont
 func (cmd *ShowApp) Run(c *cli.Context) {
 	app := cmd.appReq.GetApplication()
 	cmd.ui.Say("Showing health and status for app %s in org %s / space %s as %s...",
-		terminal.EntityNameColor(app.Fields.Name),
+		terminal.EntityNameColor(app.Name),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	appSummary, apiResponse := cmd.appSummaryRepo.GetSummary(app.Fields.Guid)
+	appSummary, apiResponse := cmd.appSummaryRepo.GetSummary(app.Guid)
 	appIsStopped := apiResponse.ErrorCode == cf.APP_STOPPED || apiResponse.ErrorCode == cf.APP_NOT_STAGED
 
 	if apiResponse.IsNotSuccessful() && !appIsStopped {

@@ -63,20 +63,20 @@ func (cmd *DomainMapper) Run(c *cli.Context) {
 
 	domainName := c.Args()[1]
 	space := cmd.spaceReq.GetSpace()
-	org := cmd.orgReq.GetOrganization()
+	org := cmd.orgReq.GetOrganizationFields()
 
 	if cmd.bind {
 		cmd.ui.Say("Mapping domain %s to org %s / space %s as %s...",
 			terminal.EntityNameColor(domainName),
 			terminal.EntityNameColor(cmd.config.Organization.Name),
-			terminal.EntityNameColor(space.Fields.Name),
+			terminal.EntityNameColor(space.Name),
 			terminal.EntityNameColor(cmd.config.Username()),
 		)
 	} else {
 		cmd.ui.Say("Unmapping domain %s from org %s / space %s as %s...",
 			terminal.EntityNameColor(domainName),
 			terminal.EntityNameColor(cmd.config.Organization.Name),
-			terminal.EntityNameColor(space.Fields.Name),
+			terminal.EntityNameColor(space.Name),
 			terminal.EntityNameColor(cmd.config.Username()),
 		)
 	}
@@ -88,9 +88,9 @@ func (cmd *DomainMapper) Run(c *cli.Context) {
 	}
 
 	if cmd.bind {
-		apiResponse = cmd.domainRepo.Map(domain.Fields.Guid, space.Fields.Guid)
+		apiResponse = cmd.domainRepo.Map(domain.Guid, space.Guid)
 	} else {
-		apiResponse = cmd.domainRepo.Unmap(domain.Fields.Guid, space.Fields.Guid)
+		apiResponse = cmd.domainRepo.Unmap(domain.Guid, space.Guid)
 	}
 
 	if apiResponse.IsNotSuccessful() {

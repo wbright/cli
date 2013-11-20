@@ -52,7 +52,7 @@ func (cmd *UnsetSpaceRole) Run(c *cli.Context) {
 
 	user := cmd.userReq.GetUser()
 	org := cmd.orgReq.GetOrganization()
-	space, apiResponse := cmd.spaceRepo.FindByNameInOrg(spaceName, org.Fields.Guid)
+	space, apiResponse := cmd.spaceRepo.FindByNameInOrg(spaceName, org.Guid)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -61,12 +61,12 @@ func (cmd *UnsetSpaceRole) Run(c *cli.Context) {
 	cmd.ui.Say("Removing role %s from user %s in org %s / space %s as %s...",
 		terminal.EntityNameColor(role),
 		terminal.EntityNameColor(user.Username),
-		terminal.EntityNameColor(org.Fields.Name),
-		terminal.EntityNameColor(space.Fields.Name),
+		terminal.EntityNameColor(org.Name),
+		terminal.EntityNameColor(space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	apiResponse = cmd.userRepo.UnsetSpaceRole(user.Guid, space.Fields.Guid, role)
+	apiResponse = cmd.userRepo.UnsetSpaceRole(user.Guid, space.Guid, role)
 
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)

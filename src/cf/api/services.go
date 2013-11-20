@@ -28,7 +28,7 @@ func (resource ServiceOfferingResource) ToFields() (fields cf.ServiceOfferingFie
 }
 
 func (resource ServiceOfferingResource) ToModel() (offering cf.ServiceOffering) {
-	offering.Fields = resource.ToFields()
+	offering.ServiceOfferingFields = resource.ToFields()
 	for _, p := range resource.Entity.ServicePlans {
 		offering.Plans = append(offering.Plans, cf.ServicePlanFields{Name: p.Entity.Name, Guid: p.Metadata.Guid})
 	}
@@ -76,7 +76,7 @@ func (resource ServiceInstanceResource) ToFields() (fields cf.ServiceInstanceFie
 }
 
 func (resource ServiceInstanceResource) ToModel() (instance cf.ServiceInstance) {
-	instance.Fields = resource.ToFields()
+	instance.ServiceInstanceFields = resource.ToFields()
 	instance.ServicePlan = resource.Entity.ServicePlan.ToFields()
 	instance.ServiceOffering = resource.Entity.ServicePlan.Entity.ServiceOffering.ToFields()
 
@@ -193,10 +193,10 @@ func (repo CloudControllerServiceRepository) CreateServiceInstance(name, planGui
 
 func (repo CloudControllerServiceRepository) RenameService(instance cf.ServiceInstance, newName string) (apiResponse net.ApiResponse) {
 	body := fmt.Sprintf(`{"name":"%s"}`, newName)
-	path := fmt.Sprintf("%s/v2/service_instances/%s", repo.config.Target, instance.Fields.Guid)
+	path := fmt.Sprintf("%s/v2/service_instances/%s", repo.config.Target, instance.Guid)
 
 	if instance.IsUserProvided() {
-		path = fmt.Sprintf("%s/v2/user_provided_service_instances/%s", repo.config.Target, instance.Fields.Guid)
+		path = fmt.Sprintf("%s/v2/user_provided_service_instances/%s", repo.config.Target, instance.Guid)
 	}
 	return repo.gateway.UpdateResource(path, repo.config.AccessToken, strings.NewReader(body))
 }
@@ -205,6 +205,6 @@ func (repo CloudControllerServiceRepository) DeleteService(instance cf.ServiceIn
 	if len(instance.ServiceBindings) > 0 {
 		return net.NewApiResponseWithMessage("Cannot delete service instance, apps are still bound to it")
 	}
-	path := fmt.Sprintf("%s/v2/service_instances/%s", repo.config.Target, instance.Fields.Guid)
+	path := fmt.Sprintf("%s/v2/service_instances/%s", repo.config.Target, instance.Guid)
 	return repo.gateway.DeleteResource(path, repo.config.AccessToken)
 }

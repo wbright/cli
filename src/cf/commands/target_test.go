@@ -64,13 +64,17 @@ func TestTargetOrganizationWhenUserHasAccess(t *testing.T) {
 	configRepo.Login()
 	config, err := configRepo.Get()
 	assert.NoError(t, err)
-	config.Space = cf.Space{Name: "my-space", Guid: "my-space-guid"}
 
-	orgs := []cf.Organization{
-		cf.Organization{Name: "my-organization", Guid: "my-organization-guid"},
-	}
-	orgRepo.Organizations = orgs
-	orgRepo.FindByNameOrganization = orgs[0]
+	config.Space = cf.SpaceFields{}
+	config.Space.Name = "my-space"
+	config.Space.Guid = "my-space-guid"
+
+	org := cf.Organization{}
+	org.Name = "my-organization"
+	org.Guid = "my-organization-guid"
+
+	orgRepo.Organizations = []cf.Organization{org}
+	orgRepo.FindByNameOrganization = org
 
 	ui := callTarget([]string{"-o", "my-organization"}, reqFactory, configRepo, orgRepo, spaceRepo)
 
@@ -111,8 +115,11 @@ func TestTargetOrganizationWhenOrgNotFound(t *testing.T) {
 
 	config, err := configRepo.Get()
 	assert.NoError(t, err)
-	org := cf.Organization{Guid: "previous-org-guid", Name: "previous-org"}
-	config.Organization = org
+
+	config.Organization = cf.OrganizationFields{}
+	config.Organization.Guid = "previous-org-guid"
+	config.Organization.Name = "previous-org"
+
 	err = configRepo.Save()
 	assert.NoError(t, err)
 
@@ -148,13 +155,16 @@ func TestTargetSpaceWhenUserHasAccess(t *testing.T) {
 
 	configRepo.Delete()
 	config := configRepo.Login()
-	config.Organization = cf.Organization{Name: "my-org", Guid: "my-org-guid"}
+	config.Organization = cf.OrganizationFields{}
+	config.Organization.Name = "my-org"
+	config.Organization.Guid = "my-org-guid"
 
-	spaces := []cf.Space{
-		cf.Space{Name: "my-space", Guid: "my-space-guid"},
-	}
-	spaceRepo.Spaces = spaces
-	spaceRepo.FindByNameSpace = spaces[0]
+	space := cf.Space{}
+	space.Name = "my-space"
+	space.Guid = "my-space-guid"
+
+	spaceRepo.Spaces = []cf.Space{space}
+	spaceRepo.FindByNameSpace = space
 
 	ui := callTarget([]string{"-s", "my-space"}, reqFactory, configRepo, orgRepo, spaceRepo)
 
@@ -169,7 +179,9 @@ func TestTargetSpaceWhenUserDoesNotHaveAccess(t *testing.T) {
 
 	configRepo.Delete()
 	config := configRepo.Login()
-	config.Organization = cf.Organization{Name: "my-org", Guid: "my-org-guid"}
+	config.Organization = cf.OrganizationFields{}
+	config.Organization.Name = "my-org"
+	config.Organization.Guid = "my-org-guid"
 
 	spaceRepo.FindByNameErr = true
 
@@ -188,7 +200,9 @@ func TestTargetSpaceWhenSpaceNotFound(t *testing.T) {
 
 	configRepo.Delete()
 	config := configRepo.Login()
-	config.Organization = cf.Organization{Name: "my-org", Guid: "my-org-guid"}
+	config.Organization = cf.OrganizationFields{}
+	config.Organization.Name = "my-org"
+	config.Organization.Guid = "my-org-guid"
 
 	spaceRepo.FindByNameNotFound = true
 
@@ -208,10 +222,14 @@ func TestTargetOrganizationAndSpace(t *testing.T) {
 	configRepo.Delete()
 	configRepo.Login()
 
-	org := cf.Organization{Name: "my-organization", Guid: "my-organization-guid"}
+	org := cf.Organization{}
+	org.Name = "my-organization"
+	org.Guid = "my-organization-guid"
 	orgRepo.FindByNameOrganization = org
 
-	space := cf.Space{Name: "my-space", Guid: "my-space-guid"}
+	space := cf.Space{}
+	space.Name = "my-space"
+	space.Guid = "my-space-guid"
 	spaceRepo.FindByNameSpace = space
 
 	ui := callTarget([]string{"-o", "my-organization", "-s", "my-space"}, reqFactory, configRepo, orgRepo, spaceRepo)
@@ -231,7 +249,9 @@ func TestTargetOrganizationAndSpaceWhenSpaceFails(t *testing.T) {
 	configRepo.Delete()
 	configRepo.Login()
 
-	org := cf.Organization{Name: "my-organization", Guid: "my-organization-guid"}
+	org := cf.Organization{}
+	org.Name = "my-organization"
+	org.Guid = "my-organization-guid"
 	orgRepo.FindByNameOrganization = org
 
 	spaceRepo.FindByNameErr = true

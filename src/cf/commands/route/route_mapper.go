@@ -60,7 +60,7 @@ func (cmd *RouteMapper) Run(c *cli.Context) {
 	hostName := c.String("n")
 	domain := cmd.domainReq.GetDomain()
 
-	route, apiResponse := cmd.routeCreator.CreateRoute(hostName, domain.Fields, cmd.config.Space)
+	route, apiResponse := cmd.routeCreator.CreateRoute(hostName, domain.DomainFields, cmd.config.Space)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed("Error resolving route:\n%s", apiResponse.Message)
 	}
@@ -70,23 +70,23 @@ func (cmd *RouteMapper) Run(c *cli.Context) {
 	if cmd.bind {
 		cmd.ui.Say("Adding route %s to app %s in org %s / space %s as %s...",
 			terminal.EntityNameColor(route.URL()),
-			terminal.EntityNameColor(app.Fields.Name),
+			terminal.EntityNameColor(app.Name),
 			terminal.EntityNameColor(cmd.config.Organization.Name),
 			terminal.EntityNameColor(cmd.config.Space.Name),
 			terminal.EntityNameColor(cmd.config.Username()),
 		)
 
-		apiResponse = cmd.routeRepo.Bind(route.Fields.Guid, app.Fields.Guid)
+		apiResponse = cmd.routeRepo.Bind(route.Guid, app.Guid)
 	} else {
 		cmd.ui.Say("Removing route %s from app %s in org %s / space %s as %s...",
 			terminal.EntityNameColor(route.URL()),
-			terminal.EntityNameColor(app.Fields.Name),
+			terminal.EntityNameColor(app.Name),
 			terminal.EntityNameColor(cmd.config.Organization.Name),
 			terminal.EntityNameColor(cmd.config.Space.Name),
 			terminal.EntityNameColor(cmd.config.Username()),
 		)
 
-		apiResponse = cmd.routeRepo.Unbind(route.Fields.Guid, app.Fields.Guid)
+		apiResponse = cmd.routeRepo.Unbind(route.Guid, app.Guid)
 	}
 
 	if apiResponse.IsNotSuccessful() {

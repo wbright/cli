@@ -46,13 +46,13 @@ func (cmd *Events) Run(c *cli.Context) {
 	app := cmd.appReq.GetApplication()
 
 	cmd.ui.Say("Getting events for app %s in org %s / space %s as %s...\n",
-		terminal.EntityNameColor(app.Fields.Name),
+		terminal.EntityNameColor(app.Name),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	eventChan, statusChan := cmd.eventsRepo.ListEvents(app.Fields.Guid)
+	eventChan, statusChan := cmd.eventsRepo.ListEvents(app.Guid)
 	table := cmd.ui.Table([]string{"time", "instance", "description", "exit status"})
 	noEvents := true
 
@@ -77,7 +77,7 @@ func (cmd *Events) Run(c *cli.Context) {
 		return
 	}
 	if noEvents {
-		cmd.ui.Say("No events for app %s", terminal.EntityNameColor(app.Fields.Name))
+		cmd.ui.Say("No events for app %s", terminal.EntityNameColor(app.Name))
 		return
 	}
 }

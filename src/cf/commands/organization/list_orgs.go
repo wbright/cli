@@ -42,7 +42,7 @@ func (cmd ListOrgs) Run(c *cli.Context) {
 	for orgs := range orgsChan {
 		rows := [][]string{}
 		for _, org := range orgs {
-			rows = append(rows, []string{org.Fields.Name})
+			rows = append(rows, []string{org.Name})
 		}
 		table.Print(rows)
 		noOrgs = false

@@ -42,14 +42,14 @@ func (cmd *RenameApp) Run(c *cli.Context) {
 	app := cmd.appReq.GetApplication()
 	new_name := c.Args()[1]
 	cmd.ui.Say("Renaming app %s to %s in org %s / space %s as %s...",
-		terminal.EntityNameColor(app.Fields.Name),
+		terminal.EntityNameColor(app.Name),
 		terminal.EntityNameColor(new_name),
 		terminal.EntityNameColor(cmd.config.Organization.Name),
 		terminal.EntityNameColor(cmd.config.Space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 
-	apiResponse := cmd.appRepo.Rename(app.Fields.Guid, new_name)
+	apiResponse := cmd.appRepo.Rename(app.Guid, new_name)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return

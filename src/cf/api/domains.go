@@ -26,7 +26,7 @@ func (resource DomainResource) ToFields() (fields cf.DomainFields) {
 }
 
 func (resource DomainResource) ToModel() (domain cf.Domain) {
-	domain.Fields = resource.ToFields()
+	domain.DomainFields = resource.ToFields()
 
 	for _, spaceResource := range resource.Entity.Spaces {
 		domain.Spaces = append(domain.Spaces, spaceResource.ToFields())
@@ -89,7 +89,7 @@ func (repo CloudControllerDomainRepository) FindAllByOrg(orgGuid string) (domain
 	}
 
 	for _, d := range allDomains {
-		if repo.isOrgDomain(orgGuid, d.Fields) {
+		if repo.isOrgDomain(orgGuid, d.DomainFields) {
 			domains = append(domains, d)
 		}
 	}
@@ -152,7 +152,7 @@ func (repo CloudControllerDomainRepository) findOneWithPaths(scopedPath, name st
 			return
 		}
 
-		if len(domains) == 0 || !domains[0].Fields.Shared {
+		if len(domains) == 0 || !domains[0].Shared {
 			apiResponse = net.NewNotFoundApiResponse("Domain %s not found", name)
 			return
 		}

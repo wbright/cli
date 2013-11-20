@@ -58,7 +58,7 @@ func (cmd *CreateRoute) Run(c *cli.Context) {
 	space := cmd.spaceReq.GetSpace()
 	domain := cmd.domainReq.GetDomain()
 
-	_, apiResponse := cmd.CreateRoute(hostName, domain.Fields, space.Fields)
+	_, apiResponse := cmd.CreateRoute(hostName, domain.DomainFields, space.SpaceFields)
 	if apiResponse.IsNotSuccessful() {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -81,7 +81,7 @@ func (cmd *CreateRoute) CreateRoute(hostName string, domain cf.DomainFields, spa
 		if findApiResponse.IsNotSuccessful() ||
 			route.Space.Guid != space.Guid ||
 			route.Domain.Guid != domain.Guid ||
-			route.Fields.Host != hostName {
+			route.Host != hostName {
 			return
 		}
 

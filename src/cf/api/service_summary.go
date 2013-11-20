@@ -28,8 +28,8 @@ func (resource ServiceInstancesSummaries) ToModels() (instances []cf.ServiceInst
 		serviceOffering.Version = offeringSummary.Version
 
 		instance := cf.ServiceInstance{}
-		instance.Fields.Name = instanceSummary.Name
-		instance.Fields.ApplicationNames = applicationNames
+		instance.Name = instanceSummary.Name
+		instance.ApplicationNames = applicationNames
 		instance.ServicePlan = servicePlan
 		instance.ServiceOffering = serviceOffering
 

@@ -45,7 +45,7 @@ func (cmd ListSpaces) Run(c *cli.Context) {
 	for spaces := range spacesChan {
 		rows := [][]string{}
 		for _, space := range spaces {
-			rows = append(rows, []string{space.Fields.Name})
+			rows = append(rows, []string{space.Name})
 		}
 		table.Print(rows)
 		noSpaces = false

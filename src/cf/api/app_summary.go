@@ -56,8 +56,8 @@ func (resource RouteSummary) toModel() (route cf.RouteSummary) {
 	domain.Name = resource.Domain.Name
 	domain.Shared = resource.Domain.OwningOrganizationGuid != ""
 
-	route.Fields.Guid = resource.Guid
-	route.Fields.Host = resource.Host
+	route.Guid = resource.Guid
+	route.Host = resource.Host
 	route.Domain = domain
 	return
 }

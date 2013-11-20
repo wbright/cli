@@ -25,7 +25,7 @@ func (resource SpaceResource) ToFields() (fields cf.SpaceFields) {
 }
 
 func (resource SpaceResource) ToModel() (space cf.Space) {
-	space.Fields = resource.ToFields()
+	space.SpaceFields = resource.ToFields()
 	for _, app := range resource.Entity.Applications {
 		space.Applications = append(space.Applications, app.ToFields())
 	}

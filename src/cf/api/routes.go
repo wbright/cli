@@ -24,7 +24,7 @@ func (resource RouteResource) ToFields() (fields cf.RouteFields) {
 	return
 }
 func (resource RouteResource) ToModel() (route cf.Route) {
-	route.Fields = resource.ToFields()
+	route.RouteFields = resource.ToFields()
 	route.Domain = resource.Entity.Domain.ToFields()
 	route.Space = resource.Entity.Space.ToFields()
 	for _, appResource := range resource.Entity.Apps {
@@ -113,13 +113,13 @@ func (repo CloudControllerRouteRepository) FindByHostAndDomain(host, domainName 
 		return
 	}
 
-	path := fmt.Sprintf("/v2/routes?inline-relations-depth=1&q=host%%3A%s%%3Bdomain_guid%%3A%s", host, domain.Fields.Guid)
+	path := fmt.Sprintf("/v2/routes?inline-relations-depth=1&q=host%%3A%s%%3Bdomain_guid%%3A%s", host, domain.Guid)
 	route, apiResponse = repo.findOneWithPath(path)
 	if apiResponse.IsNotSuccessful() {
 		return
 	}
 
-	route.Domain = domain.Fields
+	route.Domain = domain.DomainFields
 	return
 }
 

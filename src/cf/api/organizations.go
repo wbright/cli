@@ -25,7 +25,7 @@ func (resource OrganizationResource) ToFields() (fields cf.OrganizationFields) {
 }
 
 func (resource OrganizationResource) ToModel() (org cf.Organization) {
-	org.Fields = resource.ToFields()
+	org.OrganizationFields = resource.ToFields()
 
 	spaces := []cf.SpaceFields{}
 	for _, s := range resource.Entity.Spaces {

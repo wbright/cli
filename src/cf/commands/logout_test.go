@@ -2,7 +2,7 @@ package commands_test
 
 import (
 	"cf"
-	. "cf/commands"
+	"cf/commands"
 	"github.com/stretchr/testify/assert"
 	testconfig "testhelpers/configuration"
 	testterm "testhelpers/terminal"
@@ -10,15 +10,21 @@ import (
 )
 
 func TestLogoutClearsAccessTokenOrgAndSpace(t *testing.T) {
+	org := cf.OrganizationFields{}
+	org.Name = "MyOrg"
+
+	space := cf.SpaceFields{}
+	space.Name = "MySpace"
+
 	configRepo := &testconfig.FakeConfigRepository{}
 	config, _ := configRepo.Get()
 	config.AccessToken = "MyAccessToken"
-	config.Organization = cf.Organization{Name: "MyOrg"}
-	config.Space = cf.Space{Name: "MySpace"}
+	config.Organization = org
+	config.Space = space
 
 	ui := new(testterm.FakeUI)
 
-	l := NewLogout(ui, configRepo)
+	l := commands.NewLogout(ui, configRepo)
 	l.Run(nil)
 
 	updatedConfig, err := configRepo.Get()

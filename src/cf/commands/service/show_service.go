@@ -39,7 +39,7 @@ func (cmd *ShowService) Run(c *cli.Context) {
 	serviceInstance := cmd.serviceInstanceReq.GetServiceInstance()
 
 	cmd.ui.Say("")
-	cmd.ui.Say("Service instance: %s", terminal.EntityNameColor(serviceInstance.Fields.Name))
+	cmd.ui.Say("Service instance: %s", terminal.EntityNameColor(serviceInstance.Name))
 
 	if serviceInstance.IsUserProvided() {
 		cmd.ui.Say("Service: %s", terminal.EntityNameColor("user-provided"))
