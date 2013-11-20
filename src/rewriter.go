@@ -4,14 +4,11 @@ import (
 	"go/ast"
 	"go/parser"
 	"go/token"
-
 	"go/format"
 	"bytes"
-//	"io/ioutil"
 	"fmt"
+	"io/ioutil"
 )
-
-
 
 func main() {
 	fset := token.NewFileSet()
@@ -21,14 +18,10 @@ func main() {
 		panic(err)
 	}
 
-	var lastBlockStmt *ast.BlockStmt
 	count := 0
+
 	ast.Inspect(newFile, func(n ast.Node) bool {
 			switch n := n.(type) {
-
-			case *ast.BlockStmt:
-				lastBlockStmt = n
-
 			case *ast.CompositeLit:
 				switch s := n.Type.(type){
 				case *ast.SelectorExpr:
@@ -38,17 +31,11 @@ func main() {
 						}
 
 						count++
-						name := fmt.Sprintf("appAuto_%d",count)
+						name := fmt.Sprintf("appAuto_%d", count)
 
-						rewriteStructLiteralAsIdentifierAtTopOfBlock(n,lastBlockStmt,name)
-						replaceStructLiteralWithIdentifier(newFile,n,name)
+						rewriteStructLiteralAsIdentifierAtTopOfBlock(newFile, n, name)
+						replaceStructLiteralWithIdentifier(newFile, n, name)
 
-						src, err := gofmtFile(newFile,fset)
-						if err != nil {
-							println(err.Error())
-						}
-						println(string(src))
-//						ioutil.WriteFile("src/cf/commands/foo1.go", src, 0666)
 						return false
 					}
 				}
@@ -56,25 +43,62 @@ func main() {
 
 			return true
 		})
+
+	src, err := gofmtFile(newFile, fset)
+	if err != nil {
+		println(err.Error())
+	}
+	println(string(src))
+	ioutil.WriteFile("src/cf/commands/foo1.go", src, 0666)
 }
 
-func rewriteStructLiteralAsIdentifierAtTopOfBlock(n *ast.CompositeLit, block *ast.BlockStmt, name string){
-	var insertionIndex int
-	for i, stmt := range block.List {
-		switch stmt := stmt.(type){
-		case *ast.KeyValueExpr:
-			if stmt.Value == n {
-				insertionIndex = i
+func rewriteStructLiteralAsIdentifierAtTopOfBlock(newFile *ast.File, n *ast.CompositeLit, name string) {
+	var foundStmtNode ast.Stmt
+	var blocksSeen []*ast.BlockStmt
+	ast.Inspect(newFile, func(node ast.Node) bool {
+			switch node := node.(type) {
+			case *ast.AssignStmt:
+				expr := node.Rhs[0]
+				if expr == n {
+					foundStmtNode = node
+				}
+				ast.Inspect(expr, func(parentNode ast.Node) bool {
+					switch parentNode := parentNode.(type) {
+					case *ast.KeyValueExpr:
+						if parentNode.Value == n {
+							foundStmtNode = node
+						}
+					}
+					return true
+				})
+			case *ast.ExprStmt:
+				if node.X == n {
+					foundStmtNode = node
+				}
+			case *ast.ReturnStmt:
+				for _, expr := range node.Results {
+					if expr == n {
+						foundStmtNode = node
+					}
+				}
+			case *ast.BlockStmt:
+				if foundStmtNode == nil {
+					blocksSeen = append(blocksSeen, node)
+				}
 			}
-		case *ast.AssignStmt:
-			if stmt.Rhs[0] == n {
+			return true
+		})
+
+	var block *ast.BlockStmt
+	var insertionIndex int
+
+	for _, b := range blocksSeen {
+		for i, stmt := range b.List {
+			if stmt == foundStmtNode {
+				block = b
 				insertionIndex = i
 			}
 		}
-	}
-
-	if insertionIndex > 0 {
-		insertionIndex = insertionIndex - 1
 	}
 
 	lhsExpr := []ast.Expr{ast.NewIdent(name)}
@@ -92,13 +116,13 @@ func rewriteStructLiteralAsIdentifierAtTopOfBlock(n *ast.CompositeLit, block *as
 		fieldName := keyVal.Key.(*ast.Ident)
 
 		selector := &ast.SelectorExpr{
-			X: ast.NewIdent("appAuto"),
+			X: ast.NewIdent(name),
 			Sel: ast.NewIdent(fieldName.Name),
 		}
 		innerLhs := []ast.Expr{selector}
 		innerRhs := []ast.Expr{keyVal.Value}
 
-		block.List = insert(block.List, i + insertionIndex, ast.AssignStmt{
+		block.List = insert(block.List, i + insertionIndex + 1, ast.AssignStmt{
 				Lhs: innerLhs,
 				Rhs: innerRhs,
 				Tok: token.ASSIGN,
@@ -106,7 +130,7 @@ func rewriteStructLiteralAsIdentifierAtTopOfBlock(n *ast.CompositeLit, block *as
 	}
 }
 
-func replaceStructLiteralWithIdentifier(file *ast.File, n *ast.CompositeLit, name string){
+func replaceStructLiteralWithIdentifier(file *ast.File, n *ast.CompositeLit, name string) {
 	ast.Inspect(file, func(parentNode ast.Node) bool {
 			switch parentNode := parentNode.(type){
 			case *ast.KeyValueExpr:
@@ -116,6 +140,12 @@ func replaceStructLiteralWithIdentifier(file *ast.File, n *ast.CompositeLit, nam
 			case *ast.AssignStmt:
 				if parentNode.Rhs[0] == n {
 					parentNode.Rhs[0] = ast.NewIdent(name)
+				}
+			case *ast.ReturnStmt:
+				for i, expr := range parentNode.Results {
+					if expr == n {
+						parentNode.Results[i] = ast.NewIdent(name)
+					}
 				}
 			}
 			return true
