@@ -42,6 +42,7 @@ func TestOrgUsersRequirements(t *testing.T) {
 func TestOrgUsers(t *testing.T) {
 	org := cf.Organization{}
 	org.Name = "Found Org"
+	org.Guid = "found-org-guid"
 
 	userRepo := &testapi.FakeUserRepository{}
 	user_Auto := cf.User{}
@@ -66,7 +67,7 @@ func TestOrgUsers(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "Found Org")
 	assert.Contains(t, ui.Outputs[0], "my-user")
 
-	assert.Equal(t, org, userRepo.FindAllInOrgByRoleOrganization)
+	assert.Equal(t, userRepo.FindAllInOrgByRoleOrganizationGuid, "found-org-guid")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 
@@ -85,9 +86,9 @@ func callOrgUsers(t *testing.T, args []string, reqFactory *testreq.FakeReqFactor
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto3 := cf.Organization{}
+	org_Auto3 := cf.OrganizationFields{}
 	org_Auto3.Name = "my-org"
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

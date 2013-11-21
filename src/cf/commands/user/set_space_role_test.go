@@ -53,20 +53,21 @@ func TestSetSpaceRole(t *testing.T) {
 	reqFactory, spaceRepo, userRepo := getSetSpaceRoleDeps()
 
 	reqFactory.LoginSuccess = true
-	user_Auto = cf.User{}
-	user_Auto.Guid = "my-user-guid"
-	user_Auto.Username = "my-user"
-	org_Auto = cf.Organization{}
-	org_Auto.Guid = "my-org-guid"
-	org_Auto.Name = "my-org"
-	space_Auto = cf.Space{}
-	space_Auto.Guid = "my-space-guid"
-	space_Auto.Name = "my-space"
+
+	reqFactory.User = cf.User{}
+	reqFactory.User.Guid = "my-user-guid"
+	reqFactory.User.Username = "my-user"
+	reqFactory.Organization = cf.Organization{}
+	reqFactory.Organization.Guid = "my-org-guid"
+	reqFactory.Organization.Name = "my-org"
+	spaceRepo.FindByNameInOrgSpace = cf.Space{}
+	spaceRepo.FindByNameInOrgSpace.Guid = "my-space-guid"
+	spaceRepo.FindByNameInOrgSpace.Name = "my-space"
 
 	ui := callSetSpaceRole(t, args, reqFactory, spaceRepo, userRepo)
 
 	assert.Equal(t, spaceRepo.FindByNameInOrgName, "some-space")
-	assert.Equal(t, spaceRepo.FindByNameInOrgOrg, reqFactory.Organization)
+	assert.Equal(t, spaceRepo.FindByNameInOrgOrgGuid, "my-org-guid")
 
 	assert.Contains(t, ui.Outputs[0], "Assigning role ")
 	assert.Contains(t, ui.Outputs[0], "some-role")
@@ -75,8 +76,8 @@ func TestSetSpaceRole(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-space")
 	assert.Contains(t, ui.Outputs[0], "current-user")
 
-	assert.Equal(t, userRepo.SetSpaceRoleUser, reqFactory.User)
-	assert.Equal(t, userRepo.SetSpaceRoleSpace, spaceRepo.FindByNameInOrgSpace)
+	assert.Equal(t, userRepo.SetSpaceRoleUserGuid, "my-user-guid")
+	assert.Equal(t, userRepo.SetSpaceRoleSpaceGuid,"my-space-guid")
 	assert.Equal(t, userRepo.SetSpaceRoleRole, "some-role")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
@@ -97,9 +98,9 @@ func callSetSpaceRole(t *testing.T, args []string, reqFactory *testreq.FakeReqFa
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-	space_Auto2 := cf.Space{}
+	space_Auto2 := cf.SpaceFields{}
 	space_Auto2.Name = "my-space"
-	org_Auto2 := cf.Organization{}
+	org_Auto2 := cf.OrganizationFields{}
 	org_Auto2.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto2,

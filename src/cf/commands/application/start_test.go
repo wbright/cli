@@ -71,9 +71,9 @@ func startAppWithInstancesAndErrors(t *testing.T, app cf.Application, instances 
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:                   space_Auto,
@@ -157,14 +157,14 @@ func TestStartApplication(t *testing.T) {
 	assert.Contains(t, ui.Outputs[7], "my-app.example.com")
 
 	assert.Equal(t, reqFactory.ApplicationName, "my-app")
-	assert.Equal(t, appRepo.StartAppToStart.Guid, "my-app-guid")
+	assert.Equal(t, appRepo.StartAppGuid, "my-app-guid")
 }
 
 func TestStartApplicationWhenAppHasNoURL(t *testing.T) {
 	t.Parallel()
 
 	app := defaultAppForStart
-	app.Routes = []cf.Route{}
+	app.Routes = []cf.RouteSummary{}
 	appInstance_Auto5 := cf.ApplicationInstance{}
 	appInstance_Auto5.State = cf.InstanceRunning
 	instances := [][]cf.ApplicationInstance{
@@ -179,7 +179,7 @@ func TestStartApplicationWhenAppHasNoURL(t *testing.T) {
 	assert.Contains(t, ui.Outputs[6], "Started")
 
 	assert.Equal(t, reqFactory.ApplicationName, "my-app")
-	assert.Equal(t, appRepo.StartAppToStart.Guid, "my-app-guid")
+	assert.Equal(t, appRepo.StartAppGuid, "my-app-guid")
 }
 
 func TestStartApplicationWhenAppIsStillStaging(t *testing.T) {
@@ -305,7 +305,7 @@ func TestStartApplicationWhenStartFails(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-app")
 	assert.Contains(t, ui.Outputs[1], "FAILED")
 	assert.Contains(t, ui.Outputs[2], "Error starting application")
-	assert.Equal(t, appRepo.StartAppToStart.Guid, "my-app-guid")
+	assert.Equal(t, appRepo.StartAppGuid, "my-app-guid")
 }
 
 func TestStartApplicationIsAlreadyStarted(t *testing.T) {
@@ -326,7 +326,7 @@ func TestStartApplicationIsAlreadyStarted(t *testing.T) {
 
 	assert.Contains(t, ui.Outputs[0], "my-app")
 	assert.Contains(t, ui.Outputs[0], "is already started")
-	assert.Equal(t, appRepo.StartAppToStart.Guid, "")
+	assert.Equal(t, appRepo.StartAppGuid, "")
 }
 
 func TestStartApplicationWithLoggingFailure(t *testing.T) {
@@ -334,9 +334,9 @@ func TestStartApplicationWithLoggingFailure(t *testing.T) {
 
 	token, err := testconfig.CreateAccessTokenWithTokenInfo(configuration.TokenInfo{Username: "my-user"})
 	assert.NoError(t, err)
-	space_Auto2 := cf.Space{}
+	space_Auto2 := cf.SpaceFields{}
 	space_Auto2.Name = "my-space"
-	org_Auto2 := cf.Organization{}
+	org_Auto2 := cf.OrganizationFields{}
 	org_Auto2.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:                   space_Auto2,

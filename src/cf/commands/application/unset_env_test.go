@@ -54,7 +54,7 @@ func TestUnsetEnvWhenApplicationExists(t *testing.T) {
 	assert.Contains(t, ui.Outputs[1], "OK")
 
 	assert.Equal(t, reqFactory.ApplicationName, "my-app")
-	assert.Equal(t, appRepo.SetEnvApp, app)
+	assert.Equal(t, appRepo.SetEnvAppGuid, "my-app-guid")
 	assert.Equal(t, appRepo.SetEnvVars, map[string]string{"foo": "bar"})
 }
 
@@ -122,9 +122,9 @@ func callUnsetEnv(t *testing.T, args []string, reqFactory *testreq.FakeReqFactor
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

@@ -68,8 +68,8 @@ func TestSetOrgRole(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-org")
 	assert.Contains(t, ui.Outputs[0], "current-user")
 
-	assert.Equal(t, userRepo.SetOrgRoleUser, reqFactory.User)
-	assert.Equal(t, userRepo.SetOrgRoleOrganization, reqFactory.Organization)
+	assert.Equal(t, userRepo.SetOrgRoleUserGuid, "my-user-guid")
+	assert.Equal(t, userRepo.SetOrgRoleOrganizationGuid, "my-org-guid")
 	assert.Equal(t, userRepo.SetOrgRoleRole, "some-role")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
@@ -83,9 +83,9 @@ func callSetOrgRole(t *testing.T, args []string, reqFactory *testreq.FakeReqFact
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-	org_Auto2 := cf.Organization{}
+	org_Auto2 := cf.OrganizationFields{}
 	org_Auto2.Name = "my-org"
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

@@ -60,15 +60,16 @@ func TestUnsetSpaceRole(t *testing.T) {
 	reqFactory.LoginSuccess = true
 	reqFactory.User = user
 	reqFactory.Organization = org
-	space_Auto = cf.Space{}
-	space_Auto.Name = "some-space"
+	spaceRepo.FindByNameInOrgSpace = cf.Space{}
+	spaceRepo.FindByNameInOrgSpace.Name = "some-space"
+	spaceRepo.FindByNameInOrgSpace.Guid = "some-space-guid"
 
 	args := []string{"my-username", "my-org", "my-space", "my-role"}
 
 	ui := callUnsetSpaceRole(t, args, spaceRepo, userRepo, reqFactory)
 
 	assert.Equal(t, spaceRepo.FindByNameInOrgName, "my-space")
-	assert.Equal(t, spaceRepo.FindByNameInOrgOrg, reqFactory.Organization)
+	assert.Equal(t, spaceRepo.FindByNameInOrgOrgGuid,  "some-org-guid")
 
 	assert.Contains(t, ui.Outputs[0], "Removing role ")
 	assert.Contains(t, ui.Outputs[0], "my-role")
@@ -78,8 +79,8 @@ func TestUnsetSpaceRole(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "current-user")
 
 	assert.Equal(t, userRepo.UnsetSpaceRoleRole, "my-role")
-	assert.Equal(t, userRepo.UnsetSpaceRoleUser, user)
-	assert.Equal(t, userRepo.UnsetSpaceRoleSpace, spaceRepo.FindByNameInOrgSpace)
+	assert.Equal(t, userRepo.UnsetSpaceRoleUserGuid, "some-user-guid")
+	assert.Equal(t, userRepo.UnsetSpaceRoleSpaceGuid, "some-space-guid")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
@@ -99,9 +100,9 @@ func callUnsetSpaceRole(t *testing.T, args []string, spaceRepo *testapi.FakeSpac
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-	space_Auto2 := cf.Space{}
+	space_Auto2 := cf.SpaceFields{}
 	space_Auto2.Name = "my-space"
-	org_Auto2 := cf.Organization{}
+	org_Auto2 := cf.OrganizationFields{}
 	org_Auto2.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto2,

@@ -52,7 +52,7 @@ func TestDeleteUserWhenConfirmingWithY(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "current-user")
 
 	assert.Equal(t, userRepo.FindByUsernameUsername, "my-user")
-	assert.Equal(t, userRepo.DeleteUser.Guid, "my-found-user-guid")
+	assert.Equal(t, userRepo.DeleteUserGuid, "my-found-user-guid")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
@@ -68,7 +68,7 @@ func TestDeleteUserWhenConfirmingWithYes(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "current-user")
 
 	assert.Equal(t, userRepo.FindByUsernameUsername, "my-user")
-	assert.Equal(t, userRepo.DeleteUser.Guid, "my-found-user-guid")
+	assert.Equal(t, userRepo.DeleteUserGuid, "my-found-user-guid")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
@@ -80,7 +80,7 @@ func TestDeleteUserWhenNotConfirming(t *testing.T) {
 	assert.Contains(t, ui.Prompts[0], "Really delete")
 
 	assert.Equal(t, userRepo.FindByUsernameUsername, "")
-	assert.Equal(t, userRepo.DeleteUser.Guid, "")
+	assert.Equal(t, userRepo.DeleteUserGuid, "")
 }
 
 func TestDeleteUserWithForceOption(t *testing.T) {
@@ -97,7 +97,7 @@ func TestDeleteUserWithForceOption(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-user")
 
 	assert.Equal(t, userRepo.FindByUsernameUsername, "my-user")
-	assert.Equal(t, userRepo.DeleteUser.Guid, "my-found-user-guid")
+	assert.Equal(t, userRepo.DeleteUserGuid, "my-found-user-guid")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
@@ -114,7 +114,7 @@ func TestDeleteUserWhenUserNotFound(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-user")
 
 	assert.Equal(t, userRepo.FindByUsernameUsername, "my-user")
-	assert.Equal(t, userRepo.DeleteUser.Guid, "")
+	assert.Equal(t, userRepo.DeleteUserGuid, "")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 	assert.Contains(t, ui.Outputs[2], "does not exist")
@@ -127,9 +127,9 @@ func callDeleteUser(t *testing.T, args []string, userRepo *testapi.FakeUserRepos
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto,
@@ -158,9 +158,9 @@ func deleteWithConfirmation(t *testing.T, confirmation string) (ui *testterm.Fak
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-	org_Auto2 := cf.Organization{}
+	org_Auto2 := cf.OrganizationFields{}
 	org_Auto2.Name = "my-org"
-	space_Auto2 := cf.Space{}
+	space_Auto2 := cf.SpaceFields{}
 	space_Auto2.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto2,

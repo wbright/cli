@@ -79,9 +79,9 @@ func callListServiceBrokers(t *testing.T, args []string, serviceBrokerRepo *test
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

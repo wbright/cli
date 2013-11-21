@@ -48,8 +48,10 @@ func TestSpaceUsersRequirements(t *testing.T) {
 func TestSpaceUsers(t *testing.T) {
 	org := cf.Organization{}
 	org.Name = "Org1"
+	org.Guid = "org1-guid"
 	space := cf.Space{}
 	space.Name = "Space1"
+	space.Guid = "space1-guid"
 
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Organization: org}
 	spaceRepo := &testapi.FakeSpaceRepository{FindByNameInOrgSpace: space}
@@ -68,14 +70,14 @@ func TestSpaceUsers(t *testing.T) {
 	ui := callSpaceUsers(t, []string{"my-org", "my-space"}, reqFactory, spaceRepo, userRepo)
 
 	assert.Equal(t, spaceRepo.FindByNameInOrgName, "my-space")
-	assert.Equal(t, spaceRepo.FindByNameInOrgOrg, org)
+	assert.Equal(t, spaceRepo.FindByNameInOrgOrgGuid, "org1-guid")
 
 	assert.Contains(t, ui.Outputs[0], "Getting users in org")
 	assert.Contains(t, ui.Outputs[0], "Org1")
 	assert.Contains(t, ui.Outputs[0], "Space1")
 	assert.Contains(t, ui.Outputs[0], "my-user")
 
-	assert.Equal(t, userRepo.FindAllInSpaceByRoleSpace, space)
+	assert.Equal(t, userRepo.FindAllInSpaceByRoleSpaceGuid, "space1-guid")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 
@@ -94,9 +96,9 @@ func callSpaceUsers(t *testing.T, args []string, reqFactory *testreq.FakeReqFact
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto2 := cf.Organization{}
+	org_Auto2 := cf.OrganizationFields{}
 	org_Auto2.Name = "my-org"
-	space_Auto2 := cf.Space{}
+	space_Auto2 := cf.SpaceFields{}
 	space_Auto2.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto2,

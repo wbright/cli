@@ -138,30 +138,41 @@ func TestDisplayingNotStagedAppSummary(t *testing.T) {
 func testDisplayingAppSummaryWithErrorCode(t *testing.T, errorCode string) {
 	reqApp := cf.Application{}
 	reqApp.Name = "my-app"
+	reqApp.Name = "my-app-guid"
 
-	domain_Auto3 := cf.Domain{}
+	domain_Auto3 := cf.DomainFields{}
 	domain_Auto3.Name = "example.com"
-	domain_Auto4 := cf.Domain{}
+	domain_Auto4 := cf.DomainFields{}
 	domain_Auto4.Name = "example.com"
-	routes := []cf.Route{
-		{Host: "my-app", Domain: domain_Auto3},
-		{Host: "foo", Domain: domain_Auto4},
+
+	route1 := cf.RouteSummary{}
+	route1.Host = "my-app"
+	route1.Domain = domain_Auto3
+
+	route2 := cf.RouteSummary{}
+	route2.Host = "foo"
+	route2.Domain = domain_Auto4
+
+	routes := []cf.RouteSummary{
+		route1,
+		route2,
 	}
 
-	app := cf.Application{}
+	app := cf.ApplicationFields{}
 	app.State = "stopped"
-	app.Instances = 2
+	app.InstanceCount = 2
 	app.RunningInstances = 0
 	app.Memory = 256
-	app.Routes = routes
+
 	appSummary := cf.AppSummary{}
-	appSummary.App = app
+	appSummary.ApplicationFields = app
+	appSummary.RouteSummary = routes
 
 	appSummaryRepo := &testapi.FakeAppSummaryRepo{GetSummarySummary: appSummary, GetSummaryErrorCode: errorCode}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, TargetedSpaceSuccess: true, Application: reqApp}
 	ui := callApp(t, []string{"my-app"}, reqFactory, appSummaryRepo)
 
-	assert.Equal(t, appSummaryRepo.GetSummaryApp.Name, "my-app")
+	assert.Equal(t, appSummaryRepo.GetSummaryAppGuid, "my-app-guid")
 	assert.Equal(t, len(ui.Outputs), 6)
 
 	assert.Contains(t, ui.Outputs[0], "Showing health and status")
@@ -191,9 +202,9 @@ func callApp(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory, ap
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

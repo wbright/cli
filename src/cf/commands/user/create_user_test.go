@@ -52,7 +52,7 @@ func TestCreateUser(t *testing.T) {
 	assert.Contains(t, fakeUI.Outputs[0], "Creating user")
 	assert.Contains(t, fakeUI.Outputs[0], "my-user")
 	assert.Contains(t, fakeUI.Outputs[0], "current-user")
-	assert.Equal(t, defaultUserRepo.CreateUserUser.Username, "my-user")
+	assert.Equal(t, defaultUserRepo.CreateUserUsername, "my-user")
 	assert.Contains(t, fakeUI.Outputs[1], "OK")
 	assert.Contains(t, fakeUI.Outputs[2], "TIP")
 }
@@ -77,9 +77,9 @@ func callCreateUser(t *testing.T, args []string, reqFactory *testreq.FakeReqFact
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

@@ -45,7 +45,7 @@ func TestStopApplication(t *testing.T) {
 	assert.Contains(t, ui.Outputs[1], "OK")
 
 	assert.Equal(t, reqFactory.ApplicationName, "my-app")
-	assert.Equal(t, appRepo.StopAppToStop.Guid, "my-app-guid")
+	assert.Equal(t, appRepo.StopAppGuid, "my-app-guid")
 }
 
 func TestStopApplicationWhenStopFails(t *testing.T) {
@@ -60,7 +60,7 @@ func TestStopApplicationWhenStopFails(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-app")
 	assert.Contains(t, ui.Outputs[1], "FAILED")
 	assert.Contains(t, ui.Outputs[2], "Error stopping application")
-	assert.Equal(t, appRepo.StopAppToStop.Guid, "my-app-guid")
+	assert.Equal(t, appRepo.StopAppGuid, "my-app-guid")
 }
 
 func TestStopApplicationIsAlreadyStopped(t *testing.T) {
@@ -75,7 +75,7 @@ func TestStopApplicationIsAlreadyStopped(t *testing.T) {
 
 	assert.Contains(t, ui.Outputs[0], "my-app")
 	assert.Contains(t, ui.Outputs[0], "is already stopped")
-	assert.Equal(t, appRepo.StopAppToStop.Guid, "")
+	assert.Equal(t, appRepo.StopAppGuid, "")
 }
 
 func TestApplicationStopReturnsUpdatedApp(t *testing.T) {
@@ -119,9 +119,9 @@ func callStop(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory, a
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

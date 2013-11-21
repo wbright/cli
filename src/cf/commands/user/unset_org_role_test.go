@@ -71,8 +71,8 @@ func TestUnsetOrgRole(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "current-user")
 
 	assert.Equal(t, userRepo.UnsetOrgRoleRole, "my-role")
-	assert.Equal(t, userRepo.UnsetOrgRoleUser, user)
-	assert.Equal(t, userRepo.UnsetOrgRoleOrganization, org)
+	assert.Equal(t, userRepo.UnsetOrgRoleUserGuid, "some-user-guid")
+	assert.Equal(t, userRepo.UnsetOrgRoleOrganizationGuid, "some-org-guid")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
@@ -85,9 +85,9 @@ func callUnsetOrgRole(t *testing.T, args []string, userRepo *testapi.FakeUserRep
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-	org_Auto2 := cf.Organization{}
+	org_Auto2 := cf.OrganizationFields{}
 	org_Auto2.Name = "my-org"
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

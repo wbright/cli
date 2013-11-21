@@ -38,7 +38,7 @@ func TestDeleteConfirmingWithY(t *testing.T) {
 	ui, _, repo := deleteServiceBroker(t, "y", []string{"service-broker-to-delete"})
 
 	assert.Equal(t, repo.FindByNameName, "service-broker-to-delete")
-	assert.Equal(t, repo.DeletedServiceBroker.Name, "service-broker-to-delete")
+	assert.Equal(t, repo.DeletedServiceBrokerGuid, "service-broker-to-delete-guid")
 	assert.Equal(t, len(ui.Outputs), 2)
 	assert.Contains(t, ui.Prompts[0], "Really delete")
 	assert.Contains(t, ui.Outputs[0], "service-broker-to-delete")
@@ -52,7 +52,7 @@ func TestDeleteConfirmingWithYes(t *testing.T) {
 	ui, _, repo := deleteServiceBroker(t, "Yes", []string{"service-broker-to-delete"})
 
 	assert.Equal(t, repo.FindByNameName, "service-broker-to-delete")
-	assert.Equal(t, repo.DeletedServiceBroker.Name, "service-broker-to-delete")
+	assert.Equal(t, repo.DeletedServiceBrokerGuid, "service-broker-to-delete-guid")
 	assert.Equal(t, len(ui.Outputs), 2)
 	assert.Contains(t, ui.Prompts[0], "Really delete")
 	assert.Contains(t, ui.Outputs[0], "service-broker-to-delete")
@@ -72,7 +72,7 @@ func TestDeleteWithForceOption(t *testing.T) {
 	ui := callDeleteServiceBroker(t, []string{"-f", "service-broker-to-delete"}, reqFactory, repo)
 
 	assert.Equal(t, repo.FindByNameName, "service-broker-to-delete")
-	assert.Equal(t, repo.DeletedServiceBroker, serviceBroker)
+	assert.Equal(t, repo.DeletedServiceBrokerGuid, "service-broker-to-delete-guid")
 	assert.Equal(t, len(ui.Prompts), 0)
 	assert.Equal(t, len(ui.Outputs), 2)
 	assert.Contains(t, ui.Outputs[0], "Deleting service broker")
@@ -87,7 +87,7 @@ func TestDeleteAppThatDoesNotExist(t *testing.T) {
 	ui := callDeleteServiceBroker(t, []string{"-f", "service-broker-to-delete"}, reqFactory, repo)
 
 	assert.Equal(t, repo.FindByNameName, "service-broker-to-delete")
-	assert.Equal(t, repo.DeletedServiceBroker.Name, "")
+	assert.Equal(t, repo.DeletedServiceBrokerGuid, "")
 	assert.Contains(t, ui.Outputs[0], "Deleting")
 	assert.Contains(t, ui.Outputs[0], "service-broker-to-delete")
 	assert.Contains(t, ui.Outputs[1], "OK")
@@ -103,9 +103,9 @@ func callDeleteServiceBroker(t *testing.T, args []string, reqFactory *testreq.Fa
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto,
@@ -133,9 +133,9 @@ func deleteServiceBroker(t *testing.T, confirmation string, args []string) (ui *
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto2 := cf.Space{}
+	space_Auto2 := cf.SpaceFields{}
 	space_Auto2.Name = "my-space"
-	org_Auto2 := cf.Organization{}
+	org_Auto2 := cf.OrganizationFields{}
 	org_Auto2.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto2,
