@@ -6,6 +6,10 @@ import (
 )
 
 type FakeUserProvidedServiceInstanceRepo struct {
+	CreateName string
+	CreateDrainUrl string
+	CreateParams map[string]string
+
 	UpdateServiceInstance cf.ServiceInstanceFields
 }
 

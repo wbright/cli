@@ -38,8 +38,8 @@ func TestBindCommand(t *testing.T) {
 	assert.Contains(t, fakeUI.Outputs[0], "my-space")
 	assert.Contains(t, fakeUI.Outputs[0], "my-user")
 
-	assert.Equal(t, serviceBindingRepo.CreateServiceInstance, serviceInstance)
-	assert.Equal(t, serviceBindingRepo.CreateApplication, app)
+	assert.Equal(t, serviceBindingRepo.CreateServiceInstanceGuid, "my-service-guid")
+	assert.Equal(t, serviceBindingRepo.CreateApplicationGuid, "my-app-guid")
 
 	assert.Contains(t, fakeUI.Outputs[1], "OK")
 	assert.Contains(t, fakeUI.Outputs[2], "TIP")
@@ -90,9 +90,9 @@ func callBindService(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

@@ -61,7 +61,7 @@ func TestSetSpace(t *testing.T) {
 	repo := NewConfigurationDiskRepository()
 	repo.loadDefaultConfig(t)
 	defer repo.restoreConfig(t)
-	space := cf.Space{}
+	space := cf.SpaceFields{}
 	space.Name = "my-space"
 	space.Guid = "my-space-guid"
 	err := repo.SetSpace(space)
@@ -75,9 +75,9 @@ func TestSetSpace(t *testing.T) {
 }
 
 func TestClearTokens(t *testing.T) {
-	org := cf.Organization{}
+	org := cf.OrganizationFields{}
 	org.Name = "my-org"
-	space := cf.Space{}
+	space := cf.SpaceFields{}
 	space.Name = "my-space"
 
 	repo := NewConfigurationDiskRepository()
@@ -113,10 +113,10 @@ func TestClearSession(t *testing.T) {
 	config.Target = "http://api.example.com"
 	config.RefreshToken = "some old refresh token"
 	config.AccessToken = "some old access token"
-	org_Auto3 = cf.Organization{}
-	org_Auto3.Name = "my-org"
-	space_Auto5 = cf.Space{}
-	space_Auto5.Name = "my-space"
+	org_Auto := cf.OrganizationFields{}
+	org_Auto.Name = "my-org"
+	space_Auto := cf.SpaceFields{}
+	space_Auto.Name = "my-space"
 	repo.Save()
 
 	err := repo.ClearSession()

@@ -38,18 +38,20 @@ func TestShowServiceFailsWithUsage(t *testing.T) {
 }
 
 func TestShowServiceOutput(t *testing.T) {
-	offering_Auto := cf.ServiceOffering{}
+	offering_Auto := cf.ServiceOfferingFields{}
 	offering_Auto.Label = "mysql"
 	offering_Auto.DocumentationUrl = "http://documentation.url"
 	offering_Auto.Description = "the-description"
-	plan_Auto := cf.ServicePlan{}
+
+	plan_Auto := cf.ServicePlanFields{}
 	plan_Auto.Guid = "plan-guid"
 	plan_Auto.Name = "plan-name"
-	plan_Auto.ServiceOffering = offering_Auto
+
 	serviceInstance_Auto := cf.ServiceInstance{}
 	serviceInstance_Auto.Name = "service1"
 	serviceInstance_Auto.Guid = "service1-guid"
 	serviceInstance_Auto.ServicePlan = plan_Auto
+	serviceInstance_Auto.ServiceOffering = offering_Auto
 	reqFactory := &testreq.FakeReqFactory{
 		LoginSuccess:         true,
 		TargetedSpaceSuccess: true,

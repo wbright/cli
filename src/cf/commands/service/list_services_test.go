@@ -13,26 +13,33 @@ import (
 )
 
 func TestServices(t *testing.T) {
-	plan_Auto := cf.ServicePlan{}
+	plan_Auto := cf.ServicePlanFields{}
 	plan_Auto.Guid = "spark-guid"
 	plan_Auto.Name = "spark"
-	offering_Auto = cf.ServiceOffering{}
+
+	offering_Auto := cf.ServiceOffering{}
 	offering_Auto.Label = "cleardb"
-	plan_Auto2 := cf.ServicePlan{}
-	plan_Auto2.Guid = "spark-guid"
-	plan_Auto2.Name = "spark"
-	offering_Auto2 = cf.ServiceOffering{}
-	offering_Auto2.Label = "cleardb"
+
 	serviceInstance_Auto := cf.ServiceInstance{}
 	serviceInstance_Auto.Name = "my-service-1"
 	serviceInstance_Auto.ServicePlan = plan_Auto
 	serviceInstance_Auto.ApplicationNames = []string{"cli1", "cli2"}
+
+	plan_Auto2 := cf.ServicePlanFields{}
+	plan_Auto2.Guid = "spark-guid-2"
+	plan_Auto2.Name = "spark-2"
+
+	offering_Auto2 := cf.ServiceOffering{}
+	offering_Auto2.Label = "cleardb"
+
 	serviceInstance_Auto2 := cf.ServiceInstance{}
 	serviceInstance_Auto2.Name = "my-service-2"
 	serviceInstance_Auto2.ServicePlan = plan_Auto2
 	serviceInstance_Auto2.ApplicationNames = []string{"cli1"}
+
 	serviceInstance_Auto3 := cf.ServiceInstance{}
 	serviceInstance_Auto3.Name = "my-service-provided-by-user"
+
 	serviceInstances := []cf.ServiceInstance{serviceInstance_Auto, serviceInstance_Auto2, serviceInstance_Auto3}
 	serviceSummaryRepo := &testapi.FakeServiceSummaryRepo{
 		GetSummariesInCurrentSpaceInstances: serviceInstances,
@@ -43,9 +50,9 @@ func TestServices(t *testing.T) {
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto,
@@ -69,7 +76,7 @@ func TestServices(t *testing.T) {
 
 	assert.Contains(t, ui.Outputs[5], "my-service-2")
 	assert.Contains(t, ui.Outputs[5], "cleardb")
-	assert.Contains(t, ui.Outputs[5], "spark")
+	assert.Contains(t, ui.Outputs[5], "spark-2")
 	assert.Contains(t, ui.Outputs[5], "cli1")
 
 	assert.Contains(t, ui.Outputs[6], "my-service-provided-by-user")

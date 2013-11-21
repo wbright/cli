@@ -42,7 +42,7 @@ func TestRouteMapperWhenBinding(t *testing.T) {
 	route := cf.Route{}
 	route.Guid = "my-route-guid"
 	route.Host = "foo"
-	domain_Auto = cf.Domain{}
+	domain_Auto := cf.Domain{}
 	domain_Auto.Guid = "my-domain-guid"
 	domain_Auto.Name = "example.com"
 	app := cf.Application{}
@@ -62,8 +62,8 @@ func TestRouteMapperWhenBinding(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-space")
 	assert.Contains(t, ui.Outputs[0], "my-user")
 
-	assert.Equal(t, route, routeRepo.BoundRoute)
-	assert.Equal(t, app, routeRepo.BoundApp)
+	assert.Equal(t, routeRepo.BoundRouteGuid, "my-route-guid")
+	assert.Equal(t, routeRepo.BoundAppGuid, "my-app-guid")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
@@ -72,9 +72,9 @@ func TestRouteMapperWhenUnbinding(t *testing.T) {
 	route := cf.Route{}
 	route.Guid = "my-route-guid"
 	route.Host = "foo"
-	domain_Auto2 = cf.Domain{}
-	domain_Auto2.Guid = "my-domain-guid"
-	domain_Auto2.Name = "example.com"
+	domain_Auto := cf.Domain{}
+	domain_Auto.Guid = "my-domain-guid"
+	domain_Auto.Name = "example.com"
 	app := cf.Application{}
 	app.Guid = "my-app-guid"
 	app.Name = "my-app"
@@ -92,14 +92,14 @@ func TestRouteMapperWhenUnbinding(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-space")
 	assert.Contains(t, ui.Outputs[0], "my-user")
 
-	assert.Equal(t, route, routeRepo.UnboundRoute)
-	assert.Equal(t, app, routeRepo.UnboundApp)
+	assert.Equal(t, route, routeRepo.UnboundRouteGuid, "my-route-guid")
+	assert.Equal(t, app, routeRepo.UnboundAppGuid, "my-app-guid")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
 
 func TestRouteMapperWhenRouteNotReserved(t *testing.T) {
-	domain := cf.Domain{}
+	domain := cf.DomainFields{}
 	domain.Name = "my-domain.com"
 	route := cf.Route{}
 	route.Guid = "my-app-guid"
@@ -131,9 +131,9 @@ func callRouteMapper(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

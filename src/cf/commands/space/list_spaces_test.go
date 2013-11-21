@@ -46,7 +46,7 @@ func TestListingSpaces(t *testing.T) {
 	})
 
 	assert.NoError(t, err)
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Organization: org_Auto,
@@ -72,7 +72,7 @@ func TestListingSpacesWhenNoSpaces(t *testing.T) {
 	})
 
 	assert.NoError(t, err)
-	org_Auto2 := cf.Organization{}
+	org_Auto2 := cf.OrganizationFields{}
 	org_Auto2.Name = "my-org"
 	config := &configuration.Configuration{
 		Organization: org_Auto2,

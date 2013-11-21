@@ -46,7 +46,7 @@ func TestRenameSpaceRun(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-new-space")
 	assert.Contains(t, ui.Outputs[0], "my-org")
 	assert.Contains(t, ui.Outputs[0], "my-user")
-	assert.Equal(t, spaceRepo.RenameSpace, space)
+	assert.Equal(t, spaceRepo.RenameSpaceGuid, "my-space-guid")
 	assert.Equal(t, spaceRepo.RenameNewName, "my-new-space")
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
@@ -59,9 +59,9 @@ func callRenameSpace(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto2 := cf.Space{}
+	space_Auto2 := cf.SpaceFields{}
 	space_Auto2.Name = "my-space"
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto2,

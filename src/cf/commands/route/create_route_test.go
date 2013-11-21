@@ -47,16 +47,16 @@ func TestCreateRouteFailsWithUsage(t *testing.T) {
 }
 
 func TestCreateRoute(t *testing.T) {
-	space := cf.Space{}
+	space := cf.SpaceFields{}
 	space.Guid = "my-space-guid"
 	space.Name = "my-space"
-	domain := cf.Domain{}
+	domain := cf.DomainFields{}
 	domain.Guid = "domain-guid"
 	domain.Name = "example.com"
 	reqFactory := &testreq.FakeReqFactory{
 		LoginSuccess: true,
-		Domain:       domain,
-		Space:        space,
+		Domain:       cf.Domain{DomainFields: domain},
+		Space:        cf.Space{SpaceFields: space},
 	}
 	routeRepo := &testapi.FakeRouteRepository{}
 
@@ -68,35 +68,34 @@ func TestCreateRoute(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-space")
 	assert.Contains(t, ui.Outputs[0], "my-user")
 	assert.Contains(t, ui.Outputs[1], "OK")
-	route_Auto := cf.Route{}
-	route_Auto.Host = "host"
-	route_Auto.Domain = domain
-	assert.Equal(t, routeRepo.CreateInSpaceRoute, route_Auto)
-	assert.Equal(t, routeRepo.CreateInSpaceDomain, domain)
-	assert.Equal(t, routeRepo.CreateInSpaceSpace, space)
+
+	assert.Equal(t, routeRepo.CreatedHost, "host")
+	assert.Equal(t, routeRepo.CreatedDomainGuid, "domain-guid")
+	assert.Equal(t, routeRepo.CreateInSpaceSpaceGuid, "my-space-guid")
 
 }
 
 func TestCreateRouteIsIdempotent(t *testing.T) {
-	space := cf.Space{}
+	space := cf.SpaceFields{}
 	space.Guid = "my-space-guid"
 	space.Name = "my-space"
-	domain := cf.Domain{}
+	domain := cf.DomainFields{}
 	domain.Guid = "domain-guid"
 	domain.Name = "example.com"
 	reqFactory := &testreq.FakeReqFactory{
 		LoginSuccess: true,
-		Domain:       domain,
-		Space:        space,
+		Domain:       cf.Domain{DomainFields: domain},
+		Space:        cf.Space{SpaceFields: space},
 	}
-	route_Auto2 := cf.Route{}
-	route_Auto2.Guid = "my-route-guid"
-	route_Auto2.Host = "host"
-	route_Auto2.Domain = domain
-	route_Auto2.Space = space
+
+	route_Auto := cf.Route{}
+	route_Auto.Guid = "my-route-guid"
+	route_Auto.Host = "host"
+	route_Auto.Domain = domain
+	route_Auto.Space = space
 	routeRepo := &testapi.FakeRouteRepository{
 		CreateInSpaceErr:         true,
-		FindByHostAndDomainRoute: route_Auto2,
+		FindByHostAndDomainRoute: route_Auto,
 	}
 
 	ui := callCreateRoute(t, []string{"-n", "host", "my-space", "example.com"}, reqFactory, routeRepo)
@@ -104,30 +103,25 @@ func TestCreateRouteIsIdempotent(t *testing.T) {
 	assert.Contains(t, ui.Outputs[1], "OK")
 	assert.Contains(t, ui.Outputs[2], "host.example.com")
 	assert.Contains(t, ui.Outputs[2], "already exists")
-	route_Auto := cf.Route{}
-	route_Auto.Host = "host"
-	route_Auto.Domain = domain
-	assert.Equal(t, routeRepo.CreateInSpaceRoute, route_Auto)
-	assert.Equal(t, routeRepo.CreateInSpaceDomain, domain)
-	assert.Equal(t, routeRepo.CreateInSpaceSpace, space)
+	assert.Equal(t, routeRepo.CreateInSpaceHost, "host")
+	assert.Equal(t, routeRepo.CreateInSpaceDomainGuid, "domain-guid")
+	assert.Equal(t, routeRepo.CreateInSpaceSpaceGuid, "my-space-guid")
 
 }
 
 func TestRouteCreator(t *testing.T) {
-	space := cf.Space{}
+	space := cf.SpaceFields{}
 	space.Guid = "my-space-guid"
 	space.Name = "my-space"
-	domain := cf.Domain{}
+	domain := cf.DomainFields{}
 	domain.Guid = "domain-guid"
 	domain.Name = "example.com"
-	domain_Auto5 := cf.Domain{}
-	domain_Auto5.Name = "example.com"
-	route_Auto3 := cf.Route{}
-	route_Auto3.Host = "my-host"
-	route_Auto3.Guid = "my-route-guid"
-	route_Auto3.Domain = domain_Auto5
+
+	createdRoute := cf.RouteFields{}
+	createdRoute.Host = "my-host"
+	createdRoute.Guid = "my-route-guid"
 	routeRepo := &testapi.FakeRouteRepository{
-		CreateInSpaceCreatedRoute: route_Auto3,
+		CreateInSpaceCreatedRoute: createdRoute,
 	}
 
 	ui := new(testterm.FakeUI)
@@ -135,7 +129,7 @@ func TestRouteCreator(t *testing.T) {
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Organization: org_Auto,
@@ -143,7 +137,7 @@ func TestRouteCreator(t *testing.T) {
 	}
 
 	cmd := NewCreateRoute(ui, config, routeRepo)
-	route, apiResponse := cmd.CreateRoute("my-host", domain, space)
+	_, apiResponse := cmd.CreateRoute("my-host", domain, space)
 
 	assert.True(t, apiResponse.IsSuccessful())
 	assert.Contains(t, ui.Outputs[0], "Creating route")
@@ -152,10 +146,9 @@ func TestRouteCreator(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-space")
 	assert.Contains(t, ui.Outputs[0], "my-user")
 
-	assert.Equal(t, routeRepo.CreateInSpaceRoute.Host, "my-host")
-	assert.Equal(t, routeRepo.CreateInSpaceDomain, domain)
-	assert.Equal(t, routeRepo.CreateInSpaceSpace, space)
-	assert.Equal(t, routeRepo.CreateInSpaceCreatedRoute, route)
+	assert.Equal(t, routeRepo.CreateInSpaceHost, "my-host")
+	assert.Equal(t, routeRepo.CreateInSpaceDomainGuid, "domain-guid")
+	assert.Equal(t, routeRepo.CreateInSpaceSpaceGuid, "my-space-guid")
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
 
@@ -167,13 +160,13 @@ func callCreateRoute(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto2 := cf.Organization{}
-	org_Auto2.Name = "my-org"
-	space_Auto5 := cf.Space{}
-	space_Auto5.Name = "my-space"
+	org_Auto := cf.OrganizationFields{}
+	org_Auto.Name = "my-org"
+	space_Auto := cf.SpaceFields{}
+	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space_Auto5,
-		Organization: org_Auto2,
+		Space:        space_Auto,
+		Organization: org_Auto,
 		AccessToken:  token,
 	}
 

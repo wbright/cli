@@ -23,7 +23,7 @@ func TestDeleteSpaceConfirmingWithY(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "space-to-delete")
 	assert.Contains(t, ui.Outputs[0], "my-org")
 	assert.Contains(t, ui.Outputs[0], "my-user")
-	assert.Equal(t, spaceRepo.DeletedSpace, spaceRepo.FindByNameSpace)
+	assert.Equal(t, spaceRepo.DeletedSpaceGuid, "space-to-delete-guid")
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
 
@@ -37,7 +37,7 @@ func TestDeleteSpaceConfirmingWithYes(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "space-to-delete")
 	assert.Contains(t, ui.Outputs[0], "my-org")
 	assert.Contains(t, ui.Outputs[0], "my-user")
-	assert.Equal(t, spaceRepo.DeletedSpace, spaceRepo.FindByNameSpace)
+	assert.Equal(t, spaceRepo.DeletedSpaceGuid, "space-to-delete-guid")
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
 
@@ -60,7 +60,7 @@ func TestDeleteSpaceWithForceOption(t *testing.T) {
 	assert.Equal(t, len(ui.Prompts), 0)
 	assert.Contains(t, ui.Outputs[0], "Deleting")
 	assert.Contains(t, ui.Outputs[0], "space-to-delete")
-	assert.Equal(t, spaceRepo.DeletedSpace, spaceRepo.FindByNameSpace)
+	assert.Equal(t, spaceRepo.DeletedSpaceGuid, "space-to-delete-guid")
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
 
@@ -83,11 +83,11 @@ func TestDeleteSpaceWhenSpaceDoesNotExist(t *testing.T) {
 }
 
 func TestDeleteSpaceWhenSpaceIsTargeted(t *testing.T) {
-	space := cf.Space{}
+	space := cf.SpaceFields{}
 	space.Name = "space-to-delete"
 	space.Guid = "space-to-delete-guid"
 	reqFactory := &testreq.FakeReqFactory{}
-	spaceRepo := &testapi.FakeSpaceRepository{FindByNameSpace: space}
+	spaceRepo := &testapi.FakeSpaceRepository{FindByNameSpace: cf.Space{SpaceFields: space}}
 	configRepo := &testconfig.FakeConfigRepository{}
 
 	config, _ := configRepo.Get()
@@ -113,9 +113,9 @@ func TestDeleteSpaceWhenSpaceNotTargeted(t *testing.T) {
 	configRepo := &testconfig.FakeConfigRepository{}
 
 	config, _ := configRepo.Get()
-	space_Auto5 = cf.Space{}
-	space_Auto5.Name = "do-not-delete"
-	space_Auto5.Guid = "do-not-delete-guid"
+	otherSpace := cf.Space{}
+	otherSpace.Name = "do-not-delete"
+	otherSpace.Guid = "do-not-delete-guid"
 	configRepo.Save()
 
 	ui := &testterm.FakeUI{}
@@ -161,9 +161,9 @@ func deleteSpace(t *testing.T, confirmation string, args []string) (ui *testterm
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto8 := cf.Space{}
+	space_Auto8 := cf.SpaceFields{}
 	space_Auto8.Name = "my-space"
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto8,

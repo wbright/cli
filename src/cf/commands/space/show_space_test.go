@@ -29,27 +29,32 @@ func TestShowSpaceRequirements(t *testing.T) {
 }
 
 func TestShowSpaceInfoSuccess(t *testing.T) {
-	org := cf.Organization{}
+	org := cf.OrganizationFields{}
 	org.Name = "org1"
-	app_Auto := cf.Application{}
+
+	app_Auto := cf.ApplicationFields{}
 	app_Auto.Name = "app1"
 	app_Auto.Guid = "app1-guid"
-	apps := []cf.Application{app_Auto}
-	domain_Auto := cf.Domain{}
+	apps := []cf.ApplicationFields{app_Auto}
+
+	domain_Auto := cf.DomainFields{}
 	domain_Auto.Name = "domain1"
 	domain_Auto.Guid = "domain1-guid"
-	domains := []cf.Domain{domain_Auto}
-	serviceInstance_Auto := cf.ServiceInstance{}
+	domains := []cf.DomainFields{domain_Auto}
+
+	serviceInstance_Auto := cf.ServiceInstanceFields{}
 	serviceInstance_Auto.Name = "service1"
 	serviceInstance_Auto.Guid = "service1-guid"
-	services := []cf.ServiceInstance{serviceInstance_Auto}
+	services := []cf.ServiceInstanceFields{serviceInstance_Auto}
+
 	space := cf.Space{}
 	space.Name = "space1"
 	space.Organization = org
 	space.Applications = apps
 	space.Domains = domains
 	space.ServiceInstances = services
-	config := &configuration.Configuration{Space: space}
+
+	config := &configuration.Configuration{Space: space.SpaceFields}
 
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, TargetedSpaceSuccess: true}
 	ui := callShowSpace(t, []string{}, reqFactory, config)
@@ -77,8 +82,8 @@ func callShowSpace(t *testing.T, args []string, reqFactory *testreq.FakeReqFacto
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto2 = cf.Organization{}
-	org_Auto2.Name = "my-org"
+	org_Auto := cf.Organization{}
+	org_Auto.Name = "my-org"
 	config.AccessToken = token
 
 	cmd := NewShowSpace(ui, config)

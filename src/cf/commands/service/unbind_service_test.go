@@ -39,7 +39,7 @@ func TestUnbindCommand(t *testing.T) {
 	assert.Contains(t, fakeUI.Outputs[0], "my-user")
 
 	assert.Equal(t, serviceBindingRepo.DeleteServiceInstance, serviceInstance)
-	assert.Equal(t, serviceBindingRepo.DeleteApplication, app)
+	assert.Equal(t, serviceBindingRepo.DeleteApplicationGuid, "my-app-guid")
 
 	assert.Contains(t, fakeUI.Outputs[1], "OK")
 }
@@ -66,7 +66,7 @@ func TestUnbindCommandWhenBindingIsNonExistent(t *testing.T) {
 	assert.Contains(t, fakeUI.Outputs[0], "my-app")
 
 	assert.Equal(t, serviceBindingRepo.DeleteServiceInstance, serviceInstance)
-	assert.Equal(t, serviceBindingRepo.DeleteApplication, app)
+	assert.Equal(t, serviceBindingRepo.DeleteApplicationGuid, "my-app-guid")
 
 	assert.Contains(t, fakeUI.Outputs[1], "OK")
 	assert.Contains(t, fakeUI.Outputs[2], "my-service")
@@ -96,9 +96,9 @@ func callUnbindService(t *testing.T, args []string, reqFactory *testreq.FakeReqF
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

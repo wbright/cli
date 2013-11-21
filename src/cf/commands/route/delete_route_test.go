@@ -39,11 +39,12 @@ func TestDeleteRouteFailsWithUsage(t *testing.T) {
 }
 
 func TestDeleteRouteWithConfirmation(t *testing.T) {
-	domain := cf.Domain{}
+	domain := cf.DomainFields{}
 	domain.Guid = "domain-guid"
 	domain.Name = "example.com"
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
 	route_Auto := cf.Route{}
+	route_Auto.Guid = "route-guid"
 	route_Auto.Host = "my-host"
 	route_Auto.Domain = domain
 	routeRepo := &testapi.FakeRouteRepository{
@@ -56,24 +57,22 @@ func TestDeleteRouteWithConfirmation(t *testing.T) {
 
 	assert.Contains(t, ui.Outputs[0], "Deleting route")
 	assert.Contains(t, ui.Outputs[0], "my-host.example.com")
-	route_Auto := cf.Route{}
-	route_Auto.Host = "my-host"
-	route_Auto.Domain = domain
-	assert.Equal(t, routeRepo.DeleteRoute, route_Auto)
+	assert.Equal(t, routeRepo.DeleteRouteGuid, "route-guid")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
 
 func TestDeleteRouteWithForce(t *testing.T) {
-	domain := cf.Domain{}
+	domain := cf.DomainFields{}
 	domain.Guid = "domain-guid"
 	domain.Name = "example.com"
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
-	route_Auto2 := cf.Route{}
-	route_Auto2.Host = "my-host"
-	route_Auto2.Domain = domain
+	route_Auto := cf.Route{}
+	route_Auto.Guid = "route-guid"
+	route_Auto.Host = "my-host"
+	route_Auto.Domain = domain
 	routeRepo := &testapi.FakeRouteRepository{
-		FindByHostAndDomainRoute: route_Auto2,
+		FindByHostAndDomainRoute: route_Auto,
 	}
 
 	ui := callDeleteRoute(t, "", []string{"-f", "-n", "my-host", "example.com"}, reqFactory, routeRepo)
@@ -82,10 +81,7 @@ func TestDeleteRouteWithForce(t *testing.T) {
 
 	assert.Contains(t, ui.Outputs[0], "Deleting")
 	assert.Contains(t, ui.Outputs[0], "my-host.example.com")
-	route_Auto2 := cf.Route{}
-	route_Auto2.Host = "my-host"
-	route_Auto2.Domain = domain
-	assert.Equal(t, routeRepo.DeleteRoute, route_Auto2)
+	assert.Equal(t, routeRepo.DeleteRouteGuid, "route-guid")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
@@ -116,9 +112,9 @@ func callDeleteRoute(t *testing.T, confirmation string, args []string, reqFactor
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

@@ -100,9 +100,9 @@ func callDeleteService(t *testing.T, confirmation string, args []string, reqFact
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto,
