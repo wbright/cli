@@ -107,7 +107,7 @@ func coloredAppState(app cf.ApplicationFields) string {
 		}
 	}
 
-	if app.RunningInstances < app.Instances {
+	if app.RunningInstances < app.InstanceCount {
 		return terminal.WarningColor(appState)
 	}
 
@@ -115,7 +115,7 @@ func coloredAppState(app cf.ApplicationFields) string {
 }
 
 func coloredAppInstaces(app cf.ApplicationFields) string {
-	healthString := fmt.Sprintf("%d/%d", app.RunningInstances, app.Instances)
+	healthString := fmt.Sprintf("%d/%d", app.RunningInstances, app.InstanceCount)
 
 	if app.RunningInstances == 0 {
 		if strings.ToLower(app.State) == "stopped" {
@@ -125,7 +125,7 @@ func coloredAppInstaces(app cf.ApplicationFields) string {
 		}
 	}
 
-	if app.RunningInstances < app.Instances {
+	if app.RunningInstances < app.InstanceCount {
 		return terminal.WarningColor(healthString)
 	}
 

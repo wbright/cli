@@ -45,26 +45,33 @@ func TestAppFailsWithUsage(t *testing.T) {
 func TestDisplayingAppSummary(t *testing.T) {
 	reqApp := cf.Application{}
 	reqApp.Name = "my-app"
-	domain_Auto := cf.Domain{}
+
+	route1 := cf.RouteSummary{}
+	route1.Host = "my-app"
+
+	domain_Auto := cf.DomainFields{}
 	domain_Auto.Name = "example.com"
-	domain_Auto2 := cf.Domain{}
+	route1.Domain = domain_Auto
+
+	route2 := cf.RouteSummary{}
+	route2.Host = "foo"
+	domain_Auto2 := cf.DomainFields{}
 	domain_Auto2.Name = "example.com"
-	routes := []cf.Route{
-		{Host: "my-app", Domain: domain_Auto},
-		{Host: "foo", Domain: domain_Auto2},
-	}
+	route2.Domain = domain_Auto2
+
 	app := cf.Application{}
 	app.State = "started"
-	app.Instances = 2
+	app.InstanceCount = 2
 	app.RunningInstances = 2
 	app.Memory = 256
-	app.Routes = routes
+	app.Routes = []cf.RouteSummary{route1, route2}
 
 	time1, err := time.Parse("Mon Jan 2 15:04:05 -0700 MST 2006", "Mon Jan 2 15:04:05 -0700 MST 2012")
 	assert.NoError(t, err)
 
 	time2, err := time.Parse("Mon Jan 2 15:04:05 -0700 MST 2006", "Mon Apr 1 15:04:05 -0700 MST 2012")
 	assert.NoError(t, err)
+
 	appInstance_Auto := cf.ApplicationInstance{}
 	appInstance_Auto.State = cf.InstanceRunning
 	appInstance_Auto.Since = time1
@@ -73,19 +80,22 @@ func TestDisplayingAppSummary(t *testing.T) {
 	appInstance_Auto.DiskUsage = 32 * formatters.MEGABYTE
 	appInstance_Auto.MemQuota = 64 * formatters.MEGABYTE
 	appInstance_Auto.MemUsage = 13 * formatters.BYTE
+
 	appInstance_Auto2 := cf.ApplicationInstance{}
 	appInstance_Auto2.State = cf.InstanceDown
 	appInstance_Auto2.Since = time2
+
 	instances := []cf.ApplicationInstance{appInstance_Auto, appInstance_Auto2}
+
 	appSummary := cf.AppSummary{}
-	appSummary.App = app
+	appSummary.ApplicationFields = app.ApplicationFields
 	appSummary.Instances = instances
 
 	appSummaryRepo := &testapi.FakeAppSummaryRepo{GetSummarySummary: appSummary}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, TargetedSpaceSuccess: true, Application: reqApp}
 	ui := callApp(t, []string{"my-app"}, reqFactory, appSummaryRepo)
 
-	assert.Equal(t, appSummaryRepo.GetSummaryApp.Name, "my-app")
+	assert.Equal(t, appSummaryRepo.GetSummaryAppGuid, "my-app-guid")
 
 	assert.Contains(t, ui.Outputs[0], "Showing health and status")
 	assert.Contains(t, ui.Outputs[0], "my-app")
@@ -128,6 +138,7 @@ func TestDisplayingNotStagedAppSummary(t *testing.T) {
 func testDisplayingAppSummaryWithErrorCode(t *testing.T, errorCode string) {
 	reqApp := cf.Application{}
 	reqApp.Name = "my-app"
+
 	domain_Auto3 := cf.Domain{}
 	domain_Auto3.Name = "example.com"
 	domain_Auto4 := cf.Domain{}
@@ -136,6 +147,7 @@ func testDisplayingAppSummaryWithErrorCode(t *testing.T, errorCode string) {
 		{Host: "my-app", Domain: domain_Auto3},
 		{Host: "foo", Domain: domain_Auto4},
 	}
+
 	app := cf.Application{}
 	app.State = "stopped"
 	app.Instances = 2

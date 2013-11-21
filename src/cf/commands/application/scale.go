@@ -65,7 +65,7 @@ func (cmd *Scale) Run(c *cli.Context) {
 		return
 	}
 	changedAppFields.Memory = memory
-	changedAppFields.Instances = c.Int("i")
+	changedAppFields.InstanceCount = c.Int("i")
 
 	apiResponse := cmd.appRepo.Scale(changedAppFields)
 	if apiResponse.IsNotSuccessful() {

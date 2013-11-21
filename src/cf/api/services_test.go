@@ -103,7 +103,7 @@ func TestGetServiceOfferingsWhenTargetingASpace(t *testing.T) {
 		Path:     "/v2/spaces/my-space-guid/services?inline-relations-depth=1",
 		Response: multipleOfferingsResponse,
 	})
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
@@ -122,9 +122,8 @@ func TestCreateServiceInstance(t *testing.T) {
 
 	ts, handler, repo := createServiceRepo(t, []testnet.TestRequest{req})
 	defer ts.Close()
-	plan_Auto := cf.ServicePlan{}
-	plan_Auto.Guid = "plan-guid"
-	identicalAlreadyExists, apiResponse := repo.CreateServiceInstance("instance-name", plan_Auto)
+
+	identicalAlreadyExists, apiResponse := repo.CreateServiceInstance("instance-name", "plan-guid")
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
 	assert.Equal(t, identicalAlreadyExists, false)
@@ -143,10 +142,8 @@ func TestCreateServiceInstanceWhenIdenticalServiceAlreadyExists(t *testing.T) {
 
 	ts, handler, repo := createServiceRepo(t, []testnet.TestRequest{errorReq, findServiceInstanceReq})
 	defer ts.Close()
-	servicePlan := cf.ServicePlan{}
-	servicePlan.Guid = "plan-guid"
-	servicePlan.Name = "plan-name"
-	identicalAlreadyExists, apiResponse := repo.CreateServiceInstance("my-service", servicePlan)
+
+	identicalAlreadyExists, apiResponse := repo.CreateServiceInstance("my-service", "plan-guid")
 
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
@@ -166,10 +163,8 @@ func TestCreateServiceInstanceWhenDifferentServiceAlreadyExists(t *testing.T) {
 
 	ts, handler, repo := createServiceRepo(t, []testnet.TestRequest{errorReq, findServiceInstanceReq})
 	defer ts.Close()
-	servicePlan := cf.ServicePlan{}
-	servicePlan.Guid = "different-plan-guid"
-	servicePlan.Name = "plan-name"
-	identicalAlreadyExists, apiResponse := repo.CreateServiceInstance("my-service", servicePlan)
+
+	identicalAlreadyExists, apiResponse := repo.CreateServiceInstance("my-service", "different-plan-guid")
 
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsNotSuccessful())
@@ -238,9 +233,9 @@ func TestFindInstanceByName(t *testing.T) {
 	assert.False(t, apiResponse.IsNotSuccessful())
 	assert.Equal(t, instance.Name, "my-service")
 	assert.Equal(t, instance.Guid, "my-service-instance-guid")
-	assert.Equal(t, instance.ServiceOffering().Label, "mysql")
-	assert.Equal(t, instance.ServiceOffering().DocumentationUrl, "http://info.example.com")
-	assert.Equal(t, instance.ServiceOffering().Description, "MySQL database")
+	assert.Equal(t, instance.ServiceOffering.Label, "mysql")
+	assert.Equal(t, instance.ServiceOffering.DocumentationUrl, "http://info.example.com")
+	assert.Equal(t, instance.ServiceOffering.Description, "MySQL database")
 	assert.Equal(t, instance.ServicePlan.Name, "plan-name")
 	assert.Equal(t, len(instance.ServiceBindings), 2)
 
@@ -284,16 +279,19 @@ func TestDeleteServiceWithoutServiceBindings(t *testing.T) {
 
 func TestDeleteServiceWithServiceBindings(t *testing.T) {
 	_, _, repo := createServiceRepo(t, []testnet.TestRequest{})
+
+	serviceInstance := cf.ServiceInstance{}
+	serviceInstance.Guid = "my-service-instance-guid"
+
 	binding_Auto := cf.ServiceBinding{}
 	binding_Auto.Url = "/v2/service_bindings/service-binding-1-guid"
 	binding_Auto.AppGuid = "app-1-guid"
+
 	binding_Auto2 := cf.ServiceBinding{}
 	binding_Auto2.Url = "/v2/service_bindings/service-binding-2-guid"
 	binding_Auto2.AppGuid = "app-2-guid"
-	serviceBindings := []cf.ServiceBinding{binding_Auto, binding_Auto2}
-	serviceInstance := cf.ServiceInstance{}
-	serviceInstance.Guid = "my-service-instance-guid"
-	serviceInstance.ServiceBindings = serviceBindings
+
+	serviceInstance.ServiceBindings = []cf.ServiceBinding{binding_Auto, binding_Auto2}
 
 	apiResponse := repo.DeleteService(serviceInstance)
 	assert.True(t, apiResponse.IsNotSuccessful())
@@ -302,11 +300,12 @@ func TestDeleteServiceWithServiceBindings(t *testing.T) {
 
 func TestRenameService(t *testing.T) {
 	path := "/v2/service_instances/my-service-instance-guid"
-	plan_Auto4 := cf.ServicePlan{}
-	plan_Auto4.Guid = "some-plan-guid"
 	serviceInstance := cf.ServiceInstance{}
 	serviceInstance.Guid = "my-service-instance-guid"
-	serviceInstance.ServicePlan = plan_Auto4
+
+	plan_Auto := cf.ServicePlanFields{}
+	plan_Auto.Guid = "some-plan-guid"
+	serviceInstance.ServicePlan = plan_Auto
 
 	testRenameService(t, path, serviceInstance)
 }
@@ -335,7 +334,7 @@ func testRenameService(t *testing.T, endpointPath string, serviceInstance cf.Ser
 }
 
 func createServiceRepo(t *testing.T, reqs []testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo ServiceRepository) {
-	space_Auto2 := cf.Space{}
+	space_Auto2 := cf.SpaceFields{}
 	space_Auto2.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",

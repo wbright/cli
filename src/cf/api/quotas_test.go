@@ -49,11 +49,8 @@ func TestUpdateQuota(t *testing.T) {
 
 	ts, handler, repo := createQuotaRepo(t, req)
 	defer ts.Close()
-	quota := cf.Quota{}
-	quota.Guid = "my-quota-guid"
-	org := cf.Organization{}
-	org.Guid = "my-org-guid"
-	apiResponse := repo.Update(org, quota)
+
+	apiResponse := repo.Update("my-org-guid", "my-quota-guid")
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
 }

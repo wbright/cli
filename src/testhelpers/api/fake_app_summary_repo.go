@@ -7,14 +7,14 @@ import (
 )
 
 type FakeAppSummaryRepo struct{
-	GetSummariesInCurrentSpaceApps []cf.Application
+	GetSummariesInCurrentSpaceApps []cf.AppSummary
 
 	GetSummaryErrorCode string
 	GetSummaryAppGuid string
 	GetSummarySummary cf.AppSummary
 }
 
-func (repo *FakeAppSummaryRepo)GetSummariesInCurrentSpace() (apps []cf.Application, apiResponse net.ApiResponse) {
+func (repo *FakeAppSummaryRepo)GetSummariesInCurrentSpace() (apps []cf.AppSummary, apiResponse net.ApiResponse) {
 	apps = repo.GetSummariesInCurrentSpaceApps
 	return
 }

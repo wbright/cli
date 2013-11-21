@@ -22,15 +22,12 @@ func TestCreateUserProvidedServiceInstance(t *testing.T) {
 
 	ts, handler, repo := createUserProvidedServiceInstanceRepo(t, req)
 	defer ts.Close()
-	serviceInstance := cf.ServiceInstance{}
-	serviceInstance.Name = "my-custom-service"
-	serviceInstance.Params = map[string]string{
+
+	apiResponse := repo.Create("my-custom-service", "", map[string]string{
 		"host":     "example.com",
 		"user":     "me",
 		"password": "secret",
-	}
-
-	apiResponse := repo.Create(serviceInstance)
+	})
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
 }
@@ -45,16 +42,12 @@ func TestCreateUserProvidedServiceInstanceWithSyslogDrain(t *testing.T) {
 
 	ts, handler, repo := createUserProvidedServiceInstanceRepo(t, req)
 	defer ts.Close()
-	serviceInstance := cf.ServiceInstance{}
-	serviceInstance.Name = "my-custom-service"
-	serviceInstance.Params = map[string]string{
+
+	apiResponse := repo.Create("my-custom-service", "syslog://example.com", map[string]string{
 		"host":     "example.com",
 		"user":     "me",
 		"password": "secret",
-	}
-	serviceInstance.SysLogDrainUrl = "syslog://example.com"
-
-	apiResponse := repo.Create(serviceInstance)
+	})
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
 }
@@ -75,11 +68,12 @@ func TestUpdateUserProvidedServiceInstance(t *testing.T) {
 		"user":     "me",
 		"password": "secret",
 	}
-	serviceInstance_Auto5 := cf.ServiceInstance{}
-	serviceInstance_Auto5.Guid = "my-instance-guid"
-	serviceInstance_Auto5.Params = params
-	serviceInstance_Auto5.SysLogDrainUrl = "syslog://example.com"
-	apiResponse := repo.Update(serviceInstance_Auto5)
+	serviceInstance_Auto := cf.ServiceInstanceFields{}
+	serviceInstance_Auto.Guid = "my-instance-guid"
+	serviceInstance_Auto.Params = params
+	serviceInstance_Auto.SysLogDrainUrl = "syslog://example.com"
+
+	apiResponse := repo.Update(serviceInstance_Auto)
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
 }
@@ -100,10 +94,10 @@ func TestUpdateUserProvidedServiceInstanceWithOnlyParams(t *testing.T) {
 		"user":     "me",
 		"password": "secret",
 	}
-	serviceInstance_Auto6 := cf.ServiceInstance{}
-	serviceInstance_Auto6.Guid = "my-instance-guid"
-	serviceInstance_Auto6.Params = params
-	apiResponse := repo.Update(serviceInstance_Auto6)
+	serviceInstance_Auto := cf.ServiceInstanceFields{}
+	serviceInstance_Auto.Guid = "my-instance-guid"
+	serviceInstance_Auto.Params = params
+	apiResponse := repo.Update(serviceInstance_Auto)
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
 }
@@ -118,17 +112,17 @@ func TestUpdateUserProvidedServiceInstanceWithOnlySysLogDrainUrl(t *testing.T) {
 
 	ts, handler, repo := createUserProvidedServiceInstanceRepo(t, req)
 	defer ts.Close()
-	serviceInstance_Auto7 := cf.ServiceInstance{}
-	serviceInstance_Auto7.Guid = "my-instance-guid"
-	serviceInstance_Auto7.SysLogDrainUrl = "syslog://example.com"
-	apiResponse := repo.Update(serviceInstance_Auto7)
+	serviceInstance_Auto := cf.ServiceInstanceFields{}
+	serviceInstance_Auto.Guid = "my-instance-guid"
+	serviceInstance_Auto.SysLogDrainUrl = "syslog://example.com"
+	apiResponse := repo.Update(serviceInstance_Auto)
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
 }
 
 func createUserProvidedServiceInstanceRepo(t *testing.T, req testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo UserProvidedServiceInstanceRepository) {
 	ts, handler = testnet.NewTLSServer(t, []testnet.TestRequest{req})
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",

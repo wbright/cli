@@ -46,7 +46,7 @@ type ApplicationFields struct {
 	State            string
 	Command          string
 	BuildpackUrl     string
-	Instances        int
+	InstanceCount    int
 	RunningInstances int
 	Memory           uint64 // in Megabytes
 	DiskQuota        uint64 // in Megabytes
@@ -60,7 +60,7 @@ type Application struct {
 }
 
 type AppSummary struct {
-	App          ApplicationFields
+	ApplicationFields
 	Instances    []ApplicationInstance
 	RouteSummary []RouteSummary
 }

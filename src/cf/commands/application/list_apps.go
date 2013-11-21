@@ -59,11 +59,11 @@ func (cmd ListApps) Run(c *cli.Context) {
 		}
 
 		table = append(table, []string{
-			appSummary.App.Name,
-			coloredAppState(appSummary.App),
-			coloredAppInstaces(appSummary.App),
-			formatters.ByteSize(appSummary.App.Memory * formatters.MEGABYTE),
-			formatters.ByteSize(appSummary.App.DiskQuota * formatters.MEGABYTE),
+			appSummary.Name,
+			coloredAppState(appSummary.ApplicationFields),
+			coloredAppInstaces(appSummary.ApplicationFields),
+			formatters.ByteSize(appSummary.Memory * formatters.MEGABYTE),
+			formatters.ByteSize(appSummary.DiskQuota * formatters.MEGABYTE),
 			strings.Join(urls, ", "),
 		})
 	}

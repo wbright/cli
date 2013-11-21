@@ -56,7 +56,7 @@ func TestRunWhenApplicationExists(t *testing.T) {
 	assert.Contains(t, ui.Outputs[1], "OK")
 
 	assert.Equal(t, reqFactory.ApplicationName, "my-app")
-	assert.Equal(t, appRepo.SetEnvApp, app)
+	assert.Equal(t, appRepo.SetEnvAppGuid, app.Guid)
 	assert.Equal(t, appRepo.SetEnvVars, map[string]string{
 		"DATABASE_URL": "mysql://example.com/my-db",
 		"foo":          "bar",
@@ -133,9 +133,9 @@ func callSetEnv(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory,
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

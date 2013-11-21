@@ -14,34 +14,50 @@ import (
 )
 
 func TestApps(t *testing.T) {
-	domain_Auto := cf.Domain{}
+	domain_Auto := cf.DomainFields{}
 	domain_Auto.Name = "cfapps.io"
-	domain_Auto2 := cf.Domain{}
+	domain_Auto2 := cf.DomainFields{}
 	domain_Auto2.Name = "example.com"
-	app1Routes := []cf.Route{
-		{Host: "app1", Domain: domain_Auto},
-		{Host: "app1", Domain: domain_Auto2},
-	}
-	domain_Auto3 := cf.Domain{}
+
+	route1 := cf.RouteSummary{}
+	route1.Host = "app1"
+	route1.Domain = domain_Auto
+
+	route2 := cf.RouteSummary{}
+	route2.Host = "app1"
+	route2.Domain = domain_Auto2
+
+	app1Routes := []cf.RouteSummary{route1, route2}
+
+	domain_Auto3 := cf.DomainFields{}
 	domain_Auto3.Name = "cfapps.io"
-	app2Routes := []cf.Route{{Host: "app2", Domain: domain_Auto3}}
-	app_Auto := cf.Application{}
+
+	route3 := cf.RouteSummary{}
+	route3.Host = "app2"
+	route3.Domain = domain_Auto3
+
+	app2Routes := []cf.RouteSummary{route3}
+
+	app_Auto := cf.AppSummary{}
 	app_Auto.Name = "Application-1"
 	app_Auto.State = "started"
 	app_Auto.RunningInstances = 1
-	app_Auto.Instances = 1
+	app_Auto.InstanceCount = 1
 	app_Auto.Memory = 512
 	app_Auto.DiskQuota = 1024
-	app_Auto.Routes = app1Routes
-	app_Auto2 := cf.Application{}
+	app_Auto.RouteSummary = app1Routes
+
+	app_Auto2 := cf.AppSummary{}
 	app_Auto2.Name = "Application-2"
 	app_Auto2.State = "started"
 	app_Auto2.RunningInstances = 1
-	app_Auto2.Instances = 2
+	app_Auto2.InstanceCount = 2
 	app_Auto2.Memory = 256
 	app_Auto2.DiskQuota = 1024
-	app_Auto2.Routes = app2Routes
-	apps := []cf.Application{app_Auto, app_Auto2}
+	app_Auto2.RouteSummary = app2Routes
+
+	apps := []cf.AppSummary{app_Auto, app_Auto2}
+
 	appSummaryRepo := &testapi.FakeAppSummaryRepo{
 		GetSummariesInCurrentSpaceApps: apps,
 	}
@@ -97,9 +113,10 @@ func callApps(t *testing.T, appSummaryRepo *testapi.FakeAppSummaryRepo, reqFacto
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.Space{}
+
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "development"
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

@@ -28,7 +28,7 @@ func (resource ApplicationResource) ToFields() (app cf.ApplicationFields) {
 	app.Name = resource.Entity.Name
 	app.EnvironmentVars = resource.Entity.EnvironmentJson
 	app.State = strings.ToLower(resource.Entity.State)
-	app.Instances = resource.Entity.Instances
+	app.InstanceCount = resource.Entity.Instances
 	app.Memory = uint64(resource.Entity.Memory)
 
 	return
@@ -184,8 +184,8 @@ func (repo CloudControllerApplicationRepository) Scale(app cf.ApplicationFields)
 	if app.DiskQuota > 0 {
 		values["disk_quota"] = app.DiskQuota
 	}
-	if app.Instances > 0 {
-		values["instances"] = app.Instances
+	if app.InstanceCount > 0 {
+		values["instances"] = app.InstanceCount
 	}
 	if app.Memory > 0 {
 		values["memory"] = app.Memory

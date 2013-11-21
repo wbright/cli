@@ -80,9 +80,8 @@ func TestListEvents(t *testing.T) {
 		AccessToken: "BEARER my_access_token",
 	}
 	repo := NewCloudControllerAppEventsRepository(config, net.NewCloudControllerGateway())
-	app_Auto := cf.Application{}
-	app_Auto.Guid = "my-app-guid"
-	eventChan, apiErr := repo.ListEvents(app_Auto)
+
+	eventChan, apiErr := repo.ListEvents("my-app-guid")
 
 	firstExpectedTime, err := time.Parse(APP_EVENT_TIMESTAMP_FORMAT, "2013-10-07T16:51:07+00:00")
 	secondExpectedTime, err := time.Parse(APP_EVENT_TIMESTAMP_FORMAT, "2013-10-07T17:51:07+00:00")
@@ -131,9 +130,7 @@ func TestListEventsWithNoEvents(t *testing.T) {
 		AccessToken: "BEARER my_access_token",
 	}
 	repo := NewCloudControllerAppEventsRepository(config, net.NewCloudControllerGateway())
-	app_Auto2 := cf.Application{}
-	app_Auto2.Guid = "my-app-guid"
-	eventChan, apiErr := repo.ListEvents(app_Auto2)
+	eventChan, apiErr := repo.ListEvents("my-app-guid")
 
 	_, ok := <-eventChan
 	_, open := <-apiErr
@@ -156,9 +153,7 @@ func TestListEventsNotFound(t *testing.T) {
 		AccessToken: "BEARER my_access_token",
 	}
 	repo := NewCloudControllerAppEventsRepository(config, net.NewCloudControllerGateway())
-	app_Auto3 := cf.Application{}
-	app_Auto3.Guid = "my-app-guid"
-	eventChan, apiErr := repo.ListEvents(app_Auto3)
+	eventChan, apiErr := repo.ListEvents("my-app-guid")
 
 	firstExpectedTime, err := time.Parse(APP_EVENT_TIMESTAMP_FORMAT, "2013-10-07T16:51:07+00:00")
 	expectedEvents := []cf.Event{

@@ -58,32 +58,14 @@ func TestSpacesListSpaces(t *testing.T) {
 	defer close(stopChan)
 	spacesChan, statusChan := repo.ListSpaces(stopChan)
 
-	expectedSpaces := []cf.Space{
-		{
-			Guid:             "acceptance-space-guid",
-			Name:             "acceptance",
-			ServiceInstances: []cf.ServiceInstance{},
-			Organization:     cf.Organization{},
-			Applications:     []cf.Application{},
-			Domains:          []cf.Domain{},
-		},
-		{
-			Guid:             "staging-space-guid",
-			Name:             "staging",
-			ServiceInstances: []cf.ServiceInstance{},
-			Organization:     cf.Organization{},
-			Applications:     []cf.Application{},
-			Domains:          []cf.Domain{},
-		},
-	}
-
 	spaces := []cf.Space{}
 	for chunk := range spacesChan {
 		spaces = append(spaces, chunk...)
 	}
 	apiResponse := <-statusChan
 
-	assert.Equal(t, spaces, expectedSpaces)
+	assert.Equal(t, spaces[0].Guid, "acceptance-space-guid")
+	assert.Equal(t, spaces[1].Guid, "staging-space-guid")
 	assert.True(t, apiResponse.IsSuccessful())
 	assert.True(t, handler.AllRequestsCalled())
 }
@@ -123,13 +105,10 @@ func TestSpacesFindByName(t *testing.T) {
 }
 
 func TestSpacesFindByNameInOrg(t *testing.T) {
-	org := cf.Organization{}
-	org.Guid = "another-org-guid"
-
 	testSpacesFindByNameWithOrg(t,
 		"another-org-guid",
 		func(repo SpaceRepository, spaceName string) (cf.Space, net.ApiResponse) {
-			return repo.FindByNameInOrg(spaceName, org)
+			return repo.FindByNameInOrg(spaceName, "another-org-guid")
 		},
 	)
 }
@@ -205,24 +184,6 @@ func testSpacesFindByNameWithOrg(t *testing.T, orgGuid string, findByName func(S
 
 	ts, handler, repo := createSpacesRepo(t, request)
 	defer ts.Close()
-	existingOrg := cf.Organization{}
-	existingOrg.Guid = "org1-guid"
-	existingOrg.Name = "Org1"
-	app_Auto := cf.Application{}
-	app_Auto.Name = "app1"
-	app_Auto.Guid = "app1-guid"
-	app_Auto2 := cf.Application{}
-	app_Auto2.Name = "app2"
-	app_Auto2.Guid = "app2-guid"
-	apps := []cf.Application{app_Auto, app_Auto2}
-	domain_Auto := cf.Domain{}
-	domain_Auto.Name = "domain1"
-	domain_Auto.Guid = "domain1-guid"
-	domains := []cf.Domain{domain_Auto}
-	serviceInstance_Auto := cf.ServiceInstance{}
-	serviceInstance_Auto.Name = "service1"
-	serviceInstance_Auto.Guid = "service1-guid"
-	services := []cf.ServiceInstance{serviceInstance_Auto}
 
 	space, apiResponse := findByName(repo, "Space1")
 	assert.True(t, handler.AllRequestsCalled())
@@ -230,12 +191,19 @@ func testSpacesFindByNameWithOrg(t *testing.T, orgGuid string, findByName func(S
 	assert.Equal(t, space.Name, "Space1")
 	assert.Equal(t, space.Guid, "space1-guid")
 
-	assert.Equal(t, space.Organization, existingOrg)
-	assert.Equal(t, space.Applications, apps)
-	assert.Equal(t, space.Domains, domains)
-	assert.Equal(t, space.ServiceInstances, services)
-	assert.True(t, apiResponse.IsSuccessful())
+	assert.Equal(t, space.Organization.Guid, "org1-guid")
 
+	assert.Equal(t, len(space.Applications), 2)
+	assert.Equal(t, space.Applications[0].Guid, "app1-guid")
+	assert.Equal(t, space.Applications[1].Guid, "app2-guid")
+
+	assert.Equal(t, len(space.Domains), 1)
+	assert.Equal(t, space.Domains[0].Guid, "domain1-guid")
+
+	assert.Equal(t, len(space.ServiceInstances), 1)
+	assert.Equal(t, space.ServiceInstances[0].Guid, "service1-guid")
+
+	assert.True(t, apiResponse.IsSuccessful())
 	return
 }
 
@@ -249,13 +217,10 @@ func TestSpacesDidNotFindByName(t *testing.T) {
 }
 
 func TestSpacesDidNotFindByNameInOrg(t *testing.T) {
-	org := cf.Organization{}
-	org.Guid = "another-org-guid"
-
 	testSpacesDidNotFindByNameWithOrg(t,
 		"another-org-guid",
 		func(repo SpaceRepository, spaceName string) (cf.Space, net.ApiResponse) {
-			return repo.FindByNameInOrg(spaceName, org)
+			return repo.FindByNameInOrg(spaceName, "another-org-guid")
 		},
 	)
 }
@@ -305,9 +270,8 @@ func TestRenameSpace(t *testing.T) {
 
 	ts, handler, repo := createSpacesRepo(t, request)
 	defer ts.Close()
-	space := cf.Space{}
-	space.Guid = "my-space-guid"
-	apiResponse := repo.Rename(space, "new-space-name")
+
+	apiResponse := repo.Rename("my-space-guid", "new-space-name")
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
 }
@@ -321,18 +285,18 @@ func TestDeleteSpace(t *testing.T) {
 
 	ts, handler, repo := createSpacesRepo(t, request)
 	defer ts.Close()
-	space := cf.Space{}
-	space.Guid = "my-space-guid"
-	apiResponse := repo.Delete(space)
+
+	apiResponse := repo.Delete("my-space-guid")
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
 }
 
 func createSpacesRepo(t *testing.T, reqs ...testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo SpaceRepository) {
 	ts, handler = testnet.NewTLSServer(t, reqs)
-	org_Auto4 := cf.Organization{}
+	org_Auto4 := cf.OrganizationFields{}
 	org_Auto4.Guid = "some-org-guid"
-	space_Auto5 := cf.Space{}
+
+	space_Auto5 := cf.SpaceFields{}
 	space_Auto5.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken:  "BEARER my_access_token",

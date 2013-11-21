@@ -47,8 +47,6 @@ func TestPushingAppWhenItDoesNotExist(t *testing.T) {
 	domainRepo.DefaultAppDomain = domains[0]
 	routeRepo.FindByHostAndDomainErr = true
 	appRepo.FindByNameNotFound = true
-	app_Auto = cf.Application{}
-	app_Auto.Name = "my-stopped-app"
 
 	fakeUI := callPush(t, []string{"my-new-app"}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
@@ -58,27 +56,27 @@ func TestPushingAppWhenItDoesNotExist(t *testing.T) {
 	assert.Contains(t, fakeUI.Outputs[0], "my-space")
 	assert.Contains(t, fakeUI.Outputs[0], "my-user")
 	assert.Equal(t, appRepo.CreatedApp.Name, "my-new-app")
-	assert.Equal(t, appRepo.CreatedApp.Instances, 1)
+	assert.Equal(t, appRepo.CreatedApp.InstanceCount, 1)
 	assert.Equal(t, appRepo.CreatedApp.Memory, uint64(128))
 	assert.Equal(t, appRepo.CreatedApp.BuildpackUrl, "")
 	assert.Contains(t, fakeUI.Outputs[1], "OK")
 
 	assert.Contains(t, fakeUI.Outputs[3], "my-new-app.foo.cf-app.com")
 	assert.Equal(t, routeRepo.FindByHostAndDomainHost, "my-new-app")
-	assert.Equal(t, routeRepo.CreatedRoute.Host, "my-new-app")
-	assert.Equal(t, routeRepo.CreatedRouteDomain.Guid, "foo-domain-guid")
+	assert.Equal(t, routeRepo.CreatedHost, "my-new-app")
+	assert.Equal(t, routeRepo.CreatedDomainGuid, "foo-domain-guid")
 	assert.Contains(t, fakeUI.Outputs[4], "OK")
 
 	assert.Contains(t, fakeUI.Outputs[6], "my-new-app.foo.cf-app.com")
-	assert.Equal(t, routeRepo.BoundApp.Name, "my-new-app")
-	assert.Equal(t, routeRepo.BoundRoute.Host, "my-new-app")
+	assert.Equal(t, routeRepo.BoundAppGuid, "my-new-app")
+	assert.Equal(t, routeRepo.BoundRouteGuid, "my-new-app")
 	assert.Contains(t, fakeUI.Outputs[7], "OK")
 
 	expectedAppDir, err := os.Getwd()
 	assert.NoError(t, err)
 
 	assert.Contains(t, fakeUI.Outputs[9], "my-new-app")
-	assert.Equal(t, appBitsRepo.UploadedApp.Guid, "my-new-app-guid")
+	assert.Equal(t, appBitsRepo.UploadedAppGuid, "my-new-app-guid")
 	assert.Equal(t, appBitsRepo.UploadedDir, expectedAppDir)
 	assert.Contains(t, fakeUI.Outputs[10], "OK")
 
@@ -88,31 +86,34 @@ func TestPushingAppWhenItDoesNotExist(t *testing.T) {
 
 func TestPushingAppWhenItDoesNotExistButRouteExists(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-	domain_Auto2 := cf.Domain{}
+
+	domain_Auto1 := cf.Domain{}
+	domain_Auto1.Name = "foo.cf-app.com"
+	domain_Auto1.Guid = "foo-domain-guid"
+
+	domain_Auto2 := cf.DomainFields{}
 	domain_Auto2.Name = "foo.cf-app.com"
 	domain_Auto2.Guid = "foo-domain-guid"
-	domains := []cf.Domain{domain_Auto2}
-	domain_Auto3 := cf.Domain{}
-	domain_Auto3.Name = "foo.cf-app.com"
-	domain_Auto3.Guid = "foo-domain-guid"
-	route := cf.Route{}
-	route.Host = "my-new-app"
-	route.Domain = domain_Auto3
 
-	domainRepo.DefaultAppDomain = domains[0]
+	route := cf.Route{}
+	route.Guid = "my-route-guid"
+	route.Host = "my-new-app"
+	route.Domain = domain_Auto2
+
+	domainRepo.DefaultAppDomain = domain_Auto1
 	routeRepo.FindByHostAndDomainRoute = route
 	appRepo.FindByNameNotFound = true
 
 	fakeUI := callPush(t, []string{"my-new-app"}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
-	assert.Empty(t, routeRepo.CreatedRoute.Host)
-	assert.Empty(t, routeRepo.CreatedRouteDomain.Guid)
+	assert.Empty(t, routeRepo.CreatedHost)
+	assert.Empty(t, routeRepo.CreatedDomainGuid)
 	assert.Contains(t, fakeUI.Outputs[3], "my-new-app.foo.cf-app.com")
 	assert.Equal(t, routeRepo.FindByHostAndDomainHost, "my-new-app")
 
 	assert.Contains(t, fakeUI.Outputs[4], "my-new-app.foo.cf-app.com")
-	assert.Equal(t, routeRepo.BoundApp.Name, "my-new-app")
-	assert.Equal(t, routeRepo.BoundRoute.Host, "my-new-app")
+	assert.Equal(t, routeRepo.BoundAppGuid, "my-new-app-guid")
+	assert.Equal(t, routeRepo.BoundRouteGuid, "my-route-guid")
 	assert.Contains(t, fakeUI.Outputs[5], "OK")
 }
 
@@ -149,7 +150,7 @@ func TestPushingAppWithCustomFlags(t *testing.T) {
 	assert.Contains(t, fakeUI.Outputs[1], "my-new-app")
 	assert.Equal(t, appRepo.CreatedApp.Name, "my-new-app")
 	assert.Equal(t, appRepo.CreatedApp.Command, "unicorn -c config/unicorn.rb -D")
-	assert.Equal(t, appRepo.CreatedApp.Instances, 3)
+	assert.Equal(t, appRepo.CreatedApp.InstanceCount, 3)
 	assert.Equal(t, appRepo.CreatedApp.Memory, uint64(2048))
 	assert.Equal(t, appRepo.CreatedApp.Stack.Guid, "custom-linux-guid")
 	assert.Equal(t, appRepo.CreatedApp.BuildpackUrl, "https://github.com/heroku/heroku-buildpack-play.git")
@@ -157,18 +158,18 @@ func TestPushingAppWithCustomFlags(t *testing.T) {
 
 	assert.Contains(t, fakeUI.Outputs[4], "my-hostname.bar.cf-app.com")
 	assert.Equal(t, domainRepo.FindByNameInCurrentSpaceName, "bar.cf-app.com")
-	assert.Equal(t, routeRepo.CreatedRoute.Host, "my-hostname")
-	assert.Equal(t, routeRepo.CreatedRouteDomain.Guid, "bar-domain-guid")
+	assert.Equal(t, routeRepo.CreatedHost, "my-hostname")
+	assert.Equal(t, routeRepo.CreatedDomainGuid, "bar-domain-guid")
 	assert.Contains(t, fakeUI.Outputs[5], "OK")
 
 	assert.Contains(t, fakeUI.Outputs[7], "my-hostname.bar.cf-app.com")
 	assert.Contains(t, fakeUI.Outputs[7], "my-new-app")
-	assert.Equal(t, routeRepo.BoundApp.Name, "my-new-app")
-	assert.Equal(t, routeRepo.BoundRoute.Host, "my-hostname")
+	assert.Equal(t, routeRepo.BoundAppGuid, "my-new-app-guid")
+	assert.Equal(t, routeRepo.BoundRouteGuid, "my-hostname")
 	assert.Contains(t, fakeUI.Outputs[8], "OK")
 
 	assert.Contains(t, fakeUI.Outputs[10], "my-new-app")
-	assert.Equal(t, appBitsRepo.UploadedApp.Guid, "my-new-app-guid")
+	assert.Equal(t, appBitsRepo.UploadedAppGuid, "my-new-app-guid")
 	assert.Equal(t, appBitsRepo.UploadedDir, "/Users/pivotal/workspace/my-new-app")
 	assert.Contains(t, fakeUI.Outputs[11], "OK")
 
@@ -195,8 +196,8 @@ func TestPushingAppWithNoRoute(t *testing.T) {
 	}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
 	assert.Equal(t, appRepo.CreatedApp.Name, "my-new-app")
-	assert.Equal(t, routeRepo.CreatedRoute.Host, "")
-	assert.Equal(t, routeRepo.CreatedRouteDomain.Guid, "")
+	assert.Equal(t, routeRepo.CreatedHost, "")
+	assert.Equal(t, routeRepo.CreatedDomainGuid, "")
 }
 
 func TestPushingAppWithNoHostname(t *testing.T) {
@@ -219,8 +220,8 @@ func TestPushingAppWithNoHostname(t *testing.T) {
 	}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
 	assert.Equal(t, appRepo.CreatedApp.Name, "my-new-app")
-	assert.Equal(t, routeRepo.CreatedRoute.Host, "")
-	assert.Equal(t, routeRepo.CreatedRouteDomain.Guid, "bar-domain-guid")
+	assert.Equal(t, routeRepo.CreatedHost, "")
+	assert.Equal(t, routeRepo.CreatedDomainGuid, "bar-domain-guid")
 }
 
 func TestPushingAppWithMemoryInMegaBytes(t *testing.T) {
@@ -273,62 +274,79 @@ func TestPushingAppWithInvalidMemory(t *testing.T) {
 
 func TestPushingAppWhenItAlreadyExistsAndNothingIsSpecified(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-	domain_Auto13 := cf.Domain{}
-	domain_Auto13.Name = "example.com"
-	existingRoute := cf.Route{}
+
+	existingRoute := cf.RouteSummary{}
 	existingRoute.Host = "existing-app"
-	existingRoute.Domain = domain_Auto13
+
 	existingApp := cf.Application{}
 	existingApp.Name = "existing-app"
 	existingApp.Guid = "existing-app-guid"
-	existingApp.Routes = []cf.Route{existingRoute}
+	existingApp.Routes = []cf.RouteSummary{existingRoute}
 
 	appRepo.FindByNameApp = existingApp
-	routeRepo.FindByHostAndDomainRoute = existingRoute
+
+	domain_Auto := cf.DomainFields{}
+	domain_Auto.Name = "example.com"
+
+	foundRoute := cf.Route{}
+	foundRoute.RouteFields = existingRoute.RouteFields
+	foundRoute.Domain = domain_Auto
+
+	routeRepo.FindByHostAndDomainRoute = foundRoute
 	fakeUI := callPush(t, []string{"existing-app"}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
 	assert.Equal(t, stopper.AppToStop.Name, "existing-app")
 	assert.Contains(t, fakeUI.Outputs[0], "Using route")
 	assert.Contains(t, fakeUI.Outputs[0], "existing-app.example.com")
-	assert.Equal(t, appBitsRepo.UploadedApp.Guid, "existing-app-guid")
+	assert.Equal(t, appBitsRepo.UploadedAppGuid, "existing-app-guid")
 }
 
 func TestPushingAppWhenItAlreadyExistsAndDomainIsSpecifiedIsAlreadyBound(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-	domain_Auto14 := cf.Domain{}
-	domain_Auto14.Name = "example.com"
-	existingRoute := cf.Route{}
+
+	existingRoute := cf.RouteSummary{}
 	existingRoute.Host = "existing-app"
-	existingRoute.Domain = domain_Auto14
+
 	existingApp := cf.Application{}
 	existingApp.Name = "existing-app"
 	existingApp.Guid = "existing-app-guid"
-	existingApp.Routes = []cf.Route{existingRoute}
+	existingApp.Routes = []cf.RouteSummary{existingRoute}
+
+	domain_Auto := cf.DomainFields{}
+	domain_Auto.Name = "example.com"
+
+	foundRoute := cf.Route{}
+	foundRoute.RouteFields = existingRoute.RouteFields
+	foundRoute.Domain = domain_Auto
 
 	appRepo.FindByNameApp = existingApp
-	routeRepo.FindByHostAndDomainRoute = existingRoute
+	routeRepo.FindByHostAndDomainRoute = foundRoute
 
 	fakeUI := callPush(t, []string{"-d", "example.com", "existing-app"}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
 	assert.Contains(t, fakeUI.Outputs[0], "Using route")
 	assert.Contains(t, fakeUI.Outputs[0], "existing-app")
-	assert.Equal(t, appBitsRepo.UploadedApp.Guid, "existing-app-guid")
+	assert.Equal(t, appBitsRepo.UploadedAppGuid, "existing-app-guid")
 }
 
 func TestPushingAppWhenItAlreadyExistsAndDomainSpecifiedIsNotBound(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-	domain := cf.Domain{}
-	domain.Guid = "domain-guid"
-	domain.Name = "newdomain.com"
-	domain_Auto16 := cf.Domain{}
-	domain_Auto16.Name = "example.com"
-	existingRoute := cf.Route{}
+
+	domain_Auto := cf.DomainFields{}
+	domain_Auto.Name = "example.com"
+
+	existingRoute := cf.RouteSummary{}
 	existingRoute.Host = "existing-app"
-	existingRoute.Domain = domain_Auto16
+	existingRoute.Domain = domain_Auto
+
 	existingApp := cf.Application{}
 	existingApp.Name = "existing-app"
 	existingApp.Guid = "existing-app-guid"
-	existingApp.Routes = []cf.Route{existingRoute}
+	existingApp.Routes = []cf.RouteSummary{existingRoute}
+
+	domain := cf.Domain{}
+	domain.Guid = "domain-guid"
+	domain.Name = "newdomain.com"
 
 	appRepo.FindByNameApp = existingApp
 	routeRepo.FindByHostAndDomainNotFound = true
@@ -342,30 +360,31 @@ func TestPushingAppWhenItAlreadyExistsAndDomainSpecifiedIsNotBound(t *testing.T)
 	assert.Contains(t, fakeUI.Outputs[3], "Binding")
 	assert.Contains(t, fakeUI.Outputs[3], "existing-app.newdomain.com")
 
-	assert.Equal(t, appBitsRepo.UploadedApp.Guid, "existing-app-guid")
+	assert.Equal(t, appBitsRepo.UploadedAppGuid, "existing-app-guid")
 	assert.Equal(t, domainRepo.FindByNameInCurrentSpaceName, "newdomain.com")
 	assert.Equal(t, routeRepo.FindByHostAndDomainDomain, "newdomain.com")
 	assert.Equal(t, routeRepo.FindByHostAndDomainHost, "existing-app")
-	assert.Equal(t, routeRepo.CreatedRoute.Host, "existing-app")
-	assert.Equal(t, routeRepo.CreatedRouteDomain.Name, "newdomain.com")
+	assert.Equal(t, routeRepo.CreatedHost, "existing-app")
+	assert.Equal(t, routeRepo.CreatedDomainGuid, "domain-guid")
 }
 
 func TestPushingAppWhenItAlreadyExistsAndHostIsSpecified(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-	domain_Auto17 := cf.Domain{}
-	domain_Auto17.Name = "example.com"
-	existingRoute := cf.Route{}
+
+	domain_Auto := cf.DomainFields{}
+	domain_Auto.Name = "example.com"
+
+	existingRoute := cf.RouteSummary{}
 	existingRoute.Host = "existing-app"
-	existingRoute.Domain = domain_Auto17
+	existingRoute.Domain = domain_Auto
+
 	existingApp := cf.Application{}
 	existingApp.Name = "existing-app"
 	existingApp.Guid = "existing-app-guid"
-	existingApp.Routes = []cf.Route{existingRoute}
+	existingApp.Routes = []cf.RouteSummary{existingRoute}
 
 	appRepo.FindByNameApp = existingApp
 	routeRepo.FindByHostAndDomainNotFound = true
-	domain_Auto18 = cf.Domain{}
-	domain_Auto18.Name = "example.com"
 
 	fakeUI := callPush(t, []string{"-n", "new-host", "existing-app"}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
@@ -377,8 +396,8 @@ func TestPushingAppWhenItAlreadyExistsAndHostIsSpecified(t *testing.T) {
 
 	assert.Equal(t, routeRepo.FindByHostAndDomainDomain, "example.com")
 	assert.Equal(t, routeRepo.FindByHostAndDomainHost, "new-host")
-	assert.Equal(t, routeRepo.CreatedRoute.Host, "new-host")
-	assert.Equal(t, routeRepo.CreatedRouteDomain.Name, "example.com")
+	assert.Equal(t, routeRepo.CreatedHost, "new-host")
+	assert.Equal(t, routeRepo.CreatedDomainGuid, "domain-guid")
 }
 
 func TestPushingAppWhenItAlreadyExistsAndNoRouteFlagIsPresent(t *testing.T) {
@@ -395,30 +414,31 @@ func TestPushingAppWhenItAlreadyExistsAndNoRouteFlagIsPresent(t *testing.T) {
 	assert.Contains(t, fakeUI.Outputs[0], "existing-app")
 	assert.Contains(t, fakeUI.Outputs[1], "OK")
 
-	assert.Equal(t, appBitsRepo.UploadedApp.Guid, "existing-app-guid")
+	assert.Equal(t, appBitsRepo.UploadedAppGuid, "existing-app-guid")
 	assert.Equal(t, domainRepo.FindByNameInCurrentSpaceName, "")
 	assert.Equal(t, routeRepo.FindByHostAndDomainDomain, "")
 	assert.Equal(t, routeRepo.FindByHostAndDomainHost, "")
-	assert.Equal(t, routeRepo.CreatedRoute.Host, "")
-	assert.Equal(t, routeRepo.CreatedRouteDomain.Name, "")
+	assert.Equal(t, routeRepo.CreatedHost, "")
+	assert.Equal(t, routeRepo.CreatedDomainGuid, "")
 }
 
 func TestPushingAppWhenItAlreadyExistsAndNoHostFlagIsPresent(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
-	domain_Auto19 := cf.Domain{}
-	domain_Auto19.Name = "example.com"
-	existingRoute := cf.Route{}
+
+	domain_Auto := cf.DomainFields{}
+	domain_Auto.Name = "example.com"
+
+	existingRoute := cf.RouteSummary{}
 	existingRoute.Host = "existing-app"
-	existingRoute.Domain = domain_Auto19
+	existingRoute.Domain = domain_Auto
+
 	existingApp := cf.Application{}
 	existingApp.Name = "existing-app"
 	existingApp.Guid = "existing-app-guid"
-	existingApp.Routes = []cf.Route{existingRoute}
+	existingApp.Routes = []cf.RouteSummary{existingRoute}
 
 	appRepo.FindByNameApp = existingApp
 	routeRepo.FindByHostAndDomainNotFound = true
-	domain_Auto20 = cf.Domain{}
-	domain_Auto20.Name = "example.com"
 
 	fakeUI := callPush(t, []string{"--no-hostname", "existing-app"}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
@@ -432,8 +452,8 @@ func TestPushingAppWhenItAlreadyExistsAndNoHostFlagIsPresent(t *testing.T) {
 
 	assert.Equal(t, routeRepo.FindByHostAndDomainDomain, "example.com")
 	assert.Equal(t, routeRepo.FindByHostAndDomainHost, "")
-	assert.Equal(t, routeRepo.CreatedRoute.Host, "")
-	assert.Equal(t, routeRepo.CreatedRouteDomain.Name, "example.com")
+	assert.Equal(t, routeRepo.CreatedHost, "")
+	assert.Equal(t, routeRepo.CreatedDomainGuid, "domain-guid")
 }
 
 func TestPushingAppWhenItAlreadyExistsWithoutARouteAndARouteIsNotProvided(t *testing.T) {
@@ -454,16 +474,13 @@ func TestPushingAppWhenItAlreadyExistsWithoutARouteAndARouteIsNotProvided(t *tes
 
 	assert.Equal(t, routeRepo.FindByHostAndDomainDomain, "")
 	assert.Equal(t, routeRepo.FindByHostAndDomainHost, "")
-	assert.Equal(t, routeRepo.CreatedRoute.Host, "")
-	assert.Equal(t, routeRepo.CreatedRouteDomain.Name, "")
+	assert.Equal(t, routeRepo.CreatedHost, "")
+	assert.Equal(t, routeRepo.CreatedDomainGuid, "")
 }
 
 func TestPushingAppWithInvalidPath(t *testing.T) {
 	starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo := getPushDependencies()
 	appBitsRepo.UploadAppErr = true
-	app_Auto11 = cf.Application{}
-	app_Auto11.Name = "app"
-	app_Auto11.Guid = "app-guid"
 
 	fakeUI := callPush(t, []string{"app"}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
@@ -506,9 +523,9 @@ func callPush(t *testing.T,
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

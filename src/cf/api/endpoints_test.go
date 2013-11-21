@@ -39,10 +39,11 @@ func TestUpdateEndpointWhenUrlIsValidHttpsInfoEndpoint(t *testing.T) {
 
 	ts, repo := createEndpointRepoForUpdate(configRepo, validApiInfoEndpoint)
 	defer ts.Close()
-	org := cf.Organization{}
+	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	org.Guid = "my-org-guid"
-	space := cf.Space{}
+
+	space := cf.SpaceFields{}
 	space.Name = "my-space"
 	space.Guid = "my-space-guid"
 
@@ -69,10 +70,12 @@ func TestUpdateEndpointWhenUrlIsAlreadyTargeted(t *testing.T) {
 
 	ts, repo := createEndpointRepoForUpdate(configRepo, validApiInfoEndpoint)
 	defer ts.Close()
-	org := cf.Organization{}
+
+	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	org.Guid = "my-org-guid"
-	space := cf.Space{}
+
+	space := cf.SpaceFields{}
 	space.Name = "my-space"
 	space.Guid = "my-space-guid"
 

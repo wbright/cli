@@ -44,10 +44,15 @@ func TestOrganizationsListOrgs(t *testing.T) {
 	defer close(stopChan)
 	orgsChan, statusChan := repo.ListOrgs(stopChan)
 
-	expectedOrgs := []cf.Organization{
-		{Guid: "org1-guid", Name: "Org1", Spaces: []cf.Space{}, Domains: []cf.Domain{}},
-		{Guid: "org2-guid", Name: "Org2", Spaces: []cf.Space{}, Domains: []cf.Domain{}},
-	}
+	org1 := cf.Organization{}
+	org1.Guid = "org1-guid"
+	org1.Name = "Org1"
+
+	org2 := cf.Organization{}
+	org2.Guid = "org2-guid"
+	org2.Name = "Org2"
+
+	expectedOrgs := []cf.Organization{org1, org2}
 
 	orgs := []cf.Organization{}
 	for chunk := range orgsChan {
@@ -165,9 +170,8 @@ func TestRenameOrganization(t *testing.T) {
 
 	ts, handler, repo := createOrganizationRepo(t, req)
 	defer ts.Close()
-	org := cf.Organization{}
-	org.Guid = "my-org-guid"
-	apiResponse := repo.Rename(org, "my-new-org")
+
+	apiResponse := repo.Rename("my-org-guid", "my-new-org")
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
 }
@@ -181,9 +185,8 @@ func TestDeleteOrganization(t *testing.T) {
 
 	ts, handler, repo := createOrganizationRepo(t, req)
 	defer ts.Close()
-	org := cf.Organization{}
-	org.Guid = "my-org-guid"
-	apiResponse := repo.Delete(org)
+
+	apiResponse := repo.Delete("my-org-guid")
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
 }

@@ -19,27 +19,43 @@ import (
 	"time"
 )
 
-var defaultAppForStart = cf.Application{
-	Name:      "my-app",
-	Guid:      "my-app-guid",
-	Instances: 2,
-	Routes: []cf.Route{
-		{Host: "my-app", Domain: cf.Domain{Name: "example.com"}},
-	},
-}
+var (
+	defaultAppForStart        = cf.Application{}
+	defaultInstanceReponses   = [][]cf.ApplicationInstance{}
+	defaultInstanceErrorCodes = []string{"", ""}
+)
 
-var defaultInstanceReponses = [][]cf.ApplicationInstance{
-	[]cf.ApplicationInstance{
-		cf.ApplicationInstance{State: cf.InstanceStarting},
-		cf.ApplicationInstance{State: cf.InstanceStarting},
-	},
-	[]cf.ApplicationInstance{
-		cf.ApplicationInstance{State: cf.InstanceRunning},
-		cf.ApplicationInstance{State: cf.InstanceStarting},
-	},
-}
+func init() {
+	defaultAppForStart.Name = "my-app"
+	defaultAppForStart.Guid = "my-app-guid"
+	defaultAppForStart.InstanceCount = 2
 
-var defaultInstanceErrorCodes = []string{"", ""}
+	domain := cf.DomainFields{}
+	domain.Name = "example.com"
+
+	route := cf.RouteSummary{}
+	route.Host = "my-app"
+	route.Domain = domain
+
+	defaultAppForStart.Routes = []cf.RouteSummary{route}
+
+	instance1 := cf.ApplicationInstance{}
+	instance1.State = cf.InstanceStarting
+
+	instance2 := cf.ApplicationInstance{}
+	instance2.State = cf.InstanceStarting
+
+	instance3 := cf.ApplicationInstance{}
+	instance3.State = cf.InstanceRunning
+
+	instance4 := cf.ApplicationInstance{}
+	instance4.State = cf.InstanceStarting
+
+	defaultInstanceReponses = [][]cf.ApplicationInstance{
+		[]cf.ApplicationInstance{instance1, instance2},
+		[]cf.ApplicationInstance{instance3, instance4},
+	}
+}
 
 func callStart(args []string, config *configuration.Configuration, reqFactory *testreq.FakeReqFactory, appRepo api.ApplicationRepository, logRepo api.LogsRepository) (ui *testterm.FakeUI) {
 	ui = new(testterm.FakeUI)

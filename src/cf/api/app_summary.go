@@ -12,9 +12,9 @@ type ApplicationSummaries struct {
 	Apps []ApplicationFromSummary
 }
 
-func (resource ApplicationSummaries) toModels() (apps []cf.ApplicationFields) {
+func (resource ApplicationSummaries) ToModels() (apps []cf.ApplicationFields) {
 	for _, appSummary := range resource.Apps {
-		apps = append(apps, appSummary.toModel())
+		apps = append(apps, appSummary.ToFields())
 	}
 	return
 }
@@ -31,16 +31,16 @@ type ApplicationFromSummary struct {
 	State            string
 }
 
-func (resource ApplicationFromSummary) toModel() (app cf.ApplicationFields) {
-	app = cf.ApplicationFields{
-		State:            strings.ToLower(resource.State),
-		Instances:        resource.Instances,
-		DiskQuota:        resource.DiskQuota,
-		RunningInstances: resource.RunningInstances,
-		Memory:           resource.Memory,
-	}
-	app.Name = resource.Name
+func (resource ApplicationFromSummary) ToFields() (app cf.ApplicationFields) {
+	app = cf.ApplicationFields{}
 	app.Guid = resource.Guid
+	app.Name = resource.Name
+	app.State = strings.ToLower(resource.State)
+	app.InstanceCount = resource.Instances
+	app.DiskQuota = resource.DiskQuota
+	app.RunningInstances = resource.RunningInstances
+	app.Memory = resource.Memory
+
 	return
 }
 
@@ -50,7 +50,7 @@ type RouteSummary struct {
 	Domain DomainSummary
 }
 
-func (resource RouteSummary) toModel() (route cf.RouteSummary) {
+func (resource RouteSummary) ToModel() (route cf.RouteSummary) {
 	domain := cf.DomainFields{}
 	domain.Guid = resource.Domain.Guid
 	domain.Name = resource.Domain.Name
@@ -118,11 +118,10 @@ func (repo CloudControllerAppSummaryRepository) GetSummary(appGuid string) (summ
 }
 
 func (repo CloudControllerAppSummaryRepository) createSummary(resource *ApplicationFromSummary) (summary cf.AppSummary, apiResponse net.ApiResponse) {
-	summary = cf.AppSummary{
-		App: resource.toModel(),
-	}
+	summary = cf.AppSummary{}
+	summary.ApplicationFields = resource.ToFields()
 
-	instances, apiResponse := repo.appRepo.GetInstances(summary.App.Guid)
+	instances, apiResponse := repo.appRepo.GetInstances(summary.Guid)
 	if apiResponse.IsNotSuccessful() {
 		return
 	}

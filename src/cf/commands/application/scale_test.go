@@ -61,7 +61,7 @@ func TestScaleAll(t *testing.T) {
 
 	assert.Equal(t, appRepo.ScaledApp.Guid, "my-app-guid")
 	assert.Equal(t, appRepo.ScaledApp.Memory, uint64(512))
-	assert.Equal(t, appRepo.ScaledApp.Instances, 5)
+	assert.Equal(t, appRepo.ScaledApp.InstanceCount, 5)
 }
 
 func TestScaleOnlyInstances(t *testing.T) {
@@ -76,7 +76,7 @@ func TestScaleOnlyInstances(t *testing.T) {
 	assert.Equal(t, appRepo.ScaledApp.Guid, "my-app-guid")
 	assert.Equal(t, appRepo.ScaledApp.DiskQuota, uint64(0))
 	assert.Equal(t, appRepo.ScaledApp.Memory, uint64(0))
-	assert.Equal(t, appRepo.ScaledApp.Instances, 5)
+	assert.Equal(t, appRepo.ScaledApp.InstanceCount, 5)
 }
 
 func TestScaleOnlyMemory(t *testing.T) {
@@ -91,7 +91,7 @@ func TestScaleOnlyMemory(t *testing.T) {
 	assert.Equal(t, appRepo.ScaledApp.Guid, "my-app-guid")
 	assert.Equal(t, appRepo.ScaledApp.DiskQuota, uint64(0))
 	assert.Equal(t, appRepo.ScaledApp.Memory, uint64(512))
-	assert.Equal(t, appRepo.ScaledApp.Instances, 0)
+	assert.Equal(t, appRepo.ScaledApp.InstanceCount, 0)
 }
 
 func getScaleDependencies() (reqFactory *testreq.FakeReqFactory, restarter *testcmd.FakeAppRestarter, appRepo *testapi.FakeApplicationRepository) {
@@ -109,9 +109,9 @@ func callScale(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory, 
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

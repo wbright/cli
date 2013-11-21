@@ -36,9 +36,6 @@ func TestEventsSuccess(t *testing.T) {
 	assert.NoError(t, err)
 
 	reqFactory, eventsRepo := getEventsDependencies()
-	app_Auto = cf.Application{}
-	app_Auto.Name = "my-app"
-	app_Auto.Guid = "my-app-guid"
 
 	eventsRepo.Events = []cf.Event{
 		{
@@ -78,9 +75,6 @@ func TestEventsSuccess(t *testing.T) {
 
 func TestEventsWhenNoEventsAvailable(t *testing.T) {
 	reqFactory, eventsRepo := getEventsDependencies()
-	app_Auto2 = cf.Application{}
-	app_Auto2.Name = "my-app"
-	app_Auto2.Guid = "my-app-guid"
 
 	ui := callEvents(t, []string{"my-app"}, reqFactory, eventsRepo)
 
@@ -104,9 +98,9 @@ func callEvents(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory,
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
 	config := &configuration.Configuration{
 		Space:        space_Auto,

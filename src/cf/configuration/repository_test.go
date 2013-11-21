@@ -40,10 +40,10 @@ func TestSetOrganization(t *testing.T) {
 	repo := NewConfigurationDiskRepository()
 	config := repo.loadDefaultConfig(t)
 	defer repo.restoreConfig(t)
-	space_Auto = cf.Space{}
-	space_Auto.Guid = "my-space-guid"
-	config.Organization = cf.Organization{}
-	org := cf.Organization{}
+
+	config.Organization = cf.OrganizationFields{}
+
+	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	org.Guid = "my-org-guid"
 	err := repo.SetOrganization(org)
@@ -54,7 +54,7 @@ func TestSetOrganization(t *testing.T) {
 	savedConfig, err := repo.Get()
 	assert.NoError(t, err)
 	assert.Equal(t, savedConfig.Organization, org)
-	assert.Equal(t, savedConfig.Space, cf.Space{})
+	assert.Equal(t, savedConfig.Space, cf.SpaceFields{})
 }
 
 func TestSetSpace(t *testing.T) {
