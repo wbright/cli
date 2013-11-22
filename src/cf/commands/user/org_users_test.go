@@ -45,15 +45,15 @@ func TestOrgUsers(t *testing.T) {
 	org.Guid = "found-org-guid"
 
 	userRepo := &testapi.FakeUserRepository{}
-	user := cf.User{}
+	user := cf.UserFields{}
 	user.Username = "user1"
-	user2 := cf.User{}
+	user2 := cf.UserFields{}
 	user2.Username = "user2"
-	user3 := cf.User{}
+	user3 := cf.UserFields{}
 	user3.Username = "user3"
-	userRepo.FindAllInOrgByRoleUsersByRole = map[string][]cf.User{
-		"MANAGER": []cf.User{user, user2},
-		"DEV":     []cf.User{user3},
+	userRepo.FindAllInOrgByRoleUsersByRole = map[string][]cf.UserFields{
+		"MANAGER": []cf.UserFields{user, user2},
+		"DEV":     []cf.UserFields{user3},
 	}
 
 	reqFactory := &testreq.FakeReqFactory{

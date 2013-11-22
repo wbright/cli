@@ -85,7 +85,7 @@ func TestListEvents(t *testing.T) {
 
 	firstExpectedTime, err := time.Parse(APP_EVENT_TIMESTAMP_FORMAT, "2013-10-07T16:51:07+00:00")
 	secondExpectedTime, err := time.Parse(APP_EVENT_TIMESTAMP_FORMAT, "2013-10-07T17:51:07+00:00")
-	expectedEvents := []cf.Event{
+	expectedEvents := []cf.EventFields{
 		{
 			InstanceIndex:   1,
 			ExitStatus:      1,
@@ -100,7 +100,7 @@ func TestListEvents(t *testing.T) {
 		},
 	}
 
-	list := []cf.Event{}
+	list := []cf.EventFields{}
 	for events := range eventChan {
 		list = append(list, events...)
 	}
@@ -156,7 +156,7 @@ func TestListEventsNotFound(t *testing.T) {
 	eventChan, apiErr := repo.ListEvents("my-app-guid")
 
 	firstExpectedTime, err := time.Parse(APP_EVENT_TIMESTAMP_FORMAT, "2013-10-07T16:51:07+00:00")
-	expectedEvents := []cf.Event{
+	expectedEvents := []cf.EventFields{
 		{
 			InstanceIndex:   1,
 			ExitStatus:      1,
@@ -165,7 +165,7 @@ func TestListEventsNotFound(t *testing.T) {
 		},
 	}
 
-	list := []cf.Event{}
+	list := []cf.EventFields{}
 	for events := range eventChan {
 		list = append(list, events...)
 	}

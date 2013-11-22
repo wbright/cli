@@ -56,13 +56,13 @@ func TestSpaceUsers(t *testing.T) {
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Organization: org}
 	spaceRepo := &testapi.FakeSpaceRepository{FindByNameInOrgSpace: space}
 
-	usersByRole := map[string][]cf.User{
-		"SPACE MANAGER": []cf.User{
-			{Username: "My User 1"},
-			{Username: "My User 2"},
+	usersByRole := map[string][]cf.UserFields{
+		"SPACE MANAGER": []cf.UserFields{
+			{Username: "My UserFields 1"},
+			{Username: "My UserFields 2"},
 		},
-		"SPACE DEV": []cf.User{
-			{Username: "My User 3"},
+		"SPACE DEV": []cf.UserFields{
+			{Username: "My UserFields 3"},
 		},
 	}
 	userRepo := &testapi.FakeUserRepository{FindAllInSpaceByRoleUsersByRole: usersByRole}
@@ -82,11 +82,11 @@ func TestSpaceUsers(t *testing.T) {
 	assert.Contains(t, ui.Outputs[1], "OK")
 
 	assert.Contains(t, ui.Outputs[3], "SPACE MANAGER")
-	assert.Contains(t, ui.Outputs[4], "My User 1")
-	assert.Contains(t, ui.Outputs[5], "My User 2")
+	assert.Contains(t, ui.Outputs[4], "My UserFields 1")
+	assert.Contains(t, ui.Outputs[5], "My UserFields 2")
 
 	assert.Contains(t, ui.Outputs[7], "SPACE DEV")
-	assert.Contains(t, ui.Outputs[8], "My User 3")
+	assert.Contains(t, ui.Outputs[8], "My UserFields 3")
 }
 
 func callSpaceUsers(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory, spaceRepo *testapi.FakeSpaceRepository, userRepo *testapi.FakeUserRepository) (ui *testterm.FakeUI) {

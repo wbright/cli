@@ -92,7 +92,7 @@ type Domain struct {
 	Spaces []SpaceFields
 }
 
-type Event struct {
+type EventFields struct {
 	InstanceIndex   int
 	Timestamp       time.Time
 	ExitDescription string
@@ -127,7 +127,7 @@ type Stack struct {
 	Description string
 }
 
-type ApplicationInstance struct {
+type AppInstanceFields struct {
 	State     InstanceState
 	Since     time.Time
 	CpuUsage  float64 // percentage
@@ -169,7 +169,7 @@ type ServiceInstanceFields struct {
 
 type ServiceInstance struct {
 	ServiceInstanceFields
-	ServiceBindings []ServiceBinding
+	ServiceBindings []ServiceBindingFields
 	ServicePlan     ServicePlanFields
 	ServiceOffering ServiceOfferingFields
 }
@@ -178,7 +178,7 @@ func (inst ServiceInstance) IsUserProvided() bool {
 	return inst.ServicePlan.Guid == ""
 }
 
-type ServiceBinding struct {
+type ServiceBindingFields struct {
 	Guid    string
 	Url     string
 	AppGuid string
@@ -189,7 +189,7 @@ type Quota struct {
 	MemoryLimit uint64 // in Megabytes
 }
 
-type ServiceAuthToken struct {
+type ServiceAuthTokenFields struct {
 	Guid     string
 	Label    string
 	Provider string
@@ -203,7 +203,7 @@ type ServiceBroker struct {
 	Url      string
 }
 
-type User struct {
+type UserFields struct {
 	Guid     string
 	Username string
 	Password string

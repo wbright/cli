@@ -29,13 +29,13 @@ func TestListServiceAuthTokensRequirements(t *testing.T) {
 func TestListServiceAuthTokens(t *testing.T) {
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
 	authTokenRepo := &testapi.FakeAuthTokenRepo{}
-	authToken := cf.ServiceAuthToken{}
+	authToken := cf.ServiceAuthTokenFields{}
 	authToken.Label = "a label"
 	authToken.Provider = "a provider"
-	authToken2 := cf.ServiceAuthToken{}
+	authToken2 := cf.ServiceAuthTokenFields{}
 	authToken2.Label = "a second label"
 	authToken2.Provider = "a second provider"
-	authTokenRepo.FindAllAuthTokens = []cf.ServiceAuthToken{authToken, authToken2}
+	authTokenRepo.FindAllAuthTokens = []cf.ServiceAuthTokenFields{authToken, authToken2}
 
 	ui := callListServiceAuthTokens(t, reqFactory, authTokenRepo)
 	assert.Contains(t, ui.Outputs[0], "Getting service auth tokens as")

@@ -54,9 +54,9 @@ func TestSetSpaceRole(t *testing.T) {
 
 	reqFactory.LoginSuccess = true
 
-	reqFactory.User = cf.User{}
-	reqFactory.User.Guid = "my-user-guid"
-	reqFactory.User.Username = "my-user"
+	reqFactory.UserFields = cf.UserFields{}
+	reqFactory.UserFields.Guid = "my-user-guid"
+	reqFactory.UserFields.Username = "my-user"
 	reqFactory.Organization = cf.Organization{}
 	reqFactory.Organization.Guid = "my-org-guid"
 	reqFactory.Organization.Name = "my-org"

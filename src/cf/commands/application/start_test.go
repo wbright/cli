@@ -21,7 +21,7 @@ import (
 
 var (
 	defaultAppForStart        = cf.Application{}
-	defaultInstanceReponses   = [][]cf.ApplicationInstance{}
+	defaultInstanceReponses   = [][]cf.AppInstanceFields{}
 	defaultInstanceErrorCodes = []string{"", ""}
 )
 
@@ -39,21 +39,21 @@ func init() {
 
 	defaultAppForStart.Routes = []cf.RouteSummary{route}
 
-	instance1 := cf.ApplicationInstance{}
+	instance1 := cf.AppInstanceFields{}
 	instance1.State = cf.InstanceStarting
 
-	instance2 := cf.ApplicationInstance{}
+	instance2 := cf.AppInstanceFields{}
 	instance2.State = cf.InstanceStarting
 
-	instance3 := cf.ApplicationInstance{}
+	instance3 := cf.AppInstanceFields{}
 	instance3.State = cf.InstanceRunning
 
-	instance4 := cf.ApplicationInstance{}
+	instance4 := cf.AppInstanceFields{}
 	instance4.State = cf.InstanceStarting
 
-	defaultInstanceReponses = [][]cf.ApplicationInstance{
-		[]cf.ApplicationInstance{instance1, instance2},
-		[]cf.ApplicationInstance{instance3, instance4},
+	defaultInstanceReponses = [][]cf.AppInstanceFields{
+		[]cf.AppInstanceFields{instance1, instance2},
+		[]cf.AppInstanceFields{instance3, instance4},
 	}
 }
 
@@ -66,7 +66,7 @@ func callStart(args []string, config *configuration.Configuration, reqFactory *t
 	return
 }
 
-func startAppWithInstancesAndErrors(t *testing.T, app cf.Application, instances [][]cf.ApplicationInstance, errorCodes []string) (ui *testterm.FakeUI, appRepo *testapi.FakeApplicationRepository, appInstancesRepo *testapi.FakeAppInstancesRepo, reqFactory *testreq.FakeReqFactory) {
+func startAppWithInstancesAndErrors(t *testing.T, app cf.Application, instances [][]cf.AppInstanceFields, errorCodes []string) (ui *testterm.FakeUI, appRepo *testapi.FakeApplicationRepository, appInstancesRepo *testapi.FakeAppInstancesRepo, reqFactory *testreq.FakeReqFactory) {
 	token, err := testconfig.CreateAccessTokenWithTokenInfo(configuration.TokenInfo{
 		Username: "my-user",
 	})
@@ -129,8 +129,8 @@ func TestStartCommandFailsWithUsage(t *testing.T) {
 	config := &configuration.Configuration{}
 	appRepo := &testapi.FakeApplicationRepository{}
 	appInstancesRepo := &testapi.FakeAppInstancesRepo{
-		GetInstancesResponses: [][]cf.ApplicationInstance{
-			[]cf.ApplicationInstance{},
+		GetInstancesResponses: [][]cf.AppInstanceFields{
+			[]cf.AppInstanceFields{},
 		},
 		GetInstancesErrorCodes: []string{""},
 	}
@@ -169,10 +169,10 @@ func TestStartApplicationWhenAppHasNoURL(t *testing.T) {
 
 	app := defaultAppForStart
 	app.Routes = []cf.RouteSummary{}
-	appInstance5 := cf.ApplicationInstance{}
+	appInstance5 := cf.AppInstanceFields{}
 	appInstance5.State = cf.InstanceRunning
-	instances := [][]cf.ApplicationInstance{
-		[]cf.ApplicationInstance{appInstance5},
+	instances := [][]cf.AppInstanceFields{
+		[]cf.AppInstanceFields{appInstance5},
 	}
 
 	errorCodes := []string{""}
@@ -188,24 +188,24 @@ func TestStartApplicationWhenAppHasNoURL(t *testing.T) {
 
 func TestStartApplicationWhenAppIsStillStaging(t *testing.T) {
 	t.Parallel()
-	appInstance6 := cf.ApplicationInstance{}
+	appInstance6 := cf.AppInstanceFields{}
 	appInstance6.State = cf.InstanceDown
-	appInstance7 := cf.ApplicationInstance{}
+	appInstance7 := cf.AppInstanceFields{}
 	appInstance7.State = cf.InstanceStarting
-	appInstance8 := cf.ApplicationInstance{}
+	appInstance8 := cf.AppInstanceFields{}
 	appInstance8.State = cf.InstanceStarting
-	appInstance9 := cf.ApplicationInstance{}
+	appInstance9 := cf.AppInstanceFields{}
 	appInstance9.State = cf.InstanceStarting
-	appInstance10 := cf.ApplicationInstance{}
+	appInstance10 := cf.AppInstanceFields{}
 	appInstance10.State = cf.InstanceRunning
-	appInstance11 := cf.ApplicationInstance{}
+	appInstance11 := cf.AppInstanceFields{}
 	appInstance11.State = cf.InstanceRunning
-	instances := [][]cf.ApplicationInstance{
-		[]cf.ApplicationInstance{},
-		[]cf.ApplicationInstance{},
-		[]cf.ApplicationInstance{appInstance6, appInstance7},
-		[]cf.ApplicationInstance{appInstance8, appInstance9},
-		[]cf.ApplicationInstance{appInstance10, appInstance11},
+	instances := [][]cf.AppInstanceFields{
+		[]cf.AppInstanceFields{},
+		[]cf.AppInstanceFields{},
+		[]cf.AppInstanceFields{appInstance6, appInstance7},
+		[]cf.AppInstanceFields{appInstance8, appInstance9},
+		[]cf.AppInstanceFields{appInstance10, appInstance11},
 	}
 
 	errorCodes := []string{cf.APP_NOT_STAGED, cf.APP_NOT_STAGED, "", "", ""}
@@ -225,7 +225,7 @@ func TestStartApplicationWhenAppIsStillStaging(t *testing.T) {
 func TestStartApplicationWhenStagingFails(t *testing.T) {
 	t.Parallel()
 
-	instances := [][]cf.ApplicationInstance{[]cf.ApplicationInstance{}}
+	instances := [][]cf.AppInstanceFields{[]cf.AppInstanceFields{}}
 	errorCodes := []string{"170001"}
 
 	ui, _, _, _ := startAppWithInstancesAndErrors(t, defaultAppForStart, instances, errorCodes)
@@ -238,17 +238,17 @@ func TestStartApplicationWhenStagingFails(t *testing.T) {
 
 func TestStartApplicationWhenOneInstanceFlaps(t *testing.T) {
 	t.Parallel()
-	appInstance12 := cf.ApplicationInstance{}
+	appInstance12 := cf.AppInstanceFields{}
 	appInstance12.State = cf.InstanceStarting
-	appInstance13 := cf.ApplicationInstance{}
+	appInstance13 := cf.AppInstanceFields{}
 	appInstance13.State = cf.InstanceStarting
-	appInstance14 := cf.ApplicationInstance{}
+	appInstance14 := cf.AppInstanceFields{}
 	appInstance14.State = cf.InstanceStarting
-	appInstance15 := cf.ApplicationInstance{}
+	appInstance15 := cf.AppInstanceFields{}
 	appInstance15.State = cf.InstanceFlapping
-	instances := [][]cf.ApplicationInstance{
-		[]cf.ApplicationInstance{appInstance12, appInstance13},
-		[]cf.ApplicationInstance{appInstance14, appInstance15},
+	instances := [][]cf.AppInstanceFields{
+		[]cf.AppInstanceFields{appInstance12, appInstance13},
+		[]cf.AppInstanceFields{appInstance14, appInstance15},
 	}
 
 	errorCodes := []string{"", ""}
@@ -264,22 +264,22 @@ func TestStartApplicationWhenOneInstanceFlaps(t *testing.T) {
 
 func TestStartApplicationWhenStartTimesOut(t *testing.T) {
 	t.Parallel()
-	appInstance16 := cf.ApplicationInstance{}
+	appInstance16 := cf.AppInstanceFields{}
 	appInstance16.State = cf.InstanceStarting
-	appInstance17 := cf.ApplicationInstance{}
+	appInstance17 := cf.AppInstanceFields{}
 	appInstance17.State = cf.InstanceStarting
-	appInstance18 := cf.ApplicationInstance{}
+	appInstance18 := cf.AppInstanceFields{}
 	appInstance18.State = cf.InstanceStarting
-	appInstance19 := cf.ApplicationInstance{}
+	appInstance19 := cf.AppInstanceFields{}
 	appInstance19.State = cf.InstanceDown
-	appInstance20 := cf.ApplicationInstance{}
+	appInstance20 := cf.AppInstanceFields{}
 	appInstance20.State = cf.InstanceDown
-	appInstance21 := cf.ApplicationInstance{}
+	appInstance21 := cf.AppInstanceFields{}
 	appInstance21.State = cf.InstanceDown
-	instances := [][]cf.ApplicationInstance{
-		[]cf.ApplicationInstance{appInstance16, appInstance17},
-		[]cf.ApplicationInstance{appInstance18, appInstance19},
-		[]cf.ApplicationInstance{appInstance20, appInstance21},
+	instances := [][]cf.AppInstanceFields{
+		[]cf.AppInstanceFields{appInstance16, appInstance17},
+		[]cf.AppInstanceFields{appInstance18, appInstance19},
+		[]cf.AppInstanceFields{appInstance20, appInstance21},
 	}
 
 	errorCodes := []string{"", "", ""}

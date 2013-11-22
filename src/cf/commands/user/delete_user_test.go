@@ -84,9 +84,9 @@ func TestDeleteUserWhenNotConfirming(t *testing.T) {
 }
 
 func TestDeleteUserWithForceOption(t *testing.T) {
-	foundUser := cf.User{}
-	foundUser.Guid = "my-found-user-guid"
-	userRepo := &testapi.FakeUserRepository{FindByUsernameUser: foundUser}
+	foundUserFields := cf.UserFields{}
+	foundUserFields.Guid = "my-found-user-guid"
+	userRepo := &testapi.FakeUserRepository{FindByUsernameUserFields: foundUserFields}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
 
 	ui := callDeleteUser(t, []string{"-f", "my-user"}, userRepo, reqFactory)
@@ -147,11 +147,11 @@ func deleteWithConfirmation(t *testing.T, confirmation string) (ui *testterm.Fak
 	ui = &testterm.FakeUI{
 		Inputs: []string{confirmation},
 	}
-	user2 := cf.User{}
+	user2 := cf.UserFields{}
 	user2.Username = "my-found-user"
 	user2.Guid = "my-found-user-guid"
 	userRepo = &testapi.FakeUserRepository{
-		FindByUsernameUser: user2,
+		FindByUsernameUserFields: user2,
 	}
 
 	token, err := testconfig.CreateAccessTokenWithTokenInfo(configuration.TokenInfo{

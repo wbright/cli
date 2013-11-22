@@ -9,11 +9,11 @@ import (
 
 type FakeAppInstancesRepo struct{
 	GetInstancesAppGuid    string
-	GetInstancesResponses  [][]cf.ApplicationInstance
+	GetInstancesResponses  [][]cf.AppInstanceFields
 	GetInstancesErrorCodes []string
 }
 
-func (repo *FakeAppInstancesRepo) GetInstances(appGuid string) (instances[]cf.ApplicationInstance, apiResponse net.ApiResponse) {
+func (repo *FakeAppInstancesRepo) GetInstances(appGuid string) (instances[]cf.AppInstanceFields, apiResponse net.ApiResponse) {
 	repo.GetInstancesAppGuid = appGuid
 	time.Sleep(1*time.Millisecond) //needed for Windows only, otherwise it thinks error codes are not assigned
 

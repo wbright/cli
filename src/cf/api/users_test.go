@@ -134,10 +134,10 @@ func TestFindByUsername(t *testing.T) {
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
 
-	expectedUser := cf.User{}
-	expectedUser.Username = "my-full-username"
-	expectedUser.Guid = "my-guid"
-	assert.Equal(t, user, expectedUser)
+	expectedUserFields := cf.UserFields{}
+	expectedUserFields.Username = "my-full-username"
+	expectedUserFields.Guid = "my-guid"
+	assert.Equal(t, user, expectedUserFields)
 }
 
 func TestFindByUsernameWhenNotFound(t *testing.T) {

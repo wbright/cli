@@ -132,7 +132,7 @@ func coloredAppInstaces(app cf.ApplicationFields) string {
 	return healthString
 }
 
-func coloredInstanceState(instance cf.ApplicationInstance) (colored string) {
+func coloredInstanceState(instance cf.AppInstanceFields) (colored string) {
 	state := string(instance.State)
 	switch state {
 	case "started", "running":

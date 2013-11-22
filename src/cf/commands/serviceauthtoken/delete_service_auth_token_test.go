@@ -43,12 +43,12 @@ func TestDeleteServiceAuthTokenRequirements(t *testing.T) {
 }
 
 func TestDeleteServiceAuthToken(t *testing.T) {
-	expectedToken := cf.ServiceAuthToken{}
+	expectedToken := cf.ServiceAuthTokenFields{}
 	expectedToken.Label = "a label"
 	expectedToken.Provider = "a provider"
 
 	authTokenRepo := &testapi.FakeAuthTokenRepo{
-		FindByLabelAndProviderServiceAuthToken: expectedToken,
+		FindByLabelAndProviderServiceAuthTokenFields: expectedToken,
 	}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
 	args := []string{"a label", "a provider"}
@@ -59,7 +59,7 @@ func TestDeleteServiceAuthToken(t *testing.T) {
 
 	assert.Equal(t, authTokenRepo.FindByLabelAndProviderLabel, "a label")
 	assert.Equal(t, authTokenRepo.FindByLabelAndProviderProvider, "a provider")
-	assert.Equal(t, authTokenRepo.DeletedServiceAuthToken, expectedToken)
+	assert.Equal(t, authTokenRepo.DeletedServiceAuthTokenFields, expectedToken)
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
@@ -74,16 +74,16 @@ func TestDeleteServiceAuthTokenWithN(t *testing.T) {
 	assert.Contains(t, ui.Prompts[0], "Are you sure you want to delete")
 	assert.Contains(t, ui.Prompts[0], "a label a provider")
 	assert.Equal(t, len(ui.Outputs), 0)
-	assert.Equal(t, authTokenRepo.DeletedServiceAuthToken, cf.ServiceAuthToken{})
+	assert.Equal(t, authTokenRepo.DeletedServiceAuthTokenFields, cf.ServiceAuthTokenFields{})
 }
 
 func TestDeleteServiceAuthTokenWithY(t *testing.T) {
-	expectedToken := cf.ServiceAuthToken{}
+	expectedToken := cf.ServiceAuthTokenFields{}
 	expectedToken.Label = "a label"
 	expectedToken.Provider = "a provider"
 
 	authTokenRepo := &testapi.FakeAuthTokenRepo{
-		FindByLabelAndProviderServiceAuthToken: expectedToken,
+		FindByLabelAndProviderServiceAuthTokenFields: expectedToken,
 	}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
 	args := []string{"a label", "a provider"}
@@ -94,17 +94,17 @@ func TestDeleteServiceAuthTokenWithY(t *testing.T) {
 	assert.Contains(t, ui.Prompts[0], "a label")
 	assert.Contains(t, ui.Prompts[0], "a provider")
 	assert.Contains(t, ui.Outputs[0], "Deleting")
-	assert.Equal(t, authTokenRepo.DeletedServiceAuthToken, expectedToken)
+	assert.Equal(t, authTokenRepo.DeletedServiceAuthTokenFields, expectedToken)
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
 
 func TestDeleteServiceAuthTokenWithForce(t *testing.T) {
-	expectedToken := cf.ServiceAuthToken{}
+	expectedToken := cf.ServiceAuthTokenFields{}
 	expectedToken.Label = "a label"
 	expectedToken.Provider = "a provider"
 
 	authTokenRepo := &testapi.FakeAuthTokenRepo{
-		FindByLabelAndProviderServiceAuthToken: expectedToken,
+		FindByLabelAndProviderServiceAuthTokenFields: expectedToken,
 	}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
 	args := []string{"-f", "a label", "a provider"}
@@ -114,7 +114,7 @@ func TestDeleteServiceAuthTokenWithForce(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "Deleting")
 	assert.Contains(t, ui.Outputs[1], "OK")
 
-	assert.Equal(t, authTokenRepo.DeletedServiceAuthToken, expectedToken)
+	assert.Equal(t, authTokenRepo.DeletedServiceAuthTokenFields, expectedToken)
 }
 
 func TestDeleteServiceAuthTokenWhenTokenDoesNotExist(t *testing.T) {

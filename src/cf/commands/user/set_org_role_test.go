@@ -50,12 +50,12 @@ func TestSetOrgRole(t *testing.T) {
 	org := cf.Organization{}
 	org.Guid = "my-org-guid"
 	org.Name = "my-org"
-	user := cf.User{}
+	user := cf.UserFields{}
 	user.Guid = "my-user-guid"
 	user.Username = "my-user"
 	reqFactory := &testreq.FakeReqFactory{
 		LoginSuccess: true,
-		User:         user,
+		UserFields:   user,
 		Organization: org,
 	}
 	userRepo := &testapi.FakeUserRepository{}

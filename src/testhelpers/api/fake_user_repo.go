@@ -7,14 +7,14 @@ import (
 
 type FakeUserRepository struct {
 	FindByUsernameUsername string
-	FindByUsernameUser cf.User
+	FindByUsernameUserFields cf.UserFields
 	FindByUsernameNotFound bool
 
 	FindAllInOrgByRoleOrganizationGuid string
-	FindAllInOrgByRoleUsersByRole map[string][]cf.User
+	FindAllInOrgByRoleUsersByRole map[string][]cf.UserFields
 
 	FindAllInSpaceByRoleSpaceGuid string
-	FindAllInSpaceByRoleUsersByRole map[string][]cf.User
+	FindAllInSpaceByRoleUsersByRole map[string][]cf.UserFields
 
 	CreateUserUsername string
 	CreateUserPassword string
@@ -39,24 +39,24 @@ type FakeUserRepository struct {
 	UnsetSpaceRoleRole string
 }
 
-func (repo *FakeUserRepository) FindByUsername(username string) (user cf.User, apiResponse net.ApiResponse) {
+func (repo *FakeUserRepository) FindByUsername(username string) (user cf.UserFields, apiResponse net.ApiResponse) {
 	repo.FindByUsernameUsername = username
-	user = repo.FindByUsernameUser
+	user = repo.FindByUsernameUserFields
 
 	if repo.FindByUsernameNotFound {
-		apiResponse = net.NewNotFoundApiResponse("User not found")
+		apiResponse = net.NewNotFoundApiResponse("UserFields not found")
 	}
 
 	return
 }
 
-func (repo *FakeUserRepository) FindAllInOrgByRole(orgGuid string) (usersByRole map[string][]cf.User, apiResponse net.ApiResponse) {
+func (repo *FakeUserRepository) FindAllInOrgByRole(orgGuid string) (usersByRole map[string][]cf.UserFields, apiResponse net.ApiResponse) {
 	repo.FindAllInOrgByRoleOrganizationGuid = orgGuid
 	usersByRole = repo.FindAllInOrgByRoleUsersByRole
 	return
 }
 
-func (repo *FakeUserRepository) FindAllInSpaceByRole(spaceGuid string) (usersByRole map[string][]cf.User, apiResponse net.ApiResponse) {
+func (repo *FakeUserRepository) FindAllInSpaceByRole(spaceGuid string) (usersByRole map[string][]cf.UserFields, apiResponse net.ApiResponse) {
 	repo.FindAllInSpaceByRoleSpaceGuid = spaceGuid
 	usersByRole = repo.FindAllInSpaceByRoleUsersByRole
 	return
@@ -67,7 +67,7 @@ func (repo *FakeUserRepository) Create(username, password string) (apiResponse n
 	repo.CreateUserPassword = password
 
 	if repo.CreateUserExists {
-		apiResponse = net.NewApiResponse("User already exists", cf.USER_EXISTS, 400)
+		apiResponse = net.NewApiResponse("UserFields already exists", cf.USER_EXISTS, 400)
 	}
 
 	return

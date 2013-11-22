@@ -62,13 +62,13 @@ func TestDeleteServiceBinding(t *testing.T) {
 	serviceInstance := cf.ServiceInstance{}
 	serviceInstance.Guid = "my-service-instance-guid"
 
-	binding := cf.ServiceBinding{}
+	binding := cf.ServiceBindingFields{}
 	binding.Url = "/v2/service_bindings/service-binding-1-guid"
 	binding.AppGuid = "app-1-guid"
-	binding2 := cf.ServiceBinding{}
+	binding2 := cf.ServiceBindingFields{}
 	binding2.Url = "/v2/service_bindings/service-binding-2-guid"
 	binding2.AppGuid = "app-2-guid"
-	serviceInstance.ServiceBindings = []cf.ServiceBinding{binding, binding2}
+	serviceInstance.ServiceBindings = []cf.ServiceBindingFields{binding, binding2}
 
 	found, apiResponse := repo.Delete(serviceInstance, "app-2-guid")
 

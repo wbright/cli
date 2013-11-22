@@ -33,7 +33,7 @@ type FakeReqFactory struct {
 	Domain     cf.Domain
 
 	UserUsername string
-	User         cf.User
+	UserFields         cf.UserFields
 
 	Buildpack     cf.Buildpack
 }
@@ -126,8 +126,8 @@ func (r FakeRequirement) GetDomain() cf.Domain {
 	return r.factory.Domain
 }
 
-func (r FakeRequirement) GetUser() cf.User {
-	return r.factory.User
+func (r FakeRequirement) GetUser() cf.UserFields {
+	return r.factory.UserFields
 }
 
 func (r FakeRequirement) GetBuildpack() cf.Buildpack {

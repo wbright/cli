@@ -9,11 +9,11 @@ import (
 )
 
 func TestUserReqExecute(t *testing.T) {
-	user := cf.User{}
+	user := cf.UserFields{}
 	user.Username = "my-user"
 	user.Guid = "my-user-guid"
 
-	userRepo := &testapi.FakeUserRepository{FindByUsernameUser: user}
+	userRepo := &testapi.FakeUserRepository{FindByUsernameUserFields: user}
 	ui := new(testterm.FakeUI)
 
 	userReq := newUserRequirement("foo", ui, userRepo)

@@ -40,7 +40,7 @@ func TestEventsSuccess(t *testing.T) {
 	app.Name = "my-app"
 	reqFactory.Application = app
 
-	eventsRepo.Events = []cf.Event{
+	eventsRepo.Events = []cf.EventFields{
 		{
 			InstanceIndex:   98,
 			Timestamp:       timestamp,

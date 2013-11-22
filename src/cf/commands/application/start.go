@@ -140,13 +140,13 @@ func (cmd Start) displayLogMessages(logChan chan *logmessage.Message) {
 	}
 }
 
-func (cmd Start) waitForInstanceStartup(app cf.Application) []cf.ApplicationInstance {
+func (cmd Start) waitForInstanceStartup(app cf.Application) []cf.AppInstanceFields {
 	instances, apiResponse := cmd.appInstancesRepo.GetInstances(app.Guid)
 	for count := 0; apiResponse.IsNotSuccessful() && count < MaxInstanceStartupPings; count++ {
 		if apiResponse.ErrorCode != cf.APP_NOT_STAGED {
 			cmd.ui.Say("")
 			cmd.ui.Failed(apiResponse.Message)
-			return []cf.ApplicationInstance{}
+			return []cf.AppInstanceFields{}
 		}
 
 		cmd.ui.Wait(1 * time.Second)
@@ -155,7 +155,7 @@ func (cmd Start) waitForInstanceStartup(app cf.Application) []cf.ApplicationInst
 	return instances
 }
 
-func (cmd Start) displayInstancesStatus(app cf.Application, instances []cf.ApplicationInstance) (notFinished bool) {
+func (cmd Start) displayInstancesStatus(app cf.Application, instances []cf.AppInstanceFields) (notFinished bool) {
 	totalCount := len(instances)
 	runningCount, startingCount, flappingCount, downCount := 0, 0, 0, 0
 

@@ -83,7 +83,7 @@ func (resource ServiceInstanceResource) ToModel() (instance cf.ServiceInstance) 
 	instance.ServicePlan = resource.Entity.ServicePlan.ToFields()
 	instance.ServiceOffering = resource.Entity.ServicePlan.Entity.ServiceOffering.ToFields()
 
-	instance.ServiceBindings = []cf.ServiceBinding{}
+	instance.ServiceBindings = []cf.ServiceBindingFields{}
 	for _, bindingResource := range resource.Entity.ServiceBindings {
 		instance.ServiceBindings = append(instance.ServiceBindings, bindingResource.ToFields())
 	}
@@ -101,7 +101,7 @@ type ServiceBindingResource struct {
 	Entity   ServiceBindingEntity
 }
 
-func (resource ServiceBindingResource) ToFields() (fields cf.ServiceBinding) {
+func (resource ServiceBindingResource) ToFields() (fields cf.ServiceBindingFields) {
 	fields.Url = resource.Metadata.Url
 	fields.Guid = resource.Metadata.Guid
 	fields.AppGuid = resource.Entity.AppGuid

@@ -52,11 +52,11 @@ func TestCreateServiceAuthToken(t *testing.T) {
 	ui := callCreateServiceAuthToken(t, args, reqFactory, authTokenRepo)
 	assert.Contains(t, ui.Outputs[0], "Creating service auth token as")
 	assert.Contains(t, ui.Outputs[0], "my-user")
-	authToken := cf.ServiceAuthToken{}
+	authToken := cf.ServiceAuthTokenFields{}
 	authToken.Label = "a label"
 	authToken.Provider = "a provider"
 	authToken.Token = "a value"
-	assert.Equal(t, authTokenRepo.CreatedServiceAuthToken, authToken)
+	assert.Equal(t, authTokenRepo.CreatedServiceAuthTokenFields, authToken)
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }

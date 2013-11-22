@@ -117,7 +117,7 @@ func (ui terminalUI) ShowConfiguration(config *configuration.Configuration) {
 	if !config.IsLoggedIn() {
 		ui.Say(NotLoggedInText())
 	} else {
-		ui.Say("User:         %s", EntityNameColor(config.UserEmail()))
+		ui.Say("UserFields:         %s", EntityNameColor(config.UserEmail()))
 	}
 
 	if config.HasOrganization() {

@@ -49,7 +49,7 @@ func TestUnsetSpaceRoleRequirements(t *testing.T) {
 }
 
 func TestUnsetSpaceRole(t *testing.T) {
-	user := cf.User{}
+	user := cf.UserFields{}
 	user.Username = "some-user"
 	user.Guid = "some-user-guid"
 	org := cf.Organization{}
@@ -58,7 +58,7 @@ func TestUnsetSpaceRole(t *testing.T) {
 
 	reqFactory, spaceRepo, userRepo := getUnsetSpaceRoleDeps()
 	reqFactory.LoginSuccess = true
-	reqFactory.User = user
+	reqFactory.UserFields = user
 	reqFactory.Organization = org
 	spaceRepo.FindByNameInOrgSpace = cf.Space{}
 	spaceRepo.FindByNameInOrgSpace.Name = "some-space"

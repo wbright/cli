@@ -75,7 +75,7 @@ func TestDisplayingAppSummary(t *testing.T) {
 	time2, err := time.Parse("Mon Jan 2 15:04:05 -0700 MST 2006", "Mon Apr 1 15:04:05 -0700 MST 2012")
 	assert.NoError(t, err)
 
-	appInstance := cf.ApplicationInstance{}
+	appInstance := cf.AppInstanceFields{}
 	appInstance.State = cf.InstanceRunning
 	appInstance.Since = time1
 	appInstance.CpuUsage = 1.0
@@ -84,14 +84,14 @@ func TestDisplayingAppSummary(t *testing.T) {
 	appInstance.MemQuota = 64 * formatters.MEGABYTE
 	appInstance.MemUsage = 13 * formatters.BYTE
 
-	appInstance2 := cf.ApplicationInstance{}
+	appInstance2 := cf.AppInstanceFields{}
 	appInstance2.State = cf.InstanceDown
 	appInstance2.Since = time2
 
-	instances := []cf.ApplicationInstance{appInstance, appInstance2}
+	instances := []cf.AppInstanceFields{appInstance, appInstance2}
 
 	appSummaryRepo := &testapi.FakeAppSummaryRepo{GetSummarySummary: appSummary}
-	appInstancesRepo := &testapi.FakeAppInstancesRepo{GetInstancesResponses: [][]cf.ApplicationInstance{instances}}
+	appInstancesRepo := &testapi.FakeAppInstancesRepo{GetInstancesResponses: [][]cf.AppInstanceFields{instances}}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, TargetedSpaceSuccess: true, Application: reqApp}
 	ui := callApp(t, []string{"my-app"}, reqFactory, appSummaryRepo, appInstancesRepo)
 
