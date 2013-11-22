@@ -6,10 +6,10 @@ import (
 )
 
 type FakeQuotaRepository struct {
-	FindAllQuotas []cf.Quota
+	FindAllQuotas []cf.QuotaFields
 
 	FindByNameName     string
-	FindByNameQuota    cf.Quota
+	FindByNameQuota    cf.QuotaFields
 	FindByNameNotFound bool
 	FindByNameErr      bool
 
@@ -17,13 +17,13 @@ type FakeQuotaRepository struct {
 	UpdateQuotaGuid string
 }
 
-func (repo *FakeQuotaRepository) FindAll() (quotas []cf.Quota, apiResponse net.ApiResponse) {
+func (repo *FakeQuotaRepository) FindAll() (quotas []cf.QuotaFields, apiResponse net.ApiResponse) {
 	quotas = repo.FindAllQuotas
 
 	return
 }
 
-func (repo *FakeQuotaRepository) FindByName(name string) (quota cf.Quota, apiResponse net.ApiResponse) {
+func (repo *FakeQuotaRepository) FindByName(name string) (quota cf.QuotaFields, apiResponse net.ApiResponse) {
 	repo.FindByNameName = name
 	quota = repo.FindByNameQuota
 

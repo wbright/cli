@@ -32,7 +32,7 @@ func TestFindQuotaByName(t *testing.T) {
 	quota, apiResponse := repo.FindByName("my-quota")
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
-	expectedQuota := cf.Quota{}
+	expectedQuota := cf.QuotaFields{}
 	expectedQuota.Guid = "my-quota-guid"
 	expectedQuota.Name = "my-remote-quota"
 	expectedQuota.MemoryLimit = 1024

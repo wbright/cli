@@ -26,11 +26,11 @@ func TestListQuotasRequirements(t *testing.T) {
 }
 
 func TestListQuotas(t *testing.T) {
-	quota := cf.Quota{}
+	quota := cf.QuotaFields{}
 	quota.Name = "quota-name"
 	quota.MemoryLimit = 1024
 
-	quotaRepo := &testapi.FakeQuotaRepository{FindAllQuotas: []cf.Quota{quota}}
+	quotaRepo := &testapi.FakeQuotaRepository{FindAllQuotas: []cf.QuotaFields{quota}}
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
 	ui := callListQuotas(t, reqFactory, quotaRepo)
 

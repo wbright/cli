@@ -184,7 +184,7 @@ type ServiceBindingFields struct {
 	AppGuid string
 }
 
-type Quota struct {
+type QuotaFields struct {
 	BasicFields
 	MemoryLimit uint64 // in Megabytes
 }

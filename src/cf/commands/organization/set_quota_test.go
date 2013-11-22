@@ -50,7 +50,7 @@ func TestSetQuota(t *testing.T) {
 	org.Name = "my-org"
 	org.Guid = "my-org-guid"
 
-	quota := cf.Quota{}
+	quota := cf.QuotaFields{}
 	quota.Name = "my-found-quota"
 	quota.Guid = "my-quota-guid"
 
