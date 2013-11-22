@@ -68,9 +68,9 @@ func main() {
 
 								var name string
 								if count == 1 {
-									name = fmt.Sprintf("%s_Auto", varName)
+									name = fmt.Sprintf("%s", varName)
 								} else {
-									name = fmt.Sprintf("%s_Auto%d", varName, count)
+									name = fmt.Sprintf("%s%d", varName, count)
 								}
 
 								count++

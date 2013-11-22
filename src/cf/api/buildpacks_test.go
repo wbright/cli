@@ -273,13 +273,13 @@ func TestUpdateBuildpack(t *testing.T) {
 
 func createBuildpackRepo(t *testing.T, requests ...testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo BuildpackRepository) {
 	ts, handler = testnet.NewTLSServer(t, requests)
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
-	space_Auto.Guid = "my-space-guid"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
+	space.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
 		Target:      ts.URL,
-		Space:       space_Auto,
+		Space:       space,
 	}
 	gateway := net.NewCloudControllerGateway()
 	repo = NewCloudControllerBuildpackRepository(config, gateway)

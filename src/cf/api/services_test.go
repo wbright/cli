@@ -103,11 +103,11 @@ func TestGetServiceOfferingsWhenTargetingASpace(t *testing.T) {
 		Path:     "/v2/spaces/my-space-guid/services?inline-relations-depth=1",
 		Response: multipleOfferingsResponse,
 	})
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Guid = "my-space-guid"
+	space := cf.SpaceFields{}
+	space.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
-		Space:       space_Auto,
+		Space:       space,
 	}
 	testGetServiceOfferings(t, req, config)
 }
@@ -283,15 +283,15 @@ func TestDeleteServiceWithServiceBindings(t *testing.T) {
 	serviceInstance := cf.ServiceInstance{}
 	serviceInstance.Guid = "my-service-instance-guid"
 
-	binding_Auto := cf.ServiceBinding{}
-	binding_Auto.Url = "/v2/service_bindings/service-binding-1-guid"
-	binding_Auto.AppGuid = "app-1-guid"
+	binding := cf.ServiceBinding{}
+	binding.Url = "/v2/service_bindings/service-binding-1-guid"
+	binding.AppGuid = "app-1-guid"
 
-	binding_Auto2 := cf.ServiceBinding{}
-	binding_Auto2.Url = "/v2/service_bindings/service-binding-2-guid"
-	binding_Auto2.AppGuid = "app-2-guid"
+	binding2 := cf.ServiceBinding{}
+	binding2.Url = "/v2/service_bindings/service-binding-2-guid"
+	binding2.AppGuid = "app-2-guid"
 
-	serviceInstance.ServiceBindings = []cf.ServiceBinding{binding_Auto, binding_Auto2}
+	serviceInstance.ServiceBindings = []cf.ServiceBinding{binding, binding2}
 
 	apiResponse := repo.DeleteService(serviceInstance)
 	assert.True(t, apiResponse.IsNotSuccessful())
@@ -303,9 +303,9 @@ func TestRenameService(t *testing.T) {
 	serviceInstance := cf.ServiceInstance{}
 	serviceInstance.Guid = "my-service-instance-guid"
 
-	plan_Auto := cf.ServicePlanFields{}
-	plan_Auto.Guid = "some-plan-guid"
-	serviceInstance.ServicePlan = plan_Auto
+	plan := cf.ServicePlanFields{}
+	plan.Guid = "some-plan-guid"
+	serviceInstance.ServicePlan = plan
 
 	testRenameService(t, path, serviceInstance)
 }
@@ -334,11 +334,11 @@ func testRenameService(t *testing.T, endpointPath string, serviceInstance cf.Ser
 }
 
 func createServiceRepo(t *testing.T, reqs []testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo ServiceRepository) {
-	space_Auto2 := cf.SpaceFields{}
-	space_Auto2.Guid = "my-space-guid"
+	space2 := cf.SpaceFields{}
+	space2.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
-		Space:       space_Auto2,
+		Space:       space2,
 	}
 	return createServiceRepoWithConfig(t, reqs, config)
 }

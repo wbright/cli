@@ -134,10 +134,10 @@ func TestFindByUsername(t *testing.T) {
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
 
-	user_Auto := cf.User{}
-	user_Auto.Username = "my-full-username"
-	user_Auto.Guid = "my-guid"
-	assert.Equal(t, user, user_Auto)
+	expectedUser := cf.User{}
+	expectedUser.Username = "my-full-username"
+	expectedUser.Guid = "my-guid"
+	assert.Equal(t, user, expectedUser)
 }
 
 func TestFindByUsernameWhenNotFound(t *testing.T) {
@@ -390,12 +390,12 @@ func createUsersRepo(t *testing.T, ccReqs []testnet.TestRequest, uaaReqs []testn
 		uaa, uaaHandler = testnet.NewTLSServer(t, uaaReqs)
 		uaaTarget = uaa.URL
 	}
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Guid = "some-org-guid"
+	org := cf.OrganizationFields{}
+	org.Guid = "some-org-guid"
 	config := &configuration.Configuration{
 		AccessToken:  "BEARER my_access_token",
 		Target:       ccTarget,
-		Organization: org_Auto,
+		Organization: org,
 	}
 	ccGateway := net.NewCloudControllerGateway()
 	uaaGateway := net.NewUAAGateway()

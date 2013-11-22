@@ -14,12 +14,12 @@ import (
 )
 
 func TestListingRoutes(t *testing.T) {
-	domain_Auto := cf.DomainFields{}
-	domain_Auto.Name = "example.com"
-	domain_Auto2 := cf.DomainFields{}
-	domain_Auto2.Name = "cfapps.com"
-	domain_Auto3 := cf.DomainFields{}
-	domain_Auto3.Name = "another-example.com"
+	domain := cf.DomainFields{}
+	domain.Name = "example.com"
+	domain2 := cf.DomainFields{}
+	domain2.Name = "cfapps.com"
+	domain3 := cf.DomainFields{}
+	domain3.Name = "another-example.com"
 
 	app1 := cf.ApplicationFields{}
 	app1.Name = "dora"
@@ -34,19 +34,19 @@ func TestListingRoutes(t *testing.T) {
 	app5 := cf.ApplicationFields{}
 	app5.Name = "july"
 
-	route_Auto := cf.Route{}
-	route_Auto.Host = "hostname-1"
-	route_Auto.Domain = domain_Auto
-	route_Auto.Apps = []cf.ApplicationFields{app1, app2}
-	route_Auto2 := cf.Route{}
-	route_Auto2.Host = "hostname-2"
-	route_Auto2.Domain = domain_Auto2
-	route_Auto2.Apps = []cf.ApplicationFields{app3, app4}
-	route_Auto3 := cf.Route{}
-	route_Auto3.Host = "hostname-3"
-	route_Auto3.Domain = domain_Auto3
-	route_Auto3.Apps = []cf.ApplicationFields{app5}
-	routes := []cf.Route{route_Auto, route_Auto2, route_Auto3}
+	route := cf.Route{}
+	route.Host = "hostname-1"
+	route.Domain = domain
+	route.Apps = []cf.ApplicationFields{app1, app2}
+	route2 := cf.Route{}
+	route2.Host = "hostname-2"
+	route2.Domain = domain2
+	route2.Apps = []cf.ApplicationFields{app3, app4}
+	route3 := cf.Route{}
+	route3.Host = "hostname-3"
+	route3.Domain = domain3
+	route3.Apps = []cf.ApplicationFields{app5}
+	routes := []cf.Route{route, route2, route3}
 
 	routeRepo := &testapi.FakeRouteRepository{Routes: routes}
 
@@ -102,13 +102,13 @@ func callListRoutes(t *testing.T, args []string, reqFactory *testreq.FakeReqFact
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto,
+		Space:        space,
+		Organization: org,
 		AccessToken:  token,
 	}
 

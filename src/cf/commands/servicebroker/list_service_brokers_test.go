@@ -14,19 +14,19 @@ import (
 )
 
 func TestListServiceBrokers(t *testing.T) {
-	broker_Auto := cf.ServiceBroker{}
-	broker_Auto.Name = "service-broker-to-list-a"
-	broker_Auto.Guid = "service-broker-to-list-guid-a"
-	broker_Auto.Url = "http://service-a-url.com"
-	broker_Auto2 := cf.ServiceBroker{}
-	broker_Auto2.Name = "service-broker-to-list-b"
-	broker_Auto2.Guid = "service-broker-to-list-guid-b"
-	broker_Auto2.Url = "http://service-b-url.com"
-	broker_Auto3 := cf.ServiceBroker{}
-	broker_Auto3.Name = "service-broker-to-list-c"
-	broker_Auto3.Guid = "service-broker-to-list-guid-c"
-	broker_Auto3.Url = "http://service-c-url.com"
-	serviceBrokers := []cf.ServiceBroker{broker_Auto, broker_Auto2, broker_Auto3}
+	broker := cf.ServiceBroker{}
+	broker.Name = "service-broker-to-list-a"
+	broker.Guid = "service-broker-to-list-guid-a"
+	broker.Url = "http://service-a-url.com"
+	broker2 := cf.ServiceBroker{}
+	broker2.Name = "service-broker-to-list-b"
+	broker2.Guid = "service-broker-to-list-guid-b"
+	broker2.Url = "http://service-b-url.com"
+	broker3 := cf.ServiceBroker{}
+	broker3.Name = "service-broker-to-list-c"
+	broker3.Guid = "service-broker-to-list-guid-c"
+	broker3.Url = "http://service-c-url.com"
+	serviceBrokers := []cf.ServiceBroker{broker, broker2, broker3}
 
 	repo := &testapi.FakeServiceBrokerRepo{
 		ServiceBrokers: serviceBrokers,
@@ -79,13 +79,13 @@ func callListServiceBrokers(t *testing.T, args []string, serviceBrokerRepo *test
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto,
+		Space:        space,
+		Organization: org,
 		AccessToken:  token,
 	}
 

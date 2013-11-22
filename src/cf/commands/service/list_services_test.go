@@ -13,33 +13,33 @@ import (
 )
 
 func TestServices(t *testing.T) {
-	plan_Auto := cf.ServicePlanFields{}
-	plan_Auto.Guid = "spark-guid"
-	plan_Auto.Name = "spark"
+	plan := cf.ServicePlanFields{}
+	plan.Guid = "spark-guid"
+	plan.Name = "spark"
 
-	offering_Auto := cf.ServiceOfferingFields{}
-	offering_Auto.Label = "cleardb"
+	offering := cf.ServiceOfferingFields{}
+	offering.Label = "cleardb"
 
-	serviceInstance_Auto := cf.ServiceInstance{}
-	serviceInstance_Auto.Name = "my-service-1"
-	serviceInstance_Auto.ServicePlan = plan_Auto
-	serviceInstance_Auto.ApplicationNames = []string{"cli1", "cli2"}
-	serviceInstance_Auto.ServiceOffering = offering_Auto
+	serviceInstance := cf.ServiceInstance{}
+	serviceInstance.Name = "my-service-1"
+	serviceInstance.ServicePlan = plan
+	serviceInstance.ApplicationNames = []string{"cli1", "cli2"}
+	serviceInstance.ServiceOffering = offering
 
-	plan_Auto2 := cf.ServicePlanFields{}
-	plan_Auto2.Guid = "spark-guid-2"
-	plan_Auto2.Name = "spark-2"
+	plan2 := cf.ServicePlanFields{}
+	plan2.Guid = "spark-guid-2"
+	plan2.Name = "spark-2"
 
-	serviceInstance_Auto2 := cf.ServiceInstance{}
-	serviceInstance_Auto2.Name = "my-service-2"
-	serviceInstance_Auto2.ServicePlan = plan_Auto2
-	serviceInstance_Auto2.ApplicationNames = []string{"cli1"}
-	serviceInstance_Auto2.ServiceOffering = offering_Auto
+	serviceInstance2 := cf.ServiceInstance{}
+	serviceInstance2.Name = "my-service-2"
+	serviceInstance2.ServicePlan = plan2
+	serviceInstance2.ApplicationNames = []string{"cli1"}
+	serviceInstance2.ServiceOffering = offering
 
-	serviceInstance_Auto3 := cf.ServiceInstance{}
-	serviceInstance_Auto3.Name = "my-service-provided-by-user"
+	serviceInstance3 := cf.ServiceInstance{}
+	serviceInstance3.Name = "my-service-provided-by-user"
 
-	serviceInstances := []cf.ServiceInstance{serviceInstance_Auto, serviceInstance_Auto2, serviceInstance_Auto3}
+	serviceInstances := []cf.ServiceInstance{serviceInstance, serviceInstance2, serviceInstance3}
 	serviceSummaryRepo := &testapi.FakeServiceSummaryRepo{
 		GetSummariesInCurrentSpaceInstances: serviceInstances,
 	}
@@ -49,13 +49,13 @@ func TestServices(t *testing.T) {
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto,
+		Space:        space,
+		Organization: org,
 		AccessToken:  token,
 	}
 

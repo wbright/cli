@@ -71,13 +71,13 @@ func startAppWithInstancesAndErrors(t *testing.T, app cf.Application, instances 
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:                   space_Auto,
-		Organization:            org_Auto,
+		Space:                   space,
+		Organization:            org,
 		AccessToken:             token,
 		ApplicationStartTimeout: 2,
 	}
@@ -169,10 +169,10 @@ func TestStartApplicationWhenAppHasNoURL(t *testing.T) {
 
 	app := defaultAppForStart
 	app.Routes = []cf.RouteSummary{}
-	appInstance_Auto5 := cf.ApplicationInstance{}
-	appInstance_Auto5.State = cf.InstanceRunning
+	appInstance5 := cf.ApplicationInstance{}
+	appInstance5.State = cf.InstanceRunning
 	instances := [][]cf.ApplicationInstance{
-		[]cf.ApplicationInstance{appInstance_Auto5},
+		[]cf.ApplicationInstance{appInstance5},
 	}
 
 	errorCodes := []string{""}
@@ -188,24 +188,24 @@ func TestStartApplicationWhenAppHasNoURL(t *testing.T) {
 
 func TestStartApplicationWhenAppIsStillStaging(t *testing.T) {
 	t.Parallel()
-	appInstance_Auto6 := cf.ApplicationInstance{}
-	appInstance_Auto6.State = cf.InstanceDown
-	appInstance_Auto7 := cf.ApplicationInstance{}
-	appInstance_Auto7.State = cf.InstanceStarting
-	appInstance_Auto8 := cf.ApplicationInstance{}
-	appInstance_Auto8.State = cf.InstanceStarting
-	appInstance_Auto9 := cf.ApplicationInstance{}
-	appInstance_Auto9.State = cf.InstanceStarting
-	appInstance_Auto10 := cf.ApplicationInstance{}
-	appInstance_Auto10.State = cf.InstanceRunning
-	appInstance_Auto11 := cf.ApplicationInstance{}
-	appInstance_Auto11.State = cf.InstanceRunning
+	appInstance6 := cf.ApplicationInstance{}
+	appInstance6.State = cf.InstanceDown
+	appInstance7 := cf.ApplicationInstance{}
+	appInstance7.State = cf.InstanceStarting
+	appInstance8 := cf.ApplicationInstance{}
+	appInstance8.State = cf.InstanceStarting
+	appInstance9 := cf.ApplicationInstance{}
+	appInstance9.State = cf.InstanceStarting
+	appInstance10 := cf.ApplicationInstance{}
+	appInstance10.State = cf.InstanceRunning
+	appInstance11 := cf.ApplicationInstance{}
+	appInstance11.State = cf.InstanceRunning
 	instances := [][]cf.ApplicationInstance{
 		[]cf.ApplicationInstance{},
 		[]cf.ApplicationInstance{},
-		[]cf.ApplicationInstance{appInstance_Auto6, appInstance_Auto7},
-		[]cf.ApplicationInstance{appInstance_Auto8, appInstance_Auto9},
-		[]cf.ApplicationInstance{appInstance_Auto10, appInstance_Auto11},
+		[]cf.ApplicationInstance{appInstance6, appInstance7},
+		[]cf.ApplicationInstance{appInstance8, appInstance9},
+		[]cf.ApplicationInstance{appInstance10, appInstance11},
 	}
 
 	errorCodes := []string{cf.APP_NOT_STAGED, cf.APP_NOT_STAGED, "", "", ""}
@@ -238,17 +238,17 @@ func TestStartApplicationWhenStagingFails(t *testing.T) {
 
 func TestStartApplicationWhenOneInstanceFlaps(t *testing.T) {
 	t.Parallel()
-	appInstance_Auto12 := cf.ApplicationInstance{}
-	appInstance_Auto12.State = cf.InstanceStarting
-	appInstance_Auto13 := cf.ApplicationInstance{}
-	appInstance_Auto13.State = cf.InstanceStarting
-	appInstance_Auto14 := cf.ApplicationInstance{}
-	appInstance_Auto14.State = cf.InstanceStarting
-	appInstance_Auto15 := cf.ApplicationInstance{}
-	appInstance_Auto15.State = cf.InstanceFlapping
+	appInstance12 := cf.ApplicationInstance{}
+	appInstance12.State = cf.InstanceStarting
+	appInstance13 := cf.ApplicationInstance{}
+	appInstance13.State = cf.InstanceStarting
+	appInstance14 := cf.ApplicationInstance{}
+	appInstance14.State = cf.InstanceStarting
+	appInstance15 := cf.ApplicationInstance{}
+	appInstance15.State = cf.InstanceFlapping
 	instances := [][]cf.ApplicationInstance{
-		[]cf.ApplicationInstance{appInstance_Auto12, appInstance_Auto13},
-		[]cf.ApplicationInstance{appInstance_Auto14, appInstance_Auto15},
+		[]cf.ApplicationInstance{appInstance12, appInstance13},
+		[]cf.ApplicationInstance{appInstance14, appInstance15},
 	}
 
 	errorCodes := []string{"", ""}
@@ -264,22 +264,22 @@ func TestStartApplicationWhenOneInstanceFlaps(t *testing.T) {
 
 func TestStartApplicationWhenStartTimesOut(t *testing.T) {
 	t.Parallel()
-	appInstance_Auto16 := cf.ApplicationInstance{}
-	appInstance_Auto16.State = cf.InstanceStarting
-	appInstance_Auto17 := cf.ApplicationInstance{}
-	appInstance_Auto17.State = cf.InstanceStarting
-	appInstance_Auto18 := cf.ApplicationInstance{}
-	appInstance_Auto18.State = cf.InstanceStarting
-	appInstance_Auto19 := cf.ApplicationInstance{}
-	appInstance_Auto19.State = cf.InstanceDown
-	appInstance_Auto20 := cf.ApplicationInstance{}
-	appInstance_Auto20.State = cf.InstanceDown
-	appInstance_Auto21 := cf.ApplicationInstance{}
-	appInstance_Auto21.State = cf.InstanceDown
+	appInstance16 := cf.ApplicationInstance{}
+	appInstance16.State = cf.InstanceStarting
+	appInstance17 := cf.ApplicationInstance{}
+	appInstance17.State = cf.InstanceStarting
+	appInstance18 := cf.ApplicationInstance{}
+	appInstance18.State = cf.InstanceStarting
+	appInstance19 := cf.ApplicationInstance{}
+	appInstance19.State = cf.InstanceDown
+	appInstance20 := cf.ApplicationInstance{}
+	appInstance20.State = cf.InstanceDown
+	appInstance21 := cf.ApplicationInstance{}
+	appInstance21.State = cf.InstanceDown
 	instances := [][]cf.ApplicationInstance{
-		[]cf.ApplicationInstance{appInstance_Auto16, appInstance_Auto17},
-		[]cf.ApplicationInstance{appInstance_Auto18, appInstance_Auto19},
-		[]cf.ApplicationInstance{appInstance_Auto20, appInstance_Auto21},
+		[]cf.ApplicationInstance{appInstance16, appInstance17},
+		[]cf.ApplicationInstance{appInstance18, appInstance19},
+		[]cf.ApplicationInstance{appInstance20, appInstance21},
 	}
 
 	errorCodes := []string{"", "", ""}
@@ -342,13 +342,13 @@ func TestStartApplicationWithLoggingFailure(t *testing.T) {
 
 	token, err := testconfig.CreateAccessTokenWithTokenInfo(configuration.TokenInfo{Username: "my-user"})
 	assert.NoError(t, err)
-	space_Auto2 := cf.SpaceFields{}
-	space_Auto2.Name = "my-space"
-	org_Auto2 := cf.OrganizationFields{}
-	org_Auto2.Name = "my-org"
+	space2 := cf.SpaceFields{}
+	space2.Name = "my-space"
+	org2 := cf.OrganizationFields{}
+	org2.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:                   space_Auto2,
-		Organization:            org_Auto2,
+		Space:                   space2,
+		Organization:            org2,
 		AccessToken:             token,
 		ApplicationStartTimeout: 2,
 	}

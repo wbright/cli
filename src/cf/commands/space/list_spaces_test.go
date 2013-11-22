@@ -32,24 +32,24 @@ func TestSpacesRequirements(t *testing.T) {
 }
 
 func TestListingSpaces(t *testing.T) {
-	space_Auto := cf.Space{}
-	space_Auto.Name = "space1"
-	space_Auto2 := cf.Space{}
-	space_Auto2.Name = "space2"
-	space_Auto3 := cf.Space{}
-	space_Auto3.Name = "space3"
+	space := cf.Space{}
+	space.Name = "space1"
+	space2 := cf.Space{}
+	space2.Name = "space2"
+	space3 := cf.Space{}
+	space3.Name = "space3"
 	spaceRepo := &testapi.FakeSpaceRepository{
-		Spaces: []cf.Space{space_Auto, space_Auto2, space_Auto3},
+		Spaces: []cf.Space{space, space2, space3},
 	}
 	token, err := testconfig.CreateAccessTokenWithTokenInfo(configuration.TokenInfo{
 		Username: "my-user",
 	})
 
 	assert.NoError(t, err)
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Organization: org_Auto,
+		Organization: org,
 		AccessToken:  token,
 	}
 
@@ -72,10 +72,10 @@ func TestListingSpacesWhenNoSpaces(t *testing.T) {
 	})
 
 	assert.NoError(t, err)
-	org_Auto2 := cf.OrganizationFields{}
-	org_Auto2.Name = "my-org"
+	org2 := cf.OrganizationFields{}
+	org2.Name = "my-org"
 	config := &configuration.Configuration{
-		Organization: org_Auto2,
+		Organization: org2,
 		AccessToken:  token,
 	}
 

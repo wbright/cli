@@ -59,13 +59,13 @@ func callRenameSpace(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto2 := cf.SpaceFields{}
-	space_Auto2.Name = "my-space"
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
+	space2 := cf.SpaceFields{}
+	space2.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space_Auto2,
-		Organization: org_Auto,
+		Space:        space2,
+		Organization: org,
 		AccessToken:  token,
 	}
 

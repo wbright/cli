@@ -127,13 +127,13 @@ func callDeleteUser(t *testing.T, args []string, userRepo *testapi.FakeUserRepos
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto,
+		Space:        space,
+		Organization: org,
 		AccessToken:  token,
 	}
 
@@ -147,24 +147,24 @@ func deleteWithConfirmation(t *testing.T, confirmation string) (ui *testterm.Fak
 	ui = &testterm.FakeUI{
 		Inputs: []string{confirmation},
 	}
-	user_Auto2 := cf.User{}
-	user_Auto2.Username = "my-found-user"
-	user_Auto2.Guid = "my-found-user-guid"
+	user2 := cf.User{}
+	user2.Username = "my-found-user"
+	user2.Guid = "my-found-user-guid"
 	userRepo = &testapi.FakeUserRepository{
-		FindByUsernameUser: user_Auto2,
+		FindByUsernameUser: user2,
 	}
 
 	token, err := testconfig.CreateAccessTokenWithTokenInfo(configuration.TokenInfo{
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-	org_Auto2 := cf.OrganizationFields{}
-	org_Auto2.Name = "my-org"
-	space_Auto2 := cf.SpaceFields{}
-	space_Auto2.Name = "my-space"
+	org2 := cf.OrganizationFields{}
+	org2.Name = "my-org"
+	space2 := cf.SpaceFields{}
+	space2.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space_Auto2,
-		Organization: org_Auto2,
+		Space:        space2,
+		Organization: org2,
 		AccessToken:  token,
 	}
 

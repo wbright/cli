@@ -52,15 +52,15 @@ func TestDisplayingAppSummary(t *testing.T) {
 	route1 := cf.RouteSummary{}
 	route1.Host = "my-app"
 
-	domain_Auto := cf.DomainFields{}
-	domain_Auto.Name = "example.com"
-	route1.Domain = domain_Auto
+	domain := cf.DomainFields{}
+	domain.Name = "example.com"
+	route1.Domain = domain
 
 	route2 := cf.RouteSummary{}
 	route2.Host = "foo"
-	domain_Auto2 := cf.DomainFields{}
-	domain_Auto2.Name = "example.com"
-	route2.Domain = domain_Auto2
+	domain2 := cf.DomainFields{}
+	domain2.Name = "example.com"
+	route2.Domain = domain2
 
 	appSummary := cf.AppSummary{}
 	appSummary.State = "started"
@@ -75,20 +75,20 @@ func TestDisplayingAppSummary(t *testing.T) {
 	time2, err := time.Parse("Mon Jan 2 15:04:05 -0700 MST 2006", "Mon Apr 1 15:04:05 -0700 MST 2012")
 	assert.NoError(t, err)
 
-	appInstance_Auto := cf.ApplicationInstance{}
-	appInstance_Auto.State = cf.InstanceRunning
-	appInstance_Auto.Since = time1
-	appInstance_Auto.CpuUsage = 1.0
-	appInstance_Auto.DiskQuota = 1 * formatters.GIGABYTE
-	appInstance_Auto.DiskUsage = 32 * formatters.MEGABYTE
-	appInstance_Auto.MemQuota = 64 * formatters.MEGABYTE
-	appInstance_Auto.MemUsage = 13 * formatters.BYTE
+	appInstance := cf.ApplicationInstance{}
+	appInstance.State = cf.InstanceRunning
+	appInstance.Since = time1
+	appInstance.CpuUsage = 1.0
+	appInstance.DiskQuota = 1 * formatters.GIGABYTE
+	appInstance.DiskUsage = 32 * formatters.MEGABYTE
+	appInstance.MemQuota = 64 * formatters.MEGABYTE
+	appInstance.MemUsage = 13 * formatters.BYTE
 
-	appInstance_Auto2 := cf.ApplicationInstance{}
-	appInstance_Auto2.State = cf.InstanceDown
-	appInstance_Auto2.Since = time2
+	appInstance2 := cf.ApplicationInstance{}
+	appInstance2.State = cf.InstanceDown
+	appInstance2.Since = time2
 
-	instances := []cf.ApplicationInstance{appInstance_Auto, appInstance_Auto2}
+	instances := []cf.ApplicationInstance{appInstance, appInstance2}
 
 	appSummaryRepo := &testapi.FakeAppSummaryRepo{GetSummarySummary: appSummary}
 	appInstancesRepo := &testapi.FakeAppInstancesRepo{GetInstancesResponses: [][]cf.ApplicationInstance{instances}}
@@ -140,18 +140,18 @@ func testDisplayingAppSummaryWithErrorCode(t *testing.T, errorCode string) {
 	reqApp.Name = "my-app"
 	reqApp.Guid = "my-app-guid"
 
-	domain_Auto3 := cf.DomainFields{}
-	domain_Auto3.Name = "example.com"
-	domain_Auto4 := cf.DomainFields{}
-	domain_Auto4.Name = "example.com"
+	domain3 := cf.DomainFields{}
+	domain3.Name = "example.com"
+	domain4 := cf.DomainFields{}
+	domain4.Name = "example.com"
 
 	route1 := cf.RouteSummary{}
 	route1.Host = "my-app"
-	route1.Domain = domain_Auto3
+	route1.Domain = domain3
 
 	route2 := cf.RouteSummary{}
 	route2.Host = "foo"
-	route2.Domain = domain_Auto4
+	route2.Domain = domain4
 
 	routes := []cf.RouteSummary{
 		route1,
@@ -204,13 +204,13 @@ func callApp(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory, ap
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto,
+		Space:        space,
+		Organization: org,
 		AccessToken:  token,
 	}
 

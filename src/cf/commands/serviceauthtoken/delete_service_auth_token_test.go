@@ -154,13 +154,13 @@ func callDeleteServiceAuthToken(t *testing.T, args []string, inputs []string, re
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto,
+		Space:        space,
+		Organization: org,
 		AccessToken:  token,
 	}
 

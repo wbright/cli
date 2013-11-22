@@ -98,13 +98,13 @@ func callSetSpaceRole(t *testing.T, args []string, reqFactory *testreq.FakeReqFa
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-	space_Auto2 := cf.SpaceFields{}
-	space_Auto2.Name = "my-space"
-	org_Auto2 := cf.OrganizationFields{}
-	org_Auto2.Name = "my-org"
+	space2 := cf.SpaceFields{}
+	space2.Name = "my-space"
+	org2 := cf.OrganizationFields{}
+	org2.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space_Auto2,
-		Organization: org_Auto2,
+		Space:        space2,
+		Organization: org2,
 		AccessToken:  token,
 	}
 

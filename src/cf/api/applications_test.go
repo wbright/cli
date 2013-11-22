@@ -132,10 +132,10 @@ func TestCreateApplication(t *testing.T) {
 
 	assert.True(t, handler.AllRequestsCalled())
 	assert.False(t, apiResponse.IsNotSuccessful())
-	app_Auto := cf.Application{}
-	app_Auto.Name = "my-cool-app"
-	app_Auto.Guid = "my-cool-app-guid"
-	assert.Equal(t, createdApp, app_Auto)
+	app := cf.Application{}
+	app.Name = "my-cool-app"
+	app.Guid = "my-cool-app-guid"
+	assert.Equal(t, createdApp, app)
 }
 
 func TestCreateApplicationWithoutBuildpackStackOrCommand(t *testing.T) {
@@ -327,13 +327,13 @@ func TestStopApplication(t *testing.T) {
 
 func createAppRepo(t *testing.T, requests []testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo ApplicationRepository) {
 	ts, handler = testnet.NewTLSServer(t, requests)
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
-	space_Auto.Guid = "my-space-guid"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
+	space.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
 		Target:      ts.URL,
-		Space:       space_Auto,
+		Space:       space,
 	}
 	gateway := net.NewCloudControllerGateway()
 	repo = NewCloudControllerApplicationRepository(config, gateway)

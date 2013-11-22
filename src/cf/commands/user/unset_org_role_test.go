@@ -85,13 +85,13 @@ func callUnsetOrgRole(t *testing.T, args []string, userRepo *testapi.FakeUserRep
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-	org_Auto2 := cf.OrganizationFields{}
-	org_Auto2.Name = "my-org"
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
+	org2 := cf.OrganizationFields{}
+	org2.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto2,
+		Space:        space,
+		Organization: org2,
 		AccessToken:  token,
 	}
 

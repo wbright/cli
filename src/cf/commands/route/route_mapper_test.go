@@ -40,20 +40,20 @@ func TestRouteMapperRequirements(t *testing.T) {
 
 func TestRouteMapperWhenBinding(t *testing.T) {
 
-	domain_Auto := cf.Domain{}
-	domain_Auto.Guid = "my-domain-guid"
-	domain_Auto.Name = "example.com"
+	domain := cf.Domain{}
+	domain.Guid = "my-domain-guid"
+	domain.Name = "example.com"
 	route := cf.Route{}
 	route.Guid = "my-route-guid"
 	route.Host = "foo"
-	route.Domain = domain_Auto.DomainFields
+	route.Domain = domain.DomainFields
 
 	app := cf.Application{}
 	app.Guid = "my-app-guid"
 	app.Name = "my-app"
 
 	routeRepo := &testapi.FakeRouteRepository{}
-	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Application: app, Domain: domain_Auto}
+	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Application: app, Domain: domain}
 	routeCreator := &testcmd.FakeRouteCreator{ReservedRoute: route}
 
 	ui := callRouteMapper(t, []string{"-n", "my-host", "my-app", "my-domain.com"}, reqFactory, routeRepo, routeCreator, true)
@@ -72,21 +72,21 @@ func TestRouteMapperWhenBinding(t *testing.T) {
 }
 
 func TestRouteMapperWhenUnbinding(t *testing.T) {
-	domain_Auto := cf.Domain{}
-	domain_Auto.Guid = "my-domain-guid"
-	domain_Auto.Name = "example.com"
+	domain := cf.Domain{}
+	domain.Guid = "my-domain-guid"
+	domain.Name = "example.com"
 
 	route := cf.Route{}
 	route.Guid = "my-route-guid"
 	route.Host = "foo"
-	route.Domain = domain_Auto.DomainFields
+	route.Domain = domain.DomainFields
 
 	app := cf.Application{}
 	app.Guid = "my-app-guid"
 	app.Name = "my-app"
 
 	routeRepo := &testapi.FakeRouteRepository{}
-	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Application: app, Domain: domain_Auto}
+	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Application: app, Domain: domain}
 	routeCreator := &testcmd.FakeRouteCreator{ReservedRoute: route}
 
 	ui := callRouteMapper(t, []string{"-n", "my-host", "my-app", "my-domain.com"}, reqFactory, routeRepo, routeCreator, false)
@@ -137,13 +137,13 @@ func callRouteMapper(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto,
+		Space:        space,
+		Organization: org,
 		AccessToken:  token,
 	}
 

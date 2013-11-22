@@ -47,16 +47,16 @@ func TestSetOrgRoleRequirements(t *testing.T) {
 }
 
 func TestSetOrgRole(t *testing.T) {
-	org_Auto := cf.Organization{}
-	org_Auto.Guid = "my-org-guid"
-	org_Auto.Name = "my-org"
-	user_Auto := cf.User{}
-	user_Auto.Guid = "my-user-guid"
-	user_Auto.Username = "my-user"
+	org := cf.Organization{}
+	org.Guid = "my-org-guid"
+	org.Name = "my-org"
+	user := cf.User{}
+	user.Guid = "my-user-guid"
+	user.Username = "my-user"
 	reqFactory := &testreq.FakeReqFactory{
 		LoginSuccess: true,
-		User:         user_Auto,
-		Organization: org_Auto,
+		User:         user,
+		Organization: org,
 	}
 	userRepo := &testapi.FakeUserRepository{}
 
@@ -83,13 +83,13 @@ func callSetOrgRole(t *testing.T, args []string, reqFactory *testreq.FakeReqFact
 		Username: "current-user",
 	})
 	assert.NoError(t, err)
-	org_Auto2 := cf.OrganizationFields{}
-	org_Auto2.Name = "my-org"
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
+	org2 := cf.OrganizationFields{}
+	org2.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto2,
+		Space:        space,
+		Organization: org2,
 		AccessToken:  token,
 	}
 

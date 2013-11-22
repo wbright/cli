@@ -22,11 +22,11 @@ func TestServiceAuthCreate(t *testing.T) {
 
 	ts, handler, repo := createServiceAuthTokenRepo(t, req)
 	defer ts.Close()
-	authToken_Auto := cf.ServiceAuthToken{}
-	authToken_Auto.Label = "a label"
-	authToken_Auto.Provider = "a provider"
-	authToken_Auto.Token = "a token"
-	apiResponse := repo.Create(authToken_Auto)
+	authToken := cf.ServiceAuthToken{}
+	authToken.Label = "a label"
+	authToken.Provider = "a provider"
+	authToken.Token = "a token"
+	apiResponse := repo.Create(authToken)
 
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
@@ -100,11 +100,11 @@ func TestServiceAuthFindByLabelAndProvider(t *testing.T) {
 
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
-	authToken_Auto2 := cf.ServiceAuthToken{}
-	authToken_Auto2.Guid = "mysql-core-guid"
-	authToken_Auto2.Label = "mysql"
-	authToken_Auto2.Provider = "mysql-core"
-	assert.Equal(t, serviceAuthToken, authToken_Auto2)
+	authToken2 := cf.ServiceAuthToken{}
+	authToken2.Guid = "mysql-core-guid"
+	authToken2.Label = "mysql"
+	authToken2.Provider = "mysql-core"
+	assert.Equal(t, serviceAuthToken, authToken2)
 }
 
 func TestServiceAuthFindByLabelAndProviderWhenNotFound(t *testing.T) {
@@ -136,10 +136,10 @@ func TestServiceAuthUpdate(t *testing.T) {
 
 	ts, handler, repo := createServiceAuthTokenRepo(t, req)
 	defer ts.Close()
-	authToken_Auto3 := cf.ServiceAuthToken{}
-	authToken_Auto3.Guid = "mysql-core-guid"
-	authToken_Auto3.Token = "a value"
-	apiResponse := repo.Update(authToken_Auto3)
+	authToken3 := cf.ServiceAuthToken{}
+	authToken3.Guid = "mysql-core-guid"
+	authToken3.Token = "a value"
+	apiResponse := repo.Update(authToken3)
 
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
@@ -154,9 +154,9 @@ func TestServiceAuthDelete(t *testing.T) {
 
 	ts, handler, repo := createServiceAuthTokenRepo(t, req)
 	defer ts.Close()
-	authToken_Auto4 := cf.ServiceAuthToken{}
-	authToken_Auto4.Guid = "mysql-core-guid"
-	apiResponse := repo.Delete(authToken_Auto4)
+	authToken4 := cf.ServiceAuthToken{}
+	authToken4.Guid = "mysql-core-guid"
+	apiResponse := repo.Delete(authToken4)
 
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())

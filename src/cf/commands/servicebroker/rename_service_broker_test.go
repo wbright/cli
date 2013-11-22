@@ -43,11 +43,11 @@ func TestRenameServiceBrokerRequirements(t *testing.T) {
 
 func TestRenameServiceBroker(t *testing.T) {
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
-	broker_Auto := cf.ServiceBroker{}
-	broker_Auto.Name = "my-found-broker"
-	broker_Auto.Guid = "my-found-broker-guid"
+	broker := cf.ServiceBroker{}
+	broker.Name = "my-found-broker"
+	broker.Guid = "my-found-broker-guid"
 	repo := &testapi.FakeServiceBrokerRepo{
-		FindByNameServiceBroker: broker_Auto,
+		FindByNameServiceBroker: broker,
 	}
 	args := []string{"my-broker", "my-new-broker"}
 
@@ -73,13 +73,13 @@ func callRenameServiceBroker(t *testing.T, args []string, reqFactory *testreq.Fa
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto,
+		Space:        space,
+		Organization: org,
 		AccessToken:  token,
 	}
 

@@ -85,10 +85,10 @@ func TestAppInstancesGetInstances(t *testing.T) {
 
 func createAppInstancesRepo(t *testing.T, requests []testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo AppInstancesRepository) {
 	ts, handler = testnet.NewTLSServer(t, requests)
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Guid = "my-space-guid"
+	space := cf.SpaceFields{}
+	space.Guid = "my-space-guid"
 	config := &configuration.Configuration{
-		Space:       space_Auto,
+		Space:       space,
 		AccessToken: "BEARER my_access_token",
 		Target:      ts.URL,
 	}

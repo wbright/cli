@@ -62,13 +62,13 @@ func TestDeleteServiceBinding(t *testing.T) {
 	serviceInstance := cf.ServiceInstance{}
 	serviceInstance.Guid = "my-service-instance-guid"
 
-	binding_Auto := cf.ServiceBinding{}
-	binding_Auto.Url = "/v2/service_bindings/service-binding-1-guid"
-	binding_Auto.AppGuid = "app-1-guid"
-	binding_Auto2 := cf.ServiceBinding{}
-	binding_Auto2.Url = "/v2/service_bindings/service-binding-2-guid"
-	binding_Auto2.AppGuid = "app-2-guid"
-	serviceInstance.ServiceBindings = []cf.ServiceBinding{binding_Auto, binding_Auto2}
+	binding := cf.ServiceBinding{}
+	binding.Url = "/v2/service_bindings/service-binding-1-guid"
+	binding.AppGuid = "app-1-guid"
+	binding2 := cf.ServiceBinding{}
+	binding2.Url = "/v2/service_bindings/service-binding-2-guid"
+	binding2.AppGuid = "app-2-guid"
+	serviceInstance.ServiceBindings = []cf.ServiceBinding{binding, binding2}
 
 	found, apiResponse := repo.Delete(serviceInstance, "app-2-guid")
 
@@ -93,11 +93,11 @@ func TestDeleteServiceBindingWhenBindingDoesNotExist(t *testing.T) {
 
 func createServiceBindingRepo(t *testing.T, req testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo ServiceBindingRepository) {
 	ts, handler = testnet.NewTLSServer(t, []testnet.TestRequest{req})
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Guid = "my-space-guid"
+	space := cf.SpaceFields{}
+	space.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
-		Space:       space_Auto,
+		Space:       space,
 		Target:      ts.URL,
 	}
 

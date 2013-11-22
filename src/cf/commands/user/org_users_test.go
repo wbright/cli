@@ -45,15 +45,15 @@ func TestOrgUsers(t *testing.T) {
 	org.Guid = "found-org-guid"
 
 	userRepo := &testapi.FakeUserRepository{}
-	user_Auto := cf.User{}
-	user_Auto.Username = "user1"
-	user_Auto2 := cf.User{}
-	user_Auto2.Username = "user2"
-	user_Auto3 := cf.User{}
-	user_Auto3.Username = "user3"
+	user := cf.User{}
+	user.Username = "user1"
+	user2 := cf.User{}
+	user2.Username = "user2"
+	user3 := cf.User{}
+	user3.Username = "user3"
 	userRepo.FindAllInOrgByRoleUsersByRole = map[string][]cf.User{
-		"MANAGER": []cf.User{user_Auto, user_Auto2},
-		"DEV":     []cf.User{user_Auto3},
+		"MANAGER": []cf.User{user, user2},
+		"DEV":     []cf.User{user3},
 	}
 
 	reqFactory := &testreq.FakeReqFactory{
@@ -86,13 +86,13 @@ func callOrgUsers(t *testing.T, args []string, reqFactory *testreq.FakeReqFactor
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto3 := cf.OrganizationFields{}
-	org_Auto3.Name = "my-org"
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
+	org3 := cf.OrganizationFields{}
+	org3.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto3,
+		Space:        space,
+		Organization: org3,
 		AccessToken:  token,
 	}
 

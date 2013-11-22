@@ -162,13 +162,13 @@ func deleteSpace(t *testing.T, confirmation string, args []string) (ui *testterm
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto8 := cf.SpaceFields{}
-	space_Auto8.Name = "my-space"
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
+	space8 := cf.SpaceFields{}
+	space8.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space_Auto8,
-		Organization: org_Auto,
+		Space:        space8,
+		Organization: org,
 		AccessToken:  token,
 	}
 

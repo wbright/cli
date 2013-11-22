@@ -52,11 +52,11 @@ func TestCreateServiceAuthToken(t *testing.T) {
 	ui := callCreateServiceAuthToken(t, args, reqFactory, authTokenRepo)
 	assert.Contains(t, ui.Outputs[0], "Creating service auth token as")
 	assert.Contains(t, ui.Outputs[0], "my-user")
-	authToken_Auto := cf.ServiceAuthToken{}
-	authToken_Auto.Label = "a label"
-	authToken_Auto.Provider = "a provider"
-	authToken_Auto.Token = "a value"
-	assert.Equal(t, authTokenRepo.CreatedServiceAuthToken, authToken_Auto)
+	authToken := cf.ServiceAuthToken{}
+	authToken.Label = "a label"
+	authToken.Provider = "a provider"
+	authToken.Token = "a value"
+	assert.Equal(t, authTokenRepo.CreatedServiceAuthToken, authToken)
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }
@@ -68,13 +68,13 @@ func callCreateServiceAuthToken(t *testing.T, args []string, reqFactory *testreq
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto,
+		Space:        space,
+		Organization: org,
 		AccessToken:  token,
 	}
 

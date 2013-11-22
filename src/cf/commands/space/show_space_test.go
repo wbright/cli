@@ -28,20 +28,20 @@ func TestShowSpaceInfoSuccess(t *testing.T) {
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 
-	app_Auto := cf.ApplicationFields{}
-	app_Auto.Name = "app1"
-	app_Auto.Guid = "app1-guid"
-	apps := []cf.ApplicationFields{app_Auto}
+	app := cf.ApplicationFields{}
+	app.Name = "app1"
+	app.Guid = "app1-guid"
+	apps := []cf.ApplicationFields{app}
 
-	domain_Auto := cf.DomainFields{}
-	domain_Auto.Name = "domain1"
-	domain_Auto.Guid = "domain1-guid"
-	domains := []cf.DomainFields{domain_Auto}
+	domain := cf.DomainFields{}
+	domain.Name = "domain1"
+	domain.Guid = "domain1-guid"
+	domains := []cf.DomainFields{domain}
 
-	serviceInstance_Auto := cf.ServiceInstanceFields{}
-	serviceInstance_Auto.Name = "service1"
-	serviceInstance_Auto.Guid = "service1-guid"
-	services := []cf.ServiceInstanceFields{serviceInstance_Auto}
+	serviceInstance := cf.ServiceInstanceFields{}
+	serviceInstance.Name = "service1"
+	serviceInstance.Guid = "service1-guid"
+	services := []cf.ServiceInstanceFields{serviceInstance}
 
 	space := cf.Space{}
 	space.Name = "space1"
@@ -76,11 +76,11 @@ func callShowSpace(t *testing.T, args []string, reqFactory *testreq.FakeReqFacto
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
 	config := &configuration.Configuration{
 		AccessToken:  token,
-		Organization: org_Auto,
+		Organization: org,
 	}
 
 	cmd := NewShowSpace(ui, config)

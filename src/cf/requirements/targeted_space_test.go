@@ -10,16 +10,16 @@ import (
 
 func TestSpaceRequirement(t *testing.T) {
 	ui := new(testterm.FakeUI)
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
-	org_Auto.Guid = "my-org-guid"
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
-	space_Auto.Guid = "my-space-guid"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
+	org.Guid = "my-org-guid"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
+	space.Guid = "my-space-guid"
 	config := &configuration.Configuration{
-		Organization: org_Auto,
+		Organization: org,
 
-		Space: space_Auto,
+		Space: space,
 	}
 
 	req := newTargetedSpaceRequirement(ui, config)

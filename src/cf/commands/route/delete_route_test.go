@@ -43,12 +43,12 @@ func TestDeleteRouteWithConfirmation(t *testing.T) {
 	domain.Guid = "domain-guid"
 	domain.Name = "example.com"
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
-	route_Auto := cf.Route{}
-	route_Auto.Guid = "route-guid"
-	route_Auto.Host = "my-host"
-	route_Auto.Domain = domain
+	route := cf.Route{}
+	route.Guid = "route-guid"
+	route.Host = "my-host"
+	route.Domain = domain
 	routeRepo := &testapi.FakeRouteRepository{
-		FindByHostAndDomainRoute: route_Auto,
+		FindByHostAndDomainRoute: route,
 	}
 
 	ui := callDeleteRoute(t, "y", []string{"-n", "my-host", "example.com"}, reqFactory, routeRepo)
@@ -67,12 +67,12 @@ func TestDeleteRouteWithForce(t *testing.T) {
 	domain.Guid = "domain-guid"
 	domain.Name = "example.com"
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
-	route_Auto := cf.Route{}
-	route_Auto.Guid = "route-guid"
-	route_Auto.Host = "my-host"
-	route_Auto.Domain = domain
+	route := cf.Route{}
+	route.Guid = "route-guid"
+	route.Host = "my-host"
+	route.Domain = domain
 	routeRepo := &testapi.FakeRouteRepository{
-		FindByHostAndDomainRoute: route_Auto,
+		FindByHostAndDomainRoute: route,
 	}
 
 	ui := callDeleteRoute(t, "", []string{"-f", "-n", "my-host", "example.com"}, reqFactory, routeRepo)
@@ -112,13 +112,13 @@ func callDeleteRoute(t *testing.T, confirmation string, args []string, reqFactor
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto,
+		Space:        space,
+		Organization: org,
 		AccessToken:  token,
 	}
 

@@ -293,16 +293,16 @@ func TestDeleteSpace(t *testing.T) {
 
 func createSpacesRepo(t *testing.T, reqs ...testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo SpaceRepository) {
 	ts, handler = testnet.NewTLSServer(t, reqs)
-	org_Auto4 := cf.OrganizationFields{}
-	org_Auto4.Guid = "some-org-guid"
+	org4 := cf.OrganizationFields{}
+	org4.Guid = "some-org-guid"
 
-	space_Auto5 := cf.SpaceFields{}
-	space_Auto5.Guid = "my-space-guid"
+	space5 := cf.SpaceFields{}
+	space5.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken:  "BEARER my_access_token",
 		Target:       ts.URL,
-		Organization: org_Auto4,
-		Space:        space_Auto5,
+		Organization: org4,
+		Space:        space5,
 	}
 	gateway := net.NewCloudControllerGateway()
 	repo = NewCloudControllerSpaceRepository(config, gateway)

@@ -49,11 +49,11 @@ func TestUpdateServiceBrokerRequirements(t *testing.T) {
 
 func TestUpdateServiceBroker(t *testing.T) {
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true}
-	broker_Auto := cf.ServiceBroker{}
-	broker_Auto.Name = "my-found-broker"
-	broker_Auto.Guid = "my-found-broker-guid"
+	broker := cf.ServiceBroker{}
+	broker.Name = "my-found-broker"
+	broker.Guid = "my-found-broker-guid"
 	repo := &testapi.FakeServiceBrokerRepo{
-		FindByNameServiceBroker: broker_Auto,
+		FindByNameServiceBroker: broker,
 	}
 	args := []string{"my-broker", "new-username", "new-password", "new-url"}
 
@@ -83,13 +83,13 @@ func callUpdateServiceBroker(t *testing.T, args []string, reqFactory *testreq.Fa
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto,
+		Space:        space,
+		Organization: org,
 		AccessToken:  token,
 	}
 

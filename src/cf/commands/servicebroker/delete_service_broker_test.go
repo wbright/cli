@@ -103,13 +103,13 @@ func callDeleteServiceBroker(t *testing.T, args []string, reqFactory *testreq.Fa
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto,
+		Space:        space,
+		Organization: org,
 		AccessToken:  token,
 	}
 
@@ -133,13 +133,13 @@ func deleteServiceBroker(t *testing.T, confirmation string, args []string) (ui *
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	space_Auto2 := cf.SpaceFields{}
-	space_Auto2.Name = "my-space"
-	org_Auto2 := cf.OrganizationFields{}
-	org_Auto2.Name = "my-org"
+	space2 := cf.SpaceFields{}
+	space2.Name = "my-space"
+	org2 := cf.OrganizationFields{}
+	org2.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space_Auto2,
-		Organization: org_Auto2,
+		Space:        space2,
+		Organization: org2,
 		AccessToken:  token,
 	}
 

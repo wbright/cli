@@ -88,14 +88,14 @@ func TestCreateRouteIsIdempotent(t *testing.T) {
 		Space:        cf.Space{SpaceFields: space},
 	}
 
-	route_Auto := cf.Route{}
-	route_Auto.Guid = "my-route-guid"
-	route_Auto.Host = "host"
-	route_Auto.Domain = domain
-	route_Auto.Space = space
+	route := cf.Route{}
+	route.Guid = "my-route-guid"
+	route.Host = "host"
+	route.Domain = domain
+	route.Space = space
 	routeRepo := &testapi.FakeRouteRepository{
 		CreateInSpaceErr:         true,
-		FindByHostAndDomainRoute: route_Auto,
+		FindByHostAndDomainRoute: route,
 	}
 
 	ui := callCreateRoute(t, []string{"-n", "host", "my-space", "example.com"}, reqFactory, routeRepo)
@@ -129,10 +129,10 @@ func TestRouteCreator(t *testing.T) {
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Organization: org_Auto,
+		Organization: org,
 		AccessToken:  token,
 	}
 
@@ -160,13 +160,13 @@ func callCreateRoute(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 		Username: "my-user",
 	})
 	assert.NoError(t, err)
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space_Auto,
-		Organization: org_Auto,
+		Space:        space,
+		Organization: org,
 		AccessToken:  token,
 	}
 

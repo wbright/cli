@@ -38,24 +38,24 @@ func TestShowServiceFailsWithUsage(t *testing.T) {
 }
 
 func TestShowServiceOutput(t *testing.T) {
-	offering_Auto := cf.ServiceOfferingFields{}
-	offering_Auto.Label = "mysql"
-	offering_Auto.DocumentationUrl = "http://documentation.url"
-	offering_Auto.Description = "the-description"
+	offering := cf.ServiceOfferingFields{}
+	offering.Label = "mysql"
+	offering.DocumentationUrl = "http://documentation.url"
+	offering.Description = "the-description"
 
-	plan_Auto := cf.ServicePlanFields{}
-	plan_Auto.Guid = "plan-guid"
-	plan_Auto.Name = "plan-name"
+	plan := cf.ServicePlanFields{}
+	plan.Guid = "plan-guid"
+	plan.Name = "plan-name"
 
-	serviceInstance_Auto := cf.ServiceInstance{}
-	serviceInstance_Auto.Name = "service1"
-	serviceInstance_Auto.Guid = "service1-guid"
-	serviceInstance_Auto.ServicePlan = plan_Auto
-	serviceInstance_Auto.ServiceOffering = offering_Auto
+	serviceInstance := cf.ServiceInstance{}
+	serviceInstance.Name = "service1"
+	serviceInstance.Guid = "service1-guid"
+	serviceInstance.ServicePlan = plan
+	serviceInstance.ServiceOffering = offering
 	reqFactory := &testreq.FakeReqFactory{
 		LoginSuccess:         true,
 		TargetedSpaceSuccess: true,
-		ServiceInstance:      serviceInstance_Auto,
+		ServiceInstance:      serviceInstance,
 	}
 	ui := callShowService([]string{"service1"}, reqFactory)
 
@@ -73,13 +73,13 @@ func TestShowServiceOutput(t *testing.T) {
 }
 
 func TestShowUserProvidedServiceOutput(t *testing.T) {
-	serviceInstance_Auto2 := cf.ServiceInstance{}
-	serviceInstance_Auto2.Name = "service1"
-	serviceInstance_Auto2.Guid = "service1-guid"
+	serviceInstance2 := cf.ServiceInstance{}
+	serviceInstance2.Name = "service1"
+	serviceInstance2.Guid = "service1-guid"
 	reqFactory := &testreq.FakeReqFactory{
 		LoginSuccess:         true,
 		TargetedSpaceSuccess: true,
-		ServiceInstance:      serviceInstance_Auto2,
+		ServiceInstance:      serviceInstance2,
 	}
 	ui := callShowService([]string{"service1"}, reqFactory)
 

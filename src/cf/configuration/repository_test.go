@@ -113,10 +113,10 @@ func TestClearSession(t *testing.T) {
 	config.Target = "http://api.example.com"
 	config.RefreshToken = "some old refresh token"
 	config.AccessToken = "some old access token"
-	org_Auto := cf.OrganizationFields{}
-	org_Auto.Name = "my-org"
-	space_Auto := cf.SpaceFields{}
-	space_Auto.Name = "my-space"
+	org := cf.OrganizationFields{}
+	org.Name = "my-org"
+	space := cf.SpaceFields{}
+	space.Name = "my-space"
 	repo.Save()
 
 	err := repo.ClearSession()
