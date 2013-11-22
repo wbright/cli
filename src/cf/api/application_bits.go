@@ -248,7 +248,7 @@ func (repo CloudControllerApplicationBitsRepository) extractZip(zipFile string, 
 	return
 }
 
-func (repo CloudControllerApplicationBitsRepository) getFilesToUpload(allAppFiles []cf.AppFile) (appFilesToUpload []cf.AppFile, presentResourcesJson []byte, apiResponse net.ApiResponse) {
+func (repo CloudControllerApplicationBitsRepository) getFilesToUpload(allAppFiles []cf.AppFileFields) (appFilesToUpload []cf.AppFileFields, presentResourcesJson []byte, apiResponse net.ApiResponse) {
 	appFilesRequest := []AppFileResource{}
 	for _, file := range allAppFiles {
 		appFilesRequest = append(appFilesRequest, AppFileResource{
@@ -280,10 +280,10 @@ func (repo CloudControllerApplicationBitsRepository) getFilesToUpload(allAppFile
 		return
 	}
 
-	appFilesToUpload = make([]cf.AppFile, len(allAppFiles))
+	appFilesToUpload = make([]cf.AppFileFields, len(allAppFiles))
 	copy(appFilesToUpload, allAppFiles)
 	for _, file := range fileResource {
-		appFile := cf.AppFile{
+		appFile := cf.AppFileFields{
 			Path: file.Path,
 			Sha1: file.Sha1,
 			Size: file.Size,
@@ -294,7 +294,7 @@ func (repo CloudControllerApplicationBitsRepository) getFilesToUpload(allAppFile
 	return
 }
 
-func (repo CloudControllerApplicationBitsRepository) deleteAppFile(appFiles []cf.AppFile, targetFile cf.AppFile) []cf.AppFile {
+func (repo CloudControllerApplicationBitsRepository) deleteAppFile(appFiles []cf.AppFileFields, targetFile cf.AppFileFields) []cf.AppFileFields {
 	for i, file := range appFiles {
 		if file.Path == targetFile.Path {
 			appFiles[i] = appFiles[len(appFiles)-1]
