@@ -30,7 +30,10 @@ func (resource ServiceOfferingResource) ToFields() (fields cf.ServiceOfferingFie
 func (resource ServiceOfferingResource) ToModel() (offering cf.ServiceOffering) {
 	offering.ServiceOfferingFields = resource.ToFields()
 	for _, p := range resource.Entity.ServicePlans {
-		offering.Plans = append(offering.Plans, cf.ServicePlanFields{Name: p.Entity.Name, Guid: p.Metadata.Guid})
+		servicePlan := cf.ServicePlanFields{}
+		servicePlan.Name = p.Entity.Name
+		servicePlan.Guid = p.Metadata.Guid
+		offering.Plans = append(offering.Plans, servicePlan)
 	}
 	return offering
 }

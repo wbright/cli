@@ -39,18 +39,21 @@ func TestRouteMapperRequirements(t *testing.T) {
 }
 
 func TestRouteMapperWhenBinding(t *testing.T) {
-	route := cf.Route{}
-	route.Guid = "my-route-guid"
-	route.Host = "foo"
+
 	domain_Auto := cf.Domain{}
 	domain_Auto.Guid = "my-domain-guid"
 	domain_Auto.Name = "example.com"
+	route := cf.Route{}
+	route.Guid = "my-route-guid"
+	route.Host = "foo"
+	route.Domain = domain_Auto.DomainFields
+
 	app := cf.Application{}
 	app.Guid = "my-app-guid"
 	app.Name = "my-app"
 
 	routeRepo := &testapi.FakeRouteRepository{}
-	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Application: app}
+	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Application: app, Domain: domain_Auto}
 	routeCreator := &testcmd.FakeRouteCreator{ReservedRoute: route}
 
 	ui := callRouteMapper(t, []string{"-n", "my-host", "my-app", "my-domain.com"}, reqFactory, routeRepo, routeCreator, true)
@@ -69,18 +72,21 @@ func TestRouteMapperWhenBinding(t *testing.T) {
 }
 
 func TestRouteMapperWhenUnbinding(t *testing.T) {
-	route := cf.Route{}
-	route.Guid = "my-route-guid"
-	route.Host = "foo"
 	domain_Auto := cf.Domain{}
 	domain_Auto.Guid = "my-domain-guid"
 	domain_Auto.Name = "example.com"
+
+	route := cf.Route{}
+	route.Guid = "my-route-guid"
+	route.Host = "foo"
+	route.Domain = domain_Auto.DomainFields
+
 	app := cf.Application{}
 	app.Guid = "my-app-guid"
 	app.Name = "my-app"
 
 	routeRepo := &testapi.FakeRouteRepository{}
-	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Application: app}
+	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, Application: app, Domain: domain_Auto}
 	routeCreator := &testcmd.FakeRouteCreator{ReservedRoute: route}
 
 	ui := callRouteMapper(t, []string{"-n", "my-host", "my-app", "my-domain.com"}, reqFactory, routeRepo, routeCreator, false)
@@ -92,8 +98,8 @@ func TestRouteMapperWhenUnbinding(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-space")
 	assert.Contains(t, ui.Outputs[0], "my-user")
 
-	assert.Equal(t, route, routeRepo.UnboundRouteGuid, "my-route-guid")
-	assert.Equal(t, app, routeRepo.UnboundAppGuid, "my-app-guid")
+	assert.Equal(t, routeRepo.UnboundRouteGuid, "my-route-guid")
+	assert.Equal(t, routeRepo.UnboundAppGuid, "my-app-guid")
 
 	assert.Contains(t, ui.Outputs[1], "OK")
 }

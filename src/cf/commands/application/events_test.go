@@ -36,6 +36,9 @@ func TestEventsSuccess(t *testing.T) {
 	assert.NoError(t, err)
 
 	reqFactory, eventsRepo := getEventsDependencies()
+	app := cf.Application{}
+	app.Name = "my-app"
+	reqFactory.Application = app
 
 	eventsRepo.Events = []cf.Event{
 		{
@@ -75,6 +78,9 @@ func TestEventsSuccess(t *testing.T) {
 
 func TestEventsWhenNoEventsAvailable(t *testing.T) {
 	reqFactory, eventsRepo := getEventsDependencies()
+	app := cf.Application{}
+	app.Name = "my-app"
+	reqFactory.Application = app
 
 	ui := callEvents(t, []string{"my-app"}, reqFactory, eventsRepo)
 

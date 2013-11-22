@@ -10,10 +10,10 @@ import (
 
 func TestSpaceRequirement(t *testing.T) {
 	ui := new(testterm.FakeUI)
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	org_Auto.Guid = "my-org-guid"
-	space_Auto := cf.Space{}
+	space_Auto := cf.SpaceFields{}
 	space_Auto.Name = "my-space"
 	space_Auto.Guid = "my-space-guid"
 	config := &configuration.Configuration{
@@ -26,7 +26,7 @@ func TestSpaceRequirement(t *testing.T) {
 	success := req.Execute()
 	assert.True(t, success)
 
-	config.Space = cf.Space{}
+	config.Space = cf.SpaceFields{}
 
 	req = newTargetedSpaceRequirement(ui, config)
 	success = req.Execute()
@@ -35,7 +35,7 @@ func TestSpaceRequirement(t *testing.T) {
 	assert.Contains(t, ui.Outputs[1], "No space targeted")
 
 	ui.ClearOutputs()
-	config.Organization = cf.Organization{}
+	config.Organization = cf.OrganizationFields{}
 
 	req = newTargetedSpaceRequirement(ui, config)
 	success = req.Execute()

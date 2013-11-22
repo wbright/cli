@@ -129,8 +129,8 @@ func TestClearSession(t *testing.T) {
 	assert.Equal(t, savedConfig.Target, "http://api.example.com")
 	assert.Empty(t, savedConfig.AccessToken)
 	assert.Empty(t, savedConfig.RefreshToken)
-	assert.Equal(t, savedConfig.Organization, cf.Organization{})
-	assert.Equal(t, savedConfig.Space, cf.Space{})
+	assert.Equal(t, savedConfig.Organization, cf.OrganizationFields{})
+	assert.Equal(t, savedConfig.Space, cf.SpaceFields{})
 }
 
 func (repo ConfigurationDiskRepository) loadDefaultConfig(t *testing.T) (config *Configuration) {

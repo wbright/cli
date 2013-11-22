@@ -76,11 +76,13 @@ func TestDeleteTargetedOrganizationClearsConfig(t *testing.T) {
 func TestDeleteUntargetedOrganizationDoesNotClearConfig(t *testing.T) {
 	org := cf.Organization{}
 	org.Name = "org-to-delete"
+	org.Guid = "org-to-delete-guid"
 	orgRepo := &testapi.FakeOrgRepository{FindByNameOrganization: org}
 
 	configRepo := &testconfig.FakeConfigRepository{}
 	config, _ := configRepo.Get()
 	otherOrgFields := cf.OrganizationFields{}
+	otherOrgFields.Guid = "some-other-org-guid"
 	otherOrgFields.Name = "some-other-org"
 	config.Organization = otherOrgFields
 

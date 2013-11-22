@@ -23,7 +23,9 @@ func (model BasicFields) String() string {
 	return model.Name
 }
 
-type OrganizationFields BasicFields
+type OrganizationFields struct {
+	BasicFields
+}
 
 type Organization struct {
 	OrganizationFields
@@ -31,7 +33,9 @@ type Organization struct {
 	Domains []DomainFields
 }
 
-type SpaceFields BasicFields
+type SpaceFields struct {
+	BasicFields
+}
 
 type Space struct {
 	SpaceFields
@@ -61,7 +65,6 @@ type Application struct {
 
 type AppSummary struct {
 	ApplicationFields
-	Instances    []ApplicationInstance
 	RouteSummary []RouteSummary
 }
 
@@ -134,7 +137,9 @@ type ApplicationInstance struct {
 	MemUsage  uint64
 }
 
-type ServicePlanFields BasicFields
+type ServicePlanFields struct {
+	BasicFields
+}
 
 type ServicePlan struct {
 	ServicePlanFields

@@ -22,6 +22,10 @@ func TestOrganizationsListOrgs(t *testing.T) {
 			{
 			  "metadata": { "guid": "org1-guid" },
 			  "entity": { "name": "Org1" }
+			},
+			{
+			  "metadata": { "guid": "org2-guid" },
+			  "entity": { "name": "Org2" }
 			}
 		]}`},
 	})
@@ -31,8 +35,8 @@ func TestOrganizationsListOrgs(t *testing.T) {
 		Path:   "/v2/organizations?page=2",
 		Response: testnet.TestResponse{Status: http.StatusOK, Body: `{"resources": [
 			{
-			  "metadata": { "guid": "org2-guid" },
-			  "entity": { "name": "Org2" }
+			  "metadata": { "guid": "org3-guid" },
+			  "entity": { "name": "Org3" }
 			}
 		]}`},
 	})
@@ -44,23 +48,16 @@ func TestOrganizationsListOrgs(t *testing.T) {
 	defer close(stopChan)
 	orgsChan, statusChan := repo.ListOrgs(stopChan)
 
-	org1 := cf.Organization{}
-	org1.Guid = "org1-guid"
-	org1.Name = "Org1"
-
-	org2 := cf.Organization{}
-	org2.Guid = "org2-guid"
-	org2.Name = "Org2"
-
-	expectedOrgs := []cf.Organization{org1, org2}
-
 	orgs := []cf.Organization{}
 	for chunk := range orgsChan {
 		orgs = append(orgs, chunk...)
 	}
 	apiResponse := <-statusChan
 
-	assert.Equal(t, orgs, expectedOrgs)
+	assert.Equal(t, len(orgs), 3)
+	assert.Equal(t, orgs[0].Guid, "org1-guid")
+	assert.Equal(t, orgs[1].Guid, "org2-guid")
+	assert.Equal(t, orgs[2].Guid, "org3-guid")
 	assert.True(t, apiResponse.IsSuccessful())
 	assert.True(t, handler.AllRequestsCalled())
 

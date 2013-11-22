@@ -77,7 +77,7 @@ func TestSetSpaceRole(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "current-user")
 
 	assert.Equal(t, userRepo.SetSpaceRoleUserGuid, "my-user-guid")
-	assert.Equal(t, userRepo.SetSpaceRoleSpaceGuid,"my-space-guid")
+	assert.Equal(t, userRepo.SetSpaceRoleSpaceGuid, "my-space-guid")
 	assert.Equal(t, userRepo.SetSpaceRoleRole, "some-role")
 
 	assert.Contains(t, ui.Outputs[1], "OK")

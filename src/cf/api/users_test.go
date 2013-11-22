@@ -83,7 +83,7 @@ func TestFindAllInOrgByRole(t *testing.T) {
 
 	assert.Equal(t, len(usersByRole["BILLING MANAGER"]), 2)
 	assert.Equal(t, usersByRole["BILLING MANAGER"][0].Guid, "user-2-guid")
-	assert.Equal(t, usersByRole["BILLING MANAGER"][1], "user-3-guid")
+	assert.Equal(t, usersByRole["BILLING MANAGER"][1].Guid, "user-3-guid")
 
 	assert.Equal(t, len(usersByRole["ORG AUDITOR"]), 0)
 }
@@ -111,7 +111,7 @@ func TestFindAllInSpaceByRole(t *testing.T) {
 
 	assert.Equal(t, len(usersByRole["SPACE DEVELOPER"]), 2)
 	assert.Equal(t, usersByRole["SPACE DEVELOPER"][0].Guid, "user-2-guid")
-	assert.Equal(t, usersByRole["SPACE DEVELOPER"][1], "user-3-guid")
+	assert.Equal(t, usersByRole["SPACE DEVELOPER"][1].Guid, "user-3-guid")
 
 	assert.Equal(t, len(usersByRole["SPACE AUDITOR"]), 0)
 }

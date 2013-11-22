@@ -37,7 +37,7 @@ func (resource DomainResource) ToModel() (domain cf.Domain) {
 
 type DomainEntity struct {
 	Name                   string
-	OwningOrganizationGuid string
+	OwningOrganizationGuid string `json:"owning_organization_guid"`
 	Spaces                 []SpaceResource
 }
 

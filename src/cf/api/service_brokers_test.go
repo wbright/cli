@@ -74,8 +74,8 @@ func TestServiceBrokersListServiceBrokers(t *testing.T) {
 	apiResponse := <-statusChan
 
 	assert.Equal(t, len(serviceBrokers), 2)
-	assert.Equal(t, serviceBrokers[0], "found-guid-1")
-	assert.Equal(t, serviceBrokers[1], "found-guid-2")
+	assert.Equal(t, serviceBrokers[0].Guid, "found-guid-1")
+	assert.Equal(t, serviceBrokers[1].Guid, "found-guid-2")
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
 }

@@ -14,17 +14,19 @@ import (
 )
 
 type ShowApp struct {
-	ui             terminal.UI
-	config         *configuration.Configuration
-	appSummaryRepo api.AppSummaryRepository
-	appReq         requirements.ApplicationRequirement
+	ui               terminal.UI
+	config           *configuration.Configuration
+	appSummaryRepo   api.AppSummaryRepository
+	appInstancesRepo api.AppInstancesRepository
+	appReq           requirements.ApplicationRequirement
 }
 
-func NewShowApp(ui terminal.UI, config *configuration.Configuration, appSummaryRepo api.AppSummaryRepository) (cmd *ShowApp) {
+func NewShowApp(ui terminal.UI, config *configuration.Configuration, appSummaryRepo api.AppSummaryRepository, appInstancesRepo api.AppInstancesRepository) (cmd *ShowApp) {
 	cmd = new(ShowApp)
 	cmd.ui = ui
 	cmd.config = config
 	cmd.appSummaryRepo = appSummaryRepo
+	cmd.appInstancesRepo = appInstancesRepo
 	return
 }
 
@@ -56,7 +58,12 @@ func (cmd *ShowApp) Run(c *cli.Context) {
 
 	appSummary, apiResponse := cmd.appSummaryRepo.GetSummary(app.Guid)
 	appIsStopped := apiResponse.ErrorCode == cf.APP_STOPPED || apiResponse.ErrorCode == cf.APP_NOT_STAGED
+	if apiResponse.IsNotSuccessful() && !appIsStopped {
+		cmd.ui.Failed(apiResponse.Message)
+		return
+	}
 
+	instances, apiResponse := cmd.appInstancesRepo.GetInstances(app.Guid)
 	if apiResponse.IsNotSuccessful() && !appIsStopped {
 		cmd.ui.Failed(apiResponse.Message)
 		return
@@ -65,7 +72,7 @@ func (cmd *ShowApp) Run(c *cli.Context) {
 	cmd.ui.Ok()
 	cmd.ui.Say("\n%s %s", terminal.HeaderColor("state:"), coloredAppState(appSummary.ApplicationFields))
 	cmd.ui.Say("%s %s", terminal.HeaderColor("instances:"), coloredAppInstaces(appSummary.ApplicationFields))
-	cmd.ui.Say("%s %s x %d instances", terminal.HeaderColor("usage:"), formatters.ByteSize(appSummary.Memory*formatters.MEGABYTE), appSummary.Instances)
+	cmd.ui.Say("%s %s x %d instances", terminal.HeaderColor("usage:"), formatters.ByteSize(appSummary.Memory*formatters.MEGABYTE), appSummary.InstanceCount)
 
 	var urls []string
 	for _, route := range appSummary.RouteSummary {
@@ -81,7 +88,7 @@ func (cmd *ShowApp) Run(c *cli.Context) {
 		[]string{"", "status", "since", "cpu", "memory", "disk"},
 	}
 
-	for index, instance := range appSummary.Instances {
+	for index, instance := range instances {
 		table = append(table, []string{
 			fmt.Sprintf("#%d", index),
 			coloredInstanceState(instance),

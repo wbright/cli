@@ -18,12 +18,13 @@ import (
 const MaxInstanceStartupPings = 60
 
 type Start struct {
-	ui        terminal.UI
-	config    *configuration.Configuration
-	appRepo   api.ApplicationRepository
-	logRepo   api.LogsRepository
-	startTime time.Time
-	appReq    requirements.ApplicationRequirement
+	ui               terminal.UI
+	config           *configuration.Configuration
+	appRepo          api.ApplicationRepository
+	appInstancesRepo api.AppInstancesRepository
+	logRepo          api.LogsRepository
+	startTime        time.Time
+	appReq           requirements.ApplicationRequirement
 }
 
 type ApplicationStarter interface {
@@ -31,11 +32,12 @@ type ApplicationStarter interface {
 	ApplicationStartWithBuildpack(app cf.Application, buildpackUrl string) (startedApp cf.Application, err error)
 }
 
-func NewStart(ui terminal.UI, config *configuration.Configuration, appRepo api.ApplicationRepository, logRepo api.LogsRepository) (cmd *Start) {
+func NewStart(ui terminal.UI, config *configuration.Configuration, appRepo api.ApplicationRepository, appInstancesRepo api.AppInstancesRepository, logRepo api.LogsRepository) (cmd *Start) {
 	cmd = new(Start)
 	cmd.ui = ui
 	cmd.config = config
 	cmd.appRepo = appRepo
+	cmd.appInstancesRepo = appInstancesRepo
 	cmd.logRepo = logRepo
 
 	return
@@ -106,7 +108,7 @@ func (cmd *Start) applicationStartWithOptions(app cf.Application, buildpackUrl s
 
 	for cmd.displayInstancesStatus(app, instances) {
 		cmd.ui.Wait(1 * time.Second)
-		instances, _ = cmd.appRepo.GetInstances(updatedApp.Guid)
+		instances, _ = cmd.appInstancesRepo.GetInstances(updatedApp.Guid)
 	}
 
 	return
@@ -139,7 +141,7 @@ func (cmd Start) displayLogMessages(logChan chan *logmessage.Message) {
 }
 
 func (cmd Start) waitForInstanceStartup(app cf.Application) []cf.ApplicationInstance {
-	instances, apiResponse := cmd.appRepo.GetInstances(app.Guid)
+	instances, apiResponse := cmd.appInstancesRepo.GetInstances(app.Guid)
 	for count := 0; apiResponse.IsNotSuccessful() && count < MaxInstanceStartupPings; count++ {
 		if apiResponse.ErrorCode != cf.APP_NOT_STAGED {
 			cmd.ui.Say("")
@@ -148,7 +150,7 @@ func (cmd Start) waitForInstanceStartup(app cf.Application) []cf.ApplicationInst
 		}
 
 		cmd.ui.Wait(1 * time.Second)
-		instances, apiResponse = cmd.appRepo.GetInstances(app.Guid)
+		instances, apiResponse = cmd.appInstancesRepo.GetInstances(app.Guid)
 	}
 	return instances
 }

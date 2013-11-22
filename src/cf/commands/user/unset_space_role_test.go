@@ -69,7 +69,7 @@ func TestUnsetSpaceRole(t *testing.T) {
 	ui := callUnsetSpaceRole(t, args, spaceRepo, userRepo, reqFactory)
 
 	assert.Equal(t, spaceRepo.FindByNameInOrgName, "my-space")
-	assert.Equal(t, spaceRepo.FindByNameInOrgOrgGuid,  "some-org-guid")
+	assert.Equal(t, spaceRepo.FindByNameInOrgOrgGuid, "some-org-guid")
 
 	assert.Contains(t, ui.Outputs[0], "Removing role ")
 	assert.Contains(t, ui.Outputs[0], "my-role")

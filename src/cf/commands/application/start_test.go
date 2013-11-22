@@ -57,16 +57,16 @@ func init() {
 	}
 }
 
-func callStart(args []string, config *configuration.Configuration, reqFactory *testreq.FakeReqFactory, appRepo api.ApplicationRepository, logRepo api.LogsRepository) (ui *testterm.FakeUI) {
+func callStart(args []string, config *configuration.Configuration, reqFactory *testreq.FakeReqFactory, appRepo api.ApplicationRepository, appInstancesRepo api.AppInstancesRepository, logRepo api.LogsRepository) (ui *testterm.FakeUI) {
 	ui = new(testterm.FakeUI)
 	ctxt := testcmd.NewContext("start", args)
 
-	cmd := NewStart(ui, config, appRepo, logRepo)
+	cmd := NewStart(ui, config, appRepo, appInstancesRepo, logRepo)
 	testcmd.RunCommand(cmd, ctxt, reqFactory)
 	return
 }
 
-func startAppWithInstancesAndErrors(t *testing.T, app cf.Application, instances [][]cf.ApplicationInstance, errorCodes []string) (ui *testterm.FakeUI, appRepo *testapi.FakeApplicationRepository, reqFactory *testreq.FakeReqFactory) {
+func startAppWithInstancesAndErrors(t *testing.T, app cf.Application, instances [][]cf.ApplicationInstance, errorCodes []string) (ui *testterm.FakeUI, appRepo *testapi.FakeApplicationRepository, appInstancesRepo *testapi.FakeAppInstancesRepo, reqFactory *testreq.FakeReqFactory) {
 	token, err := testconfig.CreateAccessTokenWithTokenInfo(configuration.TokenInfo{
 		Username: "my-user",
 	})
@@ -83,7 +83,10 @@ func startAppWithInstancesAndErrors(t *testing.T, app cf.Application, instances 
 	}
 
 	appRepo = &testapi.FakeApplicationRepository{
-		FindByNameApp:          app,
+		FindByNameApp:   app,
+		StartUpdatedApp: app,
+	}
+	appInstancesRepo = &testapi.FakeAppInstancesRepo{
 		GetInstancesResponses:  instances,
 		GetInstancesErrorCodes: errorCodes,
 	}
@@ -116,7 +119,7 @@ func startAppWithInstancesAndErrors(t *testing.T, app cf.Application, instances 
 
 	args := []string{"my-app"}
 	reqFactory = &testreq.FakeReqFactory{Application: app}
-	ui = callStart(args, config, reqFactory, appRepo, logRepo)
+	ui = callStart(args, config, reqFactory, appRepo, appInstancesRepo, logRepo)
 	return
 }
 
@@ -124,7 +127,8 @@ func TestStartCommandFailsWithUsage(t *testing.T) {
 	t.Parallel()
 
 	config := &configuration.Configuration{}
-	appRepo := &testapi.FakeApplicationRepository{
+	appRepo := &testapi.FakeApplicationRepository{}
+	appInstancesRepo := &testapi.FakeAppInstancesRepo{
 		GetInstancesResponses: [][]cf.ApplicationInstance{
 			[]cf.ApplicationInstance{},
 		},
@@ -134,17 +138,17 @@ func TestStartCommandFailsWithUsage(t *testing.T) {
 
 	reqFactory := &testreq.FakeReqFactory{}
 
-	ui := callStart([]string{}, config, reqFactory, appRepo, logRepo)
+	ui := callStart([]string{}, config, reqFactory, appRepo, appInstancesRepo, logRepo)
 	assert.True(t, ui.FailedWithUsage)
 
-	ui = callStart([]string{"my-app"}, config, reqFactory, appRepo, logRepo)
+	ui = callStart([]string{"my-app"}, config, reqFactory, appRepo, appInstancesRepo, logRepo)
 	assert.False(t, ui.FailedWithUsage)
 }
 
 func TestStartApplication(t *testing.T) {
 	t.Parallel()
 
-	ui, appRepo, reqFactory := startAppWithInstancesAndErrors(t, defaultAppForStart, defaultInstanceReponses, defaultInstanceErrorCodes)
+	ui, appRepo, _, reqFactory := startAppWithInstancesAndErrors(t, defaultAppForStart, defaultInstanceReponses, defaultInstanceErrorCodes)
 
 	assert.Contains(t, ui.Outputs[0], "my-app")
 	assert.Contains(t, ui.Outputs[0], "my-org")
@@ -172,7 +176,7 @@ func TestStartApplicationWhenAppHasNoURL(t *testing.T) {
 	}
 
 	errorCodes := []string{""}
-	ui, appRepo, reqFactory := startAppWithInstancesAndErrors(t, app, instances, errorCodes)
+	ui, appRepo, _, reqFactory := startAppWithInstancesAndErrors(t, app, instances, errorCodes)
 
 	assert.Contains(t, ui.Outputs[0], "my-app")
 	assert.Contains(t, ui.Outputs[1], "OK")
@@ -206,7 +210,9 @@ func TestStartApplicationWhenAppIsStillStaging(t *testing.T) {
 
 	errorCodes := []string{cf.APP_NOT_STAGED, cf.APP_NOT_STAGED, "", "", ""}
 
-	ui, _, _ := startAppWithInstancesAndErrors(t, defaultAppForStart, instances, errorCodes)
+	ui, _, appInstancesRepo, _ := startAppWithInstancesAndErrors(t, defaultAppForStart, instances, errorCodes)
+
+	assert.Equal(t, appInstancesRepo.GetInstancesAppGuid, "my-app-guid")
 
 	assert.Contains(t, ui.Outputs[2], "Staging")
 	assert.Contains(t, ui.Outputs[3], "Log Line 1")
@@ -222,7 +228,7 @@ func TestStartApplicationWhenStagingFails(t *testing.T) {
 	instances := [][]cf.ApplicationInstance{[]cf.ApplicationInstance{}}
 	errorCodes := []string{"170001"}
 
-	ui, _, _ := startAppWithInstancesAndErrors(t, defaultAppForStart, instances, errorCodes)
+	ui, _, _, _ := startAppWithInstancesAndErrors(t, defaultAppForStart, instances, errorCodes)
 
 	assert.Contains(t, ui.Outputs[0], "my-app")
 	assert.Contains(t, ui.Outputs[1], "OK")
@@ -247,7 +253,7 @@ func TestStartApplicationWhenOneInstanceFlaps(t *testing.T) {
 
 	errorCodes := []string{"", ""}
 
-	ui, _, _ := startAppWithInstancesAndErrors(t, defaultAppForStart, instances, errorCodes)
+	ui, _, _, _ := startAppWithInstancesAndErrors(t, defaultAppForStart, instances, errorCodes)
 
 	assert.Contains(t, ui.Outputs[0], "my-app")
 	assert.Contains(t, ui.Outputs[1], "OK")
@@ -278,7 +284,7 @@ func TestStartApplicationWhenStartTimesOut(t *testing.T) {
 
 	errorCodes := []string{"", "", ""}
 
-	ui, _, _ := startAppWithInstancesAndErrors(t, defaultAppForStart, instances, errorCodes)
+	ui, _, _, _ := startAppWithInstancesAndErrors(t, defaultAppForStart, instances, errorCodes)
 
 	assert.Contains(t, ui.Outputs[0], "my-app")
 	assert.Contains(t, ui.Outputs[1], "OK")
@@ -297,10 +303,11 @@ func TestStartApplicationWhenStartFails(t *testing.T) {
 	app.Name = "my-app"
 	app.Guid = "my-app-guid"
 	appRepo := &testapi.FakeApplicationRepository{FindByNameApp: app, StartAppErr: true}
+	appInstancesRepo := &testapi.FakeAppInstancesRepo{}
 	logRepo := &testapi.FakeLogsRepository{}
 	args := []string{"my-app"}
 	reqFactory := &testreq.FakeReqFactory{Application: app}
-	ui := callStart(args, config, reqFactory, appRepo, logRepo)
+	ui := callStart(args, config, reqFactory, appRepo, appInstancesRepo, logRepo)
 
 	assert.Contains(t, ui.Outputs[0], "my-app")
 	assert.Contains(t, ui.Outputs[1], "FAILED")
@@ -317,12 +324,13 @@ func TestStartApplicationIsAlreadyStarted(t *testing.T) {
 	app.Guid = "my-app-guid"
 	app.State = "started"
 	appRepo := &testapi.FakeApplicationRepository{FindByNameApp: app}
+	appInstancesRepo := &testapi.FakeAppInstancesRepo{}
 	logRepo := &testapi.FakeLogsRepository{}
 
 	reqFactory := &testreq.FakeReqFactory{Application: app}
 
 	args := []string{"my-app"}
-	ui := callStart(args, config, reqFactory, appRepo, logRepo)
+	ui := callStart(args, config, reqFactory, appRepo, appInstancesRepo, logRepo)
 
 	assert.Contains(t, ui.Outputs[0], "my-app")
 	assert.Contains(t, ui.Outputs[0], "is already started")
@@ -345,8 +353,8 @@ func TestStartApplicationWithLoggingFailure(t *testing.T) {
 		ApplicationStartTimeout: 2,
 	}
 
-	appRepo := &testapi.FakeApplicationRepository{
-		FindByNameApp:          defaultAppForStart,
+	appRepo := &testapi.FakeApplicationRepository{FindByNameApp: defaultAppForStart}
+	appInstancesRepo := &testapi.FakeAppInstancesRepo{
 		GetInstancesResponses:  defaultInstanceReponses,
 		GetInstancesErrorCodes: defaultInstanceErrorCodes,
 	}
@@ -361,7 +369,7 @@ func TestStartApplicationWithLoggingFailure(t *testing.T) {
 
 	ctxt := testcmd.NewContext("start", []string{"my-app"})
 
-	cmd := NewStart(ui, config, appRepo, logRepo)
+	cmd := NewStart(ui, config, appRepo, appInstancesRepo, logRepo)
 
 	testcmd.RunCommand(cmd, ctxt, reqFactory)
 

@@ -45,16 +45,13 @@ func TestRestartApplication(t *testing.T) {
 	app := cf.Application{}
 	app.Name = "my-app"
 	app.Guid = "my-app-guid"
-	stoppedApp := cf.Application{}
-	stoppedApp.Name = "my-stopped-app"
-	stoppedApp.Guid = "my-app-guid"
 	reqFactory := &testreq.FakeReqFactory{Application: app, LoginSuccess: true, TargetedSpaceSuccess: true}
 	starter := &testcmd.FakeAppStarter{}
-	stopper := &testcmd.FakeAppStopper{StoppedApp: stoppedApp}
+	stopper := &testcmd.FakeAppStopper{}
 	callRestart([]string{"my-app"}, reqFactory, starter, stopper)
 
 	assert.Equal(t, stopper.AppToStop, app)
-	assert.Equal(t, starter.AppToStart, stoppedApp)
+	assert.Equal(t, starter.AppToStart, app)
 }
 
 func callRestart(args []string, reqFactory *testreq.FakeReqFactory, starter ApplicationStarter, stopper ApplicationStopper) (ui *testterm.FakeUI) {

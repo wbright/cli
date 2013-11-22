@@ -9,9 +9,7 @@ import (
 	"fmt"
 	"io"
 	"regexp"
-	"strconv"
 	"strings"
-	"time"
 )
 
 type PaginatedApplicationResources struct {
@@ -85,7 +83,6 @@ type ApplicationRepository interface {
 	Start(appGuid string) (updatedApp cf.Application, apiResponse net.ApiResponse)
 	StartWithDifferentBuildpack(appGuid, buildpack string) (updatedApp cf.Application, apiResponse net.ApiResponse)
 	Stop(appGuid string) (updatedApp cf.Application, apiResponse net.ApiResponse)
-	GetInstances(appGuid string) (instances []cf.ApplicationInstance, apiResponse net.ApiResponse)
 }
 
 type CloudControllerApplicationRepository struct {
@@ -248,83 +245,5 @@ func (repo CloudControllerApplicationRepository) startOrStopApp(appGuid string, 
 	}
 
 	updatedApp = resource.ToModel()
-	return
-}
-
-type InstancesApiResponse map[string]InstanceApiResponse
-
-type InstanceApiResponse struct {
-	State string
-	Since float64
-}
-
-func (repo CloudControllerApplicationRepository) GetInstances(appGuid string) (instances []cf.ApplicationInstance, apiResponse net.ApiResponse) {
-	path := fmt.Sprintf("%s/v2/apps/%s/instances", repo.config.Target, appGuid)
-	request, apiResponse := repo.gateway.NewRequest("GET", path, repo.config.AccessToken, nil)
-	if apiResponse.IsNotSuccessful() {
-		return
-	}
-
-	instancesResponse := InstancesApiResponse{}
-
-	_, apiResponse = repo.gateway.PerformRequestForJSONResponse(request, &instancesResponse)
-	if apiResponse.IsNotSuccessful() {
-		return
-	}
-
-	instances = make([]cf.ApplicationInstance, len(instancesResponse), len(instancesResponse))
-	for k, v := range instancesResponse {
-		index, err := strconv.Atoi(k)
-		if err != nil {
-			continue
-		}
-
-		instances[index] = cf.ApplicationInstance{
-			State: cf.InstanceState(strings.ToLower(v.State)),
-			Since: time.Unix(int64(v.Since), 0),
-		}
-	}
-
-	return repo.updateInstancesWithStats(appGuid, instances)
-}
-
-type StatsApiResponse map[string]InstanceStatsApiResponse
-
-type InstanceStatsApiResponse struct {
-	Stats struct {
-		DiskQuota uint64 `json:"disk_quota"`
-		MemQuota  uint64 `json:"mem_quota"`
-		Usage     struct {
-			Cpu  float64
-			Disk uint64
-			Mem  uint64
-		}
-	}
-}
-
-func (repo CloudControllerApplicationRepository) updateInstancesWithStats(guid string, instances []cf.ApplicationInstance) (updatedInst []cf.ApplicationInstance, apiResponse net.ApiResponse) {
-	path := fmt.Sprintf("%s/v2/apps/%s/stats", repo.config.Target, guid)
-	statsResponse := StatsApiResponse{}
-	apiResponse = repo.gateway.GetResource(path, repo.config.AccessToken, &statsResponse)
-	if apiResponse.IsNotSuccessful() {
-		return
-	}
-
-	updatedInst = make([]cf.ApplicationInstance, len(statsResponse), len(statsResponse))
-	for k, v := range statsResponse {
-		index, err := strconv.Atoi(k)
-		if err != nil {
-			continue
-		}
-
-		instance := instances[index]
-		instance.CpuUsage = v.Stats.Usage.Cpu
-		instance.DiskQuota = v.Stats.DiskQuota
-		instance.DiskUsage = v.Stats.Usage.Disk
-		instance.MemQuota = v.Stats.MemQuota
-		instance.MemUsage = v.Stats.Usage.Mem
-
-		updatedInst[index] = instance
-	}
 	return
 }

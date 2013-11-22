@@ -118,7 +118,7 @@ var createApplicationResponse = `
 var createApplicationRequest = testapi.NewCloudControllerTestRequest(testnet.TestRequest{
 	Method:  "POST",
 	Path:    "/v2/apps",
-	Matcher: testnet.RequestBodyMatcher(`{"space_guid":"my-space-guid","name":"my-cool-app","instances":3,"buildpack":"buildpack-url","command":null,"memory":2048,"stack_guid":"some-stack-guid","command":"some-command"}`),
+	Matcher: testnet.RequestBodyMatcher(`{"space_guid":"my-space-guid","name":"my-cool-app","instances":3,"buildpack":"buildpack-url","memory":2048,"stack_guid":"some-stack-guid","command":"some-command"}`),
 	Response: testnet.TestResponse{
 		Status: http.StatusCreated,
 		Body:   createApplicationResponse},
@@ -142,7 +142,7 @@ func TestCreateApplicationWithoutBuildpackStackOrCommand(t *testing.T) {
 	request := testapi.NewCloudControllerTestRequest(testnet.TestRequest{
 		Method:   "POST",
 		Path:     "/v2/apps",
-		Matcher:  testnet.RequestBodyMatcher(`{"space_guid":"my-space-guid","name":"my-cool-app","instances":1,"buildpack":null,"command":null,"memory":128,"stack_guid":null,"command":null}`),
+		Matcher:  testnet.RequestBodyMatcher(`{"space_guid":"my-space-guid","name":"my-cool-app","instances":1,"buildpack":null,"memory":128,"stack_guid":null,"command":null}`),
 		Response: testnet.TestResponse{Status: http.StatusCreated, Body: createApplicationResponse},
 	})
 
@@ -323,33 +323,6 @@ func TestStopApplication(t *testing.T) {
 	assert.Equal(t, "cli1", updatedApp.Name)
 	assert.Equal(t, "stopped", updatedApp.State)
 	assert.Equal(t, "my-updated-app-guid", updatedApp.Guid)
-}
-
-func TestGetInstances(t *testing.T) {
-	getInstancesRequest := testapi.NewCloudControllerTestRequest(testnet.TestRequest{
-		Method: "GET",
-		Path:   "/v2/apps/my-cool-app-guid/instances",
-		Response: testnet.TestResponse{Status: http.StatusCreated, Body: `
-{
-  "1": {
-    "state": "STARTING"
-  },
-  "0": {
-    "state": "RUNNING"
-  }
-}`},
-	})
-
-	ts, handler, repo := createAppRepo(t, []testnet.TestRequest{getInstancesRequest})
-	defer ts.Close()
-
-	instances, apiResponse := repo.GetInstances("my-cool-app-guid")
-
-	assert.True(t, handler.AllRequestsCalled())
-	assert.False(t, apiResponse.IsNotSuccessful())
-	assert.Equal(t, len(instances), 2)
-	assert.Equal(t, instances[0].State, "running")
-	assert.Equal(t, instances[1].State, "starting")
 }
 
 func createAppRepo(t *testing.T, requests []testnet.TestRequest) (ts *httptest.Server, handler *testnet.TestHandler, repo ApplicationRepository) {

@@ -211,6 +211,11 @@ func TestFindByHostAndDomain(t *testing.T) {
 
 	ts, handler, repo, domainRepo := createRoutesRepo(t, request)
 	defer ts.Close()
+
+	domain := cf.Domain{}
+	domain.Guid = "my-domain-guid"
+	domainRepo.FindByNameDomain = domain
+
 	route, apiResponse := repo.FindByHostAndDomain("my-cool-app", "my-domain.com")
 
 	assert.False(t, apiResponse.IsNotSuccessful())
@@ -218,7 +223,7 @@ func TestFindByHostAndDomain(t *testing.T) {
 	assert.Equal(t, domainRepo.FindByNameName, "my-domain.com")
 	assert.Equal(t, route.Host, "my-cool-app")
 	assert.Equal(t, route.Guid, "my-route-guid")
-	assert.Equal(t, route.Domain, domainRepo.FindByNameDomain)
+	assert.Equal(t, route.Domain.Guid, domain.Guid)
 }
 
 func TestFindByHostAndDomainWhenRouteIsNotFound(t *testing.T) {
@@ -228,8 +233,13 @@ func TestFindByHostAndDomainWhenRouteIsNotFound(t *testing.T) {
 		Response: testnet.TestResponse{Status: http.StatusOK, Body: `{ "resources": [ ] }`},
 	})
 
-	ts, handler, repo, _ := createRoutesRepo(t, request)
+	ts, handler, repo, domainRepo := createRoutesRepo(t, request)
 	defer ts.Close()
+
+	domain := cf.Domain{}
+	domain.Guid = "my-domain-guid"
+	domainRepo.FindByNameDomain = domain
+
 	_, apiResponse := repo.FindByHostAndDomain("my-cool-app", "my-domain.com")
 
 	assert.True(t, handler.AllRequestsCalled())

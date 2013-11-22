@@ -196,7 +196,7 @@ func (cmd Push) bindAppToRoute(app cf.Application, domain cf.Domain, hostName st
 		routeGuid = cmd.createRoute(hostName, domain).Guid
 	} else {
 		routeGuid = route.Guid
-		cmd.ui.Say("Using route %s", terminal.EntityNameColor(domain.UrlForHost(hostName)))
+		cmd.ui.Say("Using route %s", terminal.EntityNameColor(route.URL()))
 	}
 
 	for _, boundRoute := range app.Routes {

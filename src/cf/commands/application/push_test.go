@@ -55,10 +55,10 @@ func TestPushingAppWhenItDoesNotExist(t *testing.T) {
 	assert.Contains(t, fakeUI.Outputs[0], "my-org")
 	assert.Contains(t, fakeUI.Outputs[0], "my-space")
 	assert.Contains(t, fakeUI.Outputs[0], "my-user")
-	assert.Equal(t, appRepo.CreatedApp.Name, "my-new-app")
-	assert.Equal(t, appRepo.CreatedApp.InstanceCount, 1)
-	assert.Equal(t, appRepo.CreatedApp.Memory, uint64(128))
-	assert.Equal(t, appRepo.CreatedApp.BuildpackUrl, "")
+	assert.Equal(t, appRepo.CreateName, "my-new-app")
+	assert.Equal(t, appRepo.CreateInstances, 1)
+	assert.Equal(t, appRepo.CreateMemory, uint64(128))
+	assert.Equal(t, appRepo.CreateBuildpackUrl, "")
 	assert.Contains(t, fakeUI.Outputs[1], "OK")
 
 	assert.Contains(t, fakeUI.Outputs[3], "my-new-app.foo.cf-app.com")
@@ -68,8 +68,8 @@ func TestPushingAppWhenItDoesNotExist(t *testing.T) {
 	assert.Contains(t, fakeUI.Outputs[4], "OK")
 
 	assert.Contains(t, fakeUI.Outputs[6], "my-new-app.foo.cf-app.com")
-	assert.Equal(t, routeRepo.BoundAppGuid, "my-new-app")
-	assert.Equal(t, routeRepo.BoundRouteGuid, "my-new-app")
+	assert.Equal(t, routeRepo.BoundAppGuid, "my-new-app-guid")
+	assert.Equal(t, routeRepo.BoundRouteGuid, "my-new-app-route-guid")
 	assert.Contains(t, fakeUI.Outputs[7], "OK")
 
 	expectedAppDir, err := os.Getwd()
@@ -80,8 +80,8 @@ func TestPushingAppWhenItDoesNotExist(t *testing.T) {
 	assert.Equal(t, appBitsRepo.UploadedDir, expectedAppDir)
 	assert.Contains(t, fakeUI.Outputs[10], "OK")
 
-	assert.Equal(t, stopper.AppToStop.Name, "my-new-app")
-	assert.Equal(t, starter.AppToStart.Name, "my-stopped-app")
+	assert.Equal(t, stopper.AppToStop.Guid, "my-new-app-guid")
+	assert.Equal(t, starter.AppToStart.Guid, "my-new-app-guid")
 }
 
 func TestPushingAppWhenItDoesNotExistButRouteExists(t *testing.T) {
@@ -148,12 +148,12 @@ func TestPushingAppWithCustomFlags(t *testing.T) {
 	assert.Equal(t, stackRepo.FindByNameName, "customLinux")
 
 	assert.Contains(t, fakeUI.Outputs[1], "my-new-app")
-	assert.Equal(t, appRepo.CreatedApp.Name, "my-new-app")
-	assert.Equal(t, appRepo.CreatedApp.Command, "unicorn -c config/unicorn.rb -D")
-	assert.Equal(t, appRepo.CreatedApp.InstanceCount, 3)
-	assert.Equal(t, appRepo.CreatedApp.Memory, uint64(2048))
-	assert.Equal(t, appRepo.CreatedApp.Stack.Guid, "custom-linux-guid")
-	assert.Equal(t, appRepo.CreatedApp.BuildpackUrl, "https://github.com/heroku/heroku-buildpack-play.git")
+	assert.Equal(t, appRepo.CreateName, "my-new-app")
+	assert.Equal(t, appRepo.CreateCommand, "unicorn -c config/unicorn.rb -D")
+	assert.Equal(t, appRepo.CreateInstances, 3)
+	assert.Equal(t, appRepo.CreateMemory, uint64(2048))
+	assert.Equal(t, appRepo.CreateStackGuid, "custom-linux-guid")
+	assert.Equal(t, appRepo.CreateBuildpackUrl, "https://github.com/heroku/heroku-buildpack-play.git")
 	assert.Contains(t, fakeUI.Outputs[2], "OK")
 
 	assert.Contains(t, fakeUI.Outputs[4], "my-hostname.bar.cf-app.com")
@@ -165,7 +165,7 @@ func TestPushingAppWithCustomFlags(t *testing.T) {
 	assert.Contains(t, fakeUI.Outputs[7], "my-hostname.bar.cf-app.com")
 	assert.Contains(t, fakeUI.Outputs[7], "my-new-app")
 	assert.Equal(t, routeRepo.BoundAppGuid, "my-new-app-guid")
-	assert.Equal(t, routeRepo.BoundRouteGuid, "my-hostname")
+	assert.Equal(t, routeRepo.BoundRouteGuid, "my-hostname-route-guid")
 	assert.Contains(t, fakeUI.Outputs[8], "OK")
 
 	assert.Contains(t, fakeUI.Outputs[10], "my-new-app")
@@ -195,7 +195,7 @@ func TestPushingAppWithNoRoute(t *testing.T) {
 		"my-new-app",
 	}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
-	assert.Equal(t, appRepo.CreatedApp.Name, "my-new-app")
+	assert.Equal(t, appRepo.CreateName, "my-new-app")
 	assert.Equal(t, routeRepo.CreatedHost, "")
 	assert.Equal(t, routeRepo.CreatedDomainGuid, "")
 }
@@ -219,7 +219,7 @@ func TestPushingAppWithNoHostname(t *testing.T) {
 		"my-new-app",
 	}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
-	assert.Equal(t, appRepo.CreatedApp.Name, "my-new-app")
+	assert.Equal(t, appRepo.CreateName, "my-new-app")
 	assert.Equal(t, routeRepo.CreatedHost, "")
 	assert.Equal(t, routeRepo.CreatedDomainGuid, "bar-domain-guid")
 }
@@ -237,7 +237,7 @@ func TestPushingAppWithMemoryInMegaBytes(t *testing.T) {
 		"my-new-app",
 	}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
-	assert.Equal(t, appRepo.CreatedApp.Memory, uint64(256))
+	assert.Equal(t, appRepo.CreateMemory, uint64(256))
 }
 
 func TestPushingAppWithMemoryWithoutUnit(t *testing.T) {
@@ -253,7 +253,7 @@ func TestPushingAppWithMemoryWithoutUnit(t *testing.T) {
 		"my-new-app",
 	}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
-	assert.Equal(t, appRepo.CreatedApp.Memory, uint64(512))
+	assert.Equal(t, appRepo.CreateMemory, uint64(512))
 }
 
 func TestPushingAppWithInvalidMemory(t *testing.T) {
@@ -269,7 +269,7 @@ func TestPushingAppWithInvalidMemory(t *testing.T) {
 		"my-new-app",
 	}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
-	assert.Equal(t, appRepo.CreatedApp.Memory, uint64(128))
+	assert.Equal(t, appRepo.CreateMemory, uint64(128))
 }
 
 func TestPushingAppWhenItAlreadyExistsAndNothingIsSpecified(t *testing.T) {
@@ -373,6 +373,7 @@ func TestPushingAppWhenItAlreadyExistsAndHostIsSpecified(t *testing.T) {
 
 	domain_Auto := cf.DomainFields{}
 	domain_Auto.Name = "example.com"
+	domain_Auto.Guid = "domain-guid"
 
 	existingRoute := cf.RouteSummary{}
 	existingRoute.Host = "existing-app"
@@ -385,6 +386,7 @@ func TestPushingAppWhenItAlreadyExistsAndHostIsSpecified(t *testing.T) {
 
 	appRepo.FindByNameApp = existingApp
 	routeRepo.FindByHostAndDomainNotFound = true
+	domainRepo.DefaultAppDomain = cf.Domain{DomainFields: domain_Auto}
 
 	fakeUI := callPush(t, []string{"-n", "new-host", "existing-app"}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 
@@ -427,6 +429,7 @@ func TestPushingAppWhenItAlreadyExistsAndNoHostFlagIsPresent(t *testing.T) {
 
 	domain_Auto := cf.DomainFields{}
 	domain_Auto.Name = "example.com"
+	domain_Auto.Guid = "domain-guid"
 
 	existingRoute := cf.RouteSummary{}
 	existingRoute.Host = "existing-app"
@@ -439,6 +442,7 @@ func TestPushingAppWhenItAlreadyExistsAndNoHostFlagIsPresent(t *testing.T) {
 
 	appRepo.FindByNameApp = existingApp
 	routeRepo.FindByHostAndDomainNotFound = true
+	domainRepo.DefaultAppDomain = cf.Domain{DomainFields: domain_Auto}
 
 	fakeUI := callPush(t, []string{"--no-hostname", "existing-app"}, starter, stopper, appRepo, domainRepo, routeRepo, stackRepo, appBitsRepo)
 

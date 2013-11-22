@@ -194,6 +194,8 @@ func TestLoggingInWithTooManyOrgsDoesNotShowOrgList(t *testing.T) {
 			c.orgRepo.Organizations = append(c.orgRepo.Organizations, org)
 		}
 
+		c.orgRepo.FindByNameOrganization = c.orgRepo.Organizations[1]
+
 		space1 := cf.Space{}
 		space1.Guid = "my-space-guid"
 		space1.Name = "my-space"
@@ -209,6 +211,7 @@ func TestLoggingInWithTooManyOrgsDoesNotShowOrgList(t *testing.T) {
 
 	assert.True(t, len(c.ui.Outputs) < 50)
 
+	assert.Equal(t, c.orgRepo.FindByNameName, "my-org-1")
 	assert.Equal(t, savedConfig.Organization.Guid, "my-org-guid-1")
 }
 

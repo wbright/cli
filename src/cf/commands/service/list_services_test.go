@@ -17,25 +17,24 @@ func TestServices(t *testing.T) {
 	plan_Auto.Guid = "spark-guid"
 	plan_Auto.Name = "spark"
 
-	offering_Auto := cf.ServiceOffering{}
+	offering_Auto := cf.ServiceOfferingFields{}
 	offering_Auto.Label = "cleardb"
 
 	serviceInstance_Auto := cf.ServiceInstance{}
 	serviceInstance_Auto.Name = "my-service-1"
 	serviceInstance_Auto.ServicePlan = plan_Auto
 	serviceInstance_Auto.ApplicationNames = []string{"cli1", "cli2"}
+	serviceInstance_Auto.ServiceOffering = offering_Auto
 
 	plan_Auto2 := cf.ServicePlanFields{}
 	plan_Auto2.Guid = "spark-guid-2"
 	plan_Auto2.Name = "spark-2"
 
-	offering_Auto2 := cf.ServiceOffering{}
-	offering_Auto2.Label = "cleardb"
-
 	serviceInstance_Auto2 := cf.ServiceInstance{}
 	serviceInstance_Auto2.Name = "my-service-2"
 	serviceInstance_Auto2.ServicePlan = plan_Auto2
 	serviceInstance_Auto2.ApplicationNames = []string{"cli1"}
+	serviceInstance_Auto2.ServiceOffering = offering_Auto
 
 	serviceInstance_Auto3 := cf.ServiceInstance{}
 	serviceInstance_Auto3.Name = "my-service-provided-by-user"

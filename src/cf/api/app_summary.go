@@ -44,6 +44,17 @@ func (resource ApplicationFromSummary) ToFields() (app cf.ApplicationFields) {
 	return
 }
 
+func (resource ApplicationFromSummary) ToModel() (app cf.AppSummary) {
+	app.ApplicationFields = resource.ToFields()
+	routes := []cf.RouteSummary{}
+	for _, route := range resource.Routes {
+		routes = append(routes, route.ToModel())
+	}
+	app.RouteSummary = routes
+
+	return
+}
+
 type RouteSummary struct {
 	Guid   string
 	Host   string
@@ -76,13 +87,11 @@ type AppSummaryRepository interface {
 type CloudControllerAppSummaryRepository struct {
 	config  *configuration.Configuration
 	gateway net.Gateway
-	appRepo ApplicationRepository
 }
 
-func NewCloudControllerAppSummaryRepository(config *configuration.Configuration, gateway net.Gateway, appRepo ApplicationRepository) (repo CloudControllerAppSummaryRepository) {
+func NewCloudControllerAppSummaryRepository(config *configuration.Configuration, gateway net.Gateway) (repo CloudControllerAppSummaryRepository) {
 	repo.config = config
 	repo.gateway = gateway
-	repo.appRepo = appRepo
 	return
 }
 
@@ -118,14 +127,6 @@ func (repo CloudControllerAppSummaryRepository) GetSummary(appGuid string) (summ
 }
 
 func (repo CloudControllerAppSummaryRepository) createSummary(resource *ApplicationFromSummary) (summary cf.AppSummary, apiResponse net.ApiResponse) {
-	summary = cf.AppSummary{}
-	summary.ApplicationFields = resource.ToFields()
-
-	instances, apiResponse := repo.appRepo.GetInstances(summary.Guid)
-	if apiResponse.IsNotSuccessful() {
-		return
-	}
-	summary.Instances = instances
-
+	summary = resource.ToModel()
 	return
 }

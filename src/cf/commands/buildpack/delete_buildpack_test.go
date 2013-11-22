@@ -70,7 +70,7 @@ func TestDeleteBuildpackNoConfirmation(t *testing.T) {
 
 	testcmd.RunCommand(cmd, ctxt, reqFactory)
 
-	assert.Equal(t, buildpackRepo.DeleteBuildpackGuid, "my-buildpack-guid")
+	assert.Equal(t, buildpackRepo.DeleteBuildpackGuid, "")
 
 	assert.Contains(t, ui.Prompts[0], "delete")
 	assert.Contains(t, ui.Prompts[0], "my-buildpack")

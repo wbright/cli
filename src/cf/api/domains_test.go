@@ -12,24 +12,8 @@ import (
 	"testing"
 )
 
-var orgDomainsResponse = testnet.TestResponse{Status: http.StatusOK, Body: `{"resources": [
-    {
-      "metadata": {
-        "guid": "some-shared-domain-guid"
-      },
-      "entity": {
-        "name": "some-shared.example.com",
-        "owning_organization_guid": null,
-        "wildcard": true,
-        "spaces": [
-          {
-            "metadata": { "guid": "my-space-guid" },
-            "entity": { "name": "my-space" }
-          }
-        ]
-      }
-    },
-    {
+var domainsResponse = testnet.TestResponse{Status: http.StatusOK, Body: `{"resources": [
+	{
       "metadata": {
         "guid": "my-domain-guid"
       },
@@ -44,10 +28,7 @@ var orgDomainsResponse = testnet.TestResponse{Status: http.StatusOK, Body: `{"re
           }
         ]
       }
-    }
-]}`}
-
-var sharedDomainsResponse = testnet.TestResponse{Status: http.StatusOK, Body: `{"resources": [
+    },
     {
       "metadata": {
         "guid": "some-shared-domain-guid"
@@ -66,58 +47,42 @@ var sharedDomainsResponse = testnet.TestResponse{Status: http.StatusOK, Body: `{
     },
     {
       "metadata": {
-        "guid": "shared-domain-guid"
+        "guid": "another-domain-guid"
       },
       "entity": {
-        "name": "shared.example.com",
-        "owning_organization_guid": null,
+        "name": "example.com",
+        "owning_organization_guid": "not-in-my-org-guid",
         "wildcard": true,
-        "spaces": [
-          {
-            "metadata": { "guid": "my-space-guid" },
-            "entity": { "name": "my-space" }
-          }
-        ]
+        "spaces": []
       }
     }
 ]}`}
 
 func TestDomainFindAllByOrg(t *testing.T) {
-	orgDomainsReq := testapi.NewCloudControllerTestRequest(testnet.TestRequest{
-		Method:   "GET",
-		Path:     "/v2/organizations/my-org-guid/domains?inline-relations-depth=1",
-		Response: orgDomainsResponse,
-	})
-
-	sharedDomainsReq := testapi.NewCloudControllerTestRequest(testnet.TestRequest{
+	domainsReq := testapi.NewCloudControllerTestRequest(testnet.TestRequest{
 		Method:   "GET",
 		Path:     "/v2/domains?inline-relations-depth=1",
-		Response: sharedDomainsResponse,
+		Response: domainsResponse,
 	})
 
-	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{orgDomainsReq, sharedDomainsReq})
+	ts, handler, repo := createDomainRepo(t, []testnet.TestRequest{domainsReq})
 	defer ts.Close()
 
 	domains, apiResponse := repo.FindAllByOrg("my-org-guid")
 
 	assert.True(t, handler.AllRequestsCalled())
 	assert.True(t, apiResponse.IsSuccessful())
-	assert.Equal(t, 3, len(domains))
+	assert.Equal(t, len(domains), 2)
 
 	domain := domains[0]
-	assert.Equal(t, domain.Name, "some-shared.example.com")
-	assert.Equal(t, domain.Guid, "some-shared-domain-guid")
-	assert.True(t, domain.Shared)
-
-	domain = domains[1]
 	assert.Equal(t, domain.Name, "example.com")
 	assert.Equal(t, domain.Guid, "my-domain-guid")
 	assert.False(t, domain.Shared)
 	assert.Equal(t, domain.Spaces[0].Name, "my-space")
 
-	domain = domains[2]
-	assert.Equal(t, domain.Name, "shared.example.com")
-	assert.Equal(t, domain.Guid, "shared-domain-guid")
+	domain = domains[1]
+	assert.Equal(t, domain.Name, "some-shared.example.com")
+	assert.Equal(t, domain.Guid, "some-shared-domain-guid")
 	assert.True(t, domain.Shared)
 }
 
@@ -406,7 +371,7 @@ func TestCreateDomain(t *testing.T) {
 	req := testapi.NewCloudControllerTestRequest(testnet.TestRequest{
 		Method:  "POST",
 		Path:    "/v2/domains",
-		Matcher: testnet.RequestBodyMatcher(`{"name":"example.com","wildcard":true,"owning_organization_guid":"domain1-guid"}`),
+		Matcher: testnet.RequestBodyMatcher(`{"name":"example.com","wildcard":true,"owning_organization_guid":"org-guid"}`),
 		Response: testnet.TestResponse{Status: http.StatusCreated, Body: `{
 			"metadata": { "guid": "abc-123" },
 			"entity": { "name": "example.com" }

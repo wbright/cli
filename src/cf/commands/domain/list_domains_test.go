@@ -78,7 +78,7 @@ func TestListDomains(t *testing.T) {
 
 	assert.Contains(t, fakeUI.Outputs[5], "Domain2")
 	assert.Contains(t, fakeUI.Outputs[5], "owned")
-	assert.Contains(t, fakeUI.Outputs[5], "my-space, my-other-space")
+	assert.Contains(t, fakeUI.Outputs[5], "my-space, my-space-2")
 
 	assert.Contains(t, fakeUI.Outputs[6], "Domain3")
 	assert.Contains(t, fakeUI.Outputs[6], "reserved")

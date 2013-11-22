@@ -69,8 +69,8 @@ func TestCreateRoute(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "my-user")
 	assert.Contains(t, ui.Outputs[1], "OK")
 
-	assert.Equal(t, routeRepo.CreatedHost, "host")
-	assert.Equal(t, routeRepo.CreatedDomainGuid, "domain-guid")
+	assert.Equal(t, routeRepo.CreateInSpaceHost, "host")
+	assert.Equal(t, routeRepo.CreateInSpaceDomainGuid, "domain-guid")
 	assert.Equal(t, routeRepo.CreateInSpaceSpaceGuid, "my-space-guid")
 
 }

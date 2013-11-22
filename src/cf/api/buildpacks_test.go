@@ -187,38 +187,6 @@ func TestBuildpackCreateRejectsImproperNames(t *testing.T) {
 	assert.Contains(t, apiResponse.Message, "Buildpack is invalid")
 }
 
-func TestCreateBuildpack(t *testing.T) {
-	req := testapi.NewCloudControllerTestRequest(testnet.TestRequest{
-		Method:  "POST",
-		Path:    "/v2/buildpacks",
-		Matcher: testnet.RequestBodyMatcher(`{"name":"my-cool-buildpack"}`),
-		Response: testnet.TestResponse{
-			Status: http.StatusCreated,
-			Body: `{
-			    "metadata": {
-			        "guid": "my-cool-buildpack-guid"
-			    },
-			    "entity": {
-			        "name": "my-cool-buildpack",
-					"position":10
-			    }
-			}`},
-	})
-
-	ts, handler, repo := createBuildpackRepo(t, req)
-	defer ts.Close()
-
-	position := 0
-	created, apiResponse := repo.Create("my-cool-buildpack", &position)
-
-	assert.True(t, handler.AllRequestsCalled())
-	assert.True(t, apiResponse.IsSuccessful())
-
-	assert.NotNil(t, created.Guid)
-	assert.Equal(t, "my-cool-buildpack", created.Name)
-	assert.NotEqual(t, *created.Position, 0)
-}
-
 func TestCreateBuildpackWithPosition(t *testing.T) {
 	req := testapi.NewCloudControllerTestRequest(testnet.TestRequest{
 		Method:  "POST",
@@ -248,7 +216,7 @@ func TestCreateBuildpackWithPosition(t *testing.T) {
 
 	assert.NotNil(t, created.Guid)
 	assert.Equal(t, "my-cool-buildpack", created.Name)
-	assert.Equal(t, 99, *created.Position)
+	assert.Equal(t, 999, *created.Position)
 }
 
 func TestDeleteBuildpack(t *testing.T) {

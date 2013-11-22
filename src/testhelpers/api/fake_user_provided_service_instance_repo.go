@@ -14,6 +14,9 @@ type FakeUserProvidedServiceInstanceRepo struct {
 }
 
 func (repo *FakeUserProvidedServiceInstanceRepo) Create(name, drainUrl string, params map[string]string) (apiResponse net.ApiResponse) {
+	repo.CreateName = name
+	repo.CreateDrainUrl = drainUrl
+	repo.CreateParams = params
 	return
 }
 

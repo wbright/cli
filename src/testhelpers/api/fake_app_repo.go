@@ -3,12 +3,9 @@ package api
 import (
 	"cf"
 	"cf/net"
-	"net/http"
-	"time"
 )
 
 type FakeApplicationRepository struct {
-
 	ScaledApp cf.ApplicationFields
 
 	StartAppGuid string
@@ -35,12 +32,16 @@ type FakeApplicationRepository struct {
 	SetEnvErr   bool
 
 	CreatedApp  cf.Application
+	CreateName string
+	CreateBuildpackUrl string
+	CreateStackGuid string
+	CreateCommand string
+	CreateMemory uint64
+	CreateInstances int
+
 
 	RenameAppGuid     string
 	RenameNewName string
-
-	GetInstancesResponses  [][]cf.ApplicationInstance
-	GetInstancesErrorCodes []string
 }
 
 func (repo *FakeApplicationRepository) FindByName(name string) (app cf.Application, apiResponse net.ApiResponse) {
@@ -71,8 +72,22 @@ func (repo *FakeApplicationRepository) SetEnv(appGuid string, envVars map[string
 }
 
 func (repo *FakeApplicationRepository) Create(name, buildpackUrl, stackGuid, command string, memory uint64, instances int) (resultApp cf.Application, apiResponse net.ApiResponse) {
-	resultApp = repo.CreatedApp
-	resultApp.Guid = resultApp.Name + "-guid"
+	repo.CreateName = name
+	repo.CreateBuildpackUrl = buildpackUrl
+	repo.CreateStackGuid = stackGuid
+	repo.CreateCommand = command
+	repo.CreateMemory = memory
+	repo.CreateInstances = instances
+
+	resultApp.Name = name
+	resultApp.Guid = name+"-guid"
+	resultApp.BuildpackUrl = buildpackUrl
+	resultApp.Stack = cf.Stack{}
+	resultApp.Stack.Guid = stackGuid
+	resultApp.Command = command
+	resultApp.Memory = memory
+	resultApp.InstanceCount = instances
+
 	return
 }
 
@@ -102,6 +117,11 @@ func (repo *FakeApplicationRepository) Start(appGuid string) (updatedApp cf.Appl
 }
 
 func (repo *FakeApplicationRepository) StartWithDifferentBuildpack(appGuid, buildpack string) (updatedApp cf.Application, apiResponse net.ApiResponse){
+	repo.StartAppGuid = appGuid
+	if repo.StartAppErr {
+		apiResponse = net.NewApiResponseWithMessage("Error starting application")
+	}
+	updatedApp = repo.StartUpdatedApp
 	return
 }
 
@@ -111,21 +131,5 @@ func (repo *FakeApplicationRepository) Stop(appGuid string) (updatedApp cf.Appli
 		apiResponse = net.NewApiResponseWithMessage("Error stopping application")
 	}
 	updatedApp = repo.StopUpdatedApp
-	return
-}
-
-func (repo *FakeApplicationRepository) GetInstances(appGuid string) (instances[]cf.ApplicationInstance, apiResponse net.ApiResponse) {
-	time.Sleep(1*time.Millisecond) //needed for Windows only, otherwise it thinks error codes are not assigned
-	errorCode := repo.GetInstancesErrorCodes[0]
-	repo.GetInstancesErrorCodes = repo.GetInstancesErrorCodes[1:]
-
-	instances = repo.GetInstancesResponses[0]
-	repo.GetInstancesResponses = repo.GetInstancesResponses[1:]
-
-	if errorCode != "" {
-		apiResponse = net.NewApiResponse("Error staging app", errorCode, http.StatusBadRequest)
-		return
-	}
-
 	return
 }

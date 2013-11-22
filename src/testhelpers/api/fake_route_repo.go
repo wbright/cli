@@ -104,7 +104,7 @@ func (repo *FakeRouteRepository) Create(host, domainGuid string) (createdRoute c
 	repo.CreatedHost = host
 	repo.CreatedDomainGuid = domainGuid
 
-	createdRoute.Guid = host + "-guid"
+	createdRoute.Guid = host + "-route-guid"
 
 	return
 }

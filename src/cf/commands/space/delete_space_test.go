@@ -113,9 +113,10 @@ func TestDeleteSpaceWhenSpaceNotTargeted(t *testing.T) {
 	configRepo := &testconfig.FakeConfigRepository{}
 
 	config, _ := configRepo.Get()
-	otherSpace := cf.Space{}
+	otherSpace := cf.SpaceFields{}
 	otherSpace.Name = "do-not-delete"
 	otherSpace.Guid = "do-not-delete-guid"
+	config.Space = otherSpace
 	configRepo.Save()
 
 	ui := &testterm.FakeUI{}

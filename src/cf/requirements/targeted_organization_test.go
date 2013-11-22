@@ -10,7 +10,7 @@ import (
 
 func TestTargetedOrgRequirement(t *testing.T) {
 	ui := new(testterm.FakeUI)
-	org_Auto := cf.Organization{}
+	org_Auto := cf.OrganizationFields{}
 	org_Auto.Name = "my-org"
 	org_Auto.Guid = "my-org-guid"
 	config := &configuration.Configuration{
@@ -21,7 +21,7 @@ func TestTargetedOrgRequirement(t *testing.T) {
 	success := req.Execute()
 	assert.True(t, success)
 
-	config.Organization = cf.Organization{}
+	config.Organization = cf.OrganizationFields{}
 
 	req = newTargetedOrgRequirement(ui, config)
 	success = req.Execute()
