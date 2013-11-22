@@ -81,7 +81,7 @@ func createServiceSummaryRepo(t *testing.T, req testnet.TestRequest) (ts *httpte
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
 		Target:      ts.URL,
-		Space:       space,
+		SpaceFields: space,
 	}
 	gateway := net.NewCloudControllerGateway()
 	repo = NewCloudControllerServiceSummaryRepository(config, gateway)

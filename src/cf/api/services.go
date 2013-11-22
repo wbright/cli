@@ -133,7 +133,7 @@ func NewCloudControllerServiceRepository(config *configuration.Configuration, ga
 
 func (repo CloudControllerServiceRepository) GetServiceOfferings() (offerings []cf.ServiceOffering, apiResponse net.ApiResponse) {
 	path := fmt.Sprintf("%s/v2/services?inline-relations-depth=1", repo.config.Target)
-	spaceGuid := repo.config.Space.Guid
+	spaceGuid := repo.config.SpaceFields.Guid
 
 	if spaceGuid != "" {
 		path = fmt.Sprintf("%s/v2/spaces/%s/services?inline-relations-depth=1", repo.config.Target, spaceGuid)
@@ -153,7 +153,7 @@ func (repo CloudControllerServiceRepository) GetServiceOfferings() (offerings []
 }
 
 func (repo CloudControllerServiceRepository) FindInstanceByName(name string) (instance cf.ServiceInstance, apiResponse net.ApiResponse) {
-	path := fmt.Sprintf("%s/v2/spaces/%s/service_instances?return_user_provided_service_instances=true&q=name%s&inline-relations-depth=2", repo.config.Target, repo.config.Space.Guid, "%3A"+name)
+	path := fmt.Sprintf("%s/v2/spaces/%s/service_instances?return_user_provided_service_instances=true&q=name%s&inline-relations-depth=2", repo.config.Target, repo.config.SpaceFields.Guid, "%3A"+name)
 
 	resources := new(PaginatedServiceInstanceResources)
 	apiResponse = repo.gateway.GetResource(path, repo.config.AccessToken, resources)
@@ -175,7 +175,7 @@ func (repo CloudControllerServiceRepository) CreateServiceInstance(name, planGui
 	path := fmt.Sprintf("%s/v2/service_instances", repo.config.Target)
 	data := fmt.Sprintf(
 		`{"name":"%s","service_plan_guid":"%s","space_guid":"%s"}`,
-		name, planGuid, repo.config.Space.Guid,
+		name, planGuid, repo.config.SpaceFields.Guid,
 	)
 
 	apiResponse = repo.gateway.CreateResource(path, repo.config.AccessToken, strings.NewReader(data))

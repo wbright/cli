@@ -76,9 +76,9 @@ func callCreateOrg(t *testing.T, args []string, reqFactory *testreq.FakeReqFacto
 	organization.Name = "my-org"
 
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: organization,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: organization,
+		AccessToken:        token,
 	}
 
 	cmd := NewCreateOrg(fakeUI, config, orgRepo)

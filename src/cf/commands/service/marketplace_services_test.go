@@ -47,9 +47,9 @@ func TestMarketplaceServices(t *testing.T) {
 	space.Name = "my-space"
 	space.Guid = "my-space-guid"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	ui := callMarketplaceServices(t, config, serviceRepo)

@@ -83,9 +83,9 @@ func callUpdateServiceAuthToken(t *testing.T, args []string, reqFactory *testreq
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	cmd := NewUpdateServiceAuthToken(ui, config, authTokenRepo)

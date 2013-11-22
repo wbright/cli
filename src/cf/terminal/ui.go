@@ -121,11 +121,11 @@ func (ui terminalUI) ShowConfiguration(config *configuration.Configuration) {
 	}
 
 	if config.HasOrganization() {
-		ui.Say("Org:          %s", EntityNameColor(config.Organization.Name))
+		ui.Say("Org:          %s", EntityNameColor(config.OrganizationFields.Name))
 	}
 
 	if config.HasSpace() {
-		ui.Say("Space:        %s", EntityNameColor(config.Space.Name))
+		ui.Say("SpaceFields:        %s", EntityNameColor(config.SpaceFields.Name))
 	}
 }
 

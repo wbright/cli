@@ -48,8 +48,8 @@ func TestUpdateEndpointWhenUrlIsValidHttpsInfoEndpoint(t *testing.T) {
 	space.Guid = "my-space-guid"
 
 	config, _ := configRepo.Get()
-	config.Organization = org
-	config.Space = space
+	config.OrganizationFields = org
+	config.SpaceFields = space
 
 	repo.UpdateEndpoint(ts.URL)
 
@@ -83,13 +83,13 @@ func TestUpdateEndpointWhenUrlIsAlreadyTargeted(t *testing.T) {
 	config.Target = ts.URL
 	config.AccessToken = "some access token"
 	config.RefreshToken = "some refresh token"
-	config.Organization = org
-	config.Space = space
+	config.OrganizationFields = org
+	config.SpaceFields = space
 
 	repo.UpdateEndpoint(ts.URL)
 
-	assert.Equal(t, config.Organization, org)
-	assert.Equal(t, config.Space, space)
+	assert.Equal(t, config.OrganizationFields, org)
+	assert.Equal(t, config.SpaceFields, space)
 	assert.Equal(t, config.AccessToken, "some access token")
 	assert.Equal(t, config.RefreshToken, "some refresh token")
 }

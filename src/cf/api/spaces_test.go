@@ -299,10 +299,10 @@ func createSpacesRepo(t *testing.T, reqs ...testnet.TestRequest) (ts *httptest.S
 	space5 := cf.SpaceFields{}
 	space5.Guid = "my-space-guid"
 	config := &configuration.Configuration{
-		AccessToken:  "BEARER my_access_token",
-		Target:       ts.URL,
-		Organization: org4,
-		Space:        space5,
+		AccessToken:        "BEARER my_access_token",
+		Target:             ts.URL,
+		OrganizationFields: org4,
+		SpaceFields:        space5,
 	}
 	gateway := net.NewCloudControllerGateway()
 	repo = NewCloudControllerSpaceRepository(config, gateway)

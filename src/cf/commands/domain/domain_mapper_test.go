@@ -138,9 +138,9 @@ func callDomainMapper(t *testing.T, shouldMap bool, args []string, reqFactory *t
 	spaceFields.Name = "my-space"
 
 	config := &configuration.Configuration{
-		Space:        spaceFields,
-		Organization: orgFields,
-		AccessToken:  token,
+		SpaceFields:        spaceFields,
+		OrganizationFields: orgFields,
+		AccessToken:        token,
 	}
 
 	cmd := domain.NewDomainMapper(ui, config, domainRepo, shouldMap)

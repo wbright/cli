@@ -98,7 +98,7 @@ func NewCloudControllerAppSummaryRepository(config *configuration.Configuration,
 func (repo CloudControllerAppSummaryRepository) GetSummariesInCurrentSpace() (apps []cf.AppSummary, apiResponse net.ApiResponse) {
 	resources := new(ApplicationSummaries)
 
-	path := fmt.Sprintf("%s/v2/spaces/%s/summary", repo.config.Target, repo.config.Space.Guid)
+	path := fmt.Sprintf("%s/v2/spaces/%s/summary", repo.config.Target, repo.config.SpaceFields.Guid)
 	apiResponse = repo.gateway.GetResource(path, repo.config.AccessToken, resources)
 	if apiResponse.IsNotSuccessful() {
 		return

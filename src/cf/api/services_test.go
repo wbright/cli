@@ -107,7 +107,7 @@ func TestGetServiceOfferingsWhenTargetingASpace(t *testing.T) {
 	space.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
-		Space:       space,
+		SpaceFields: space,
 	}
 	testGetServiceOfferings(t, req, config)
 }
@@ -338,7 +338,7 @@ func createServiceRepo(t *testing.T, reqs []testnet.TestRequest) (ts *httptest.S
 	space2.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
-		Space:       space2,
+		SpaceFields: space2,
 	}
 	return createServiceRepoWithConfig(t, reqs, config)
 }

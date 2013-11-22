@@ -91,9 +91,9 @@ func callOrgUsers(t *testing.T, args []string, reqFactory *testreq.FakeReqFactor
 	space := cf.SpaceFields{}
 	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org3,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org3,
+		AccessToken:        token,
 	}
 
 	cmd := NewOrgUsers(ui, config, userRepo)

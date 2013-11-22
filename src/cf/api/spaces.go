@@ -75,7 +75,7 @@ func (repo CloudControllerSpaceRepository) ListSpaces(stop chan bool) (spacesCha
 	statusChan = make(chan net.ApiResponse, 1)
 
 	go func() {
-		path := fmt.Sprintf("/v2/organizations/%s/spaces", repo.config.Organization.Guid)
+		path := fmt.Sprintf("/v2/organizations/%s/spaces", repo.config.OrganizationFields.Guid)
 
 	loop:
 		for path != "" {
@@ -109,7 +109,7 @@ func (repo CloudControllerSpaceRepository) ListSpaces(stop chan bool) (spacesCha
 }
 
 func (repo CloudControllerSpaceRepository) FindByName(name string) (space cf.Space, apiResponse net.ApiResponse) {
-	return repo.FindByNameInOrg(name, repo.config.Organization.Guid)
+	return repo.FindByNameInOrg(name, repo.config.OrganizationFields.Guid)
 }
 
 func (repo CloudControllerSpaceRepository) FindByNameInOrg(name, orgGuid string) (space cf.Space, apiResponse net.ApiResponse) {
@@ -146,7 +146,7 @@ func (repo CloudControllerSpaceRepository) findNextWithPath(path string) (spaces
 
 func (repo CloudControllerSpaceRepository) Create(name string) (apiResponse net.ApiResponse) {
 	path := fmt.Sprintf("%s/v2/spaces", repo.config.Target)
-	body := fmt.Sprintf(`{"name":"%s","organization_guid":"%s"}`, name, repo.config.Organization.Guid)
+	body := fmt.Sprintf(`{"name":"%s","organization_guid":"%s"}`, name, repo.config.OrganizationFields.Guid)
 	return repo.gateway.CreateResource(path, repo.config.AccessToken, strings.NewReader(body))
 }
 

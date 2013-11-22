@@ -333,7 +333,7 @@ func createAppRepo(t *testing.T, requests []testnet.TestRequest) (ts *httptest.S
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
 		Target:      ts.URL,
-		Space:       space,
+		SpaceFields: space,
 	}
 	gateway := net.NewCloudControllerGateway()
 	repo = NewCloudControllerApplicationRepository(config, gateway)

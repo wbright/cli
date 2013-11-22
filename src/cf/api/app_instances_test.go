@@ -88,7 +88,7 @@ func createAppInstancesRepo(t *testing.T, requests []testnet.TestRequest) (ts *h
 	space := cf.SpaceFields{}
 	space.Guid = "my-space-guid"
 	config := &configuration.Configuration{
-		Space:       space,
+		SpaceFields: space,
 		AccessToken: "BEARER my_access_token",
 		Target:      ts.URL,
 	}

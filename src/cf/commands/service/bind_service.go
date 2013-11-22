@@ -49,8 +49,8 @@ func (cmd *BindService) Run(c *cli.Context) {
 	cmd.ui.Say("Binding service %s to app %s in org %s / space %s as %s...",
 		terminal.EntityNameColor(instance.Name),
 		terminal.EntityNameColor(app.Name),
-		terminal.EntityNameColor(cmd.config.Organization.Name),
-		terminal.EntityNameColor(cmd.config.Space.Name),
+		terminal.EntityNameColor(cmd.config.OrganizationFields.Name),
+		terminal.EntityNameColor(cmd.config.SpaceFields.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 

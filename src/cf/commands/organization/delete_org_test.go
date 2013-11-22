@@ -54,11 +54,11 @@ func TestDeleteTargetedOrganizationClearsConfig(t *testing.T) {
 	organizationFields := cf.OrganizationFields{}
 	organizationFields.Name = "org-to-delete"
 	organizationFields.Guid = "org-to-delete-guid"
-	config.Organization = organizationFields
+	config.OrganizationFields = organizationFields
 
 	spaceFields := cf.SpaceFields{}
 	spaceFields.Name = "space-to-delete"
-	config.Space = spaceFields
+	config.SpaceFields = spaceFields
 	configRepo.Save()
 
 	org := cf.Organization{}
@@ -69,8 +69,8 @@ func TestDeleteTargetedOrganizationClearsConfig(t *testing.T) {
 	updatedConfig, err := configRepo.Get()
 	assert.NoError(t, err)
 
-	assert.Equal(t, updatedConfig.Organization, cf.OrganizationFields{})
-	assert.Equal(t, updatedConfig.Space, cf.SpaceFields{})
+	assert.Equal(t, updatedConfig.OrganizationFields, cf.OrganizationFields{})
+	assert.Equal(t, updatedConfig.SpaceFields, cf.SpaceFields{})
 }
 
 func TestDeleteUntargetedOrganizationDoesNotClearConfig(t *testing.T) {
@@ -84,11 +84,11 @@ func TestDeleteUntargetedOrganizationDoesNotClearConfig(t *testing.T) {
 	otherOrgFields := cf.OrganizationFields{}
 	otherOrgFields.Guid = "some-other-org-guid"
 	otherOrgFields.Name = "some-other-org"
-	config.Organization = otherOrgFields
+	config.OrganizationFields = otherOrgFields
 
 	spaceFields := cf.SpaceFields{}
 	spaceFields.Name = "some-other-space"
-	config.Space = spaceFields
+	config.SpaceFields = spaceFields
 	configRepo.Save()
 
 	deleteOrg(t, "Yes", []string{"org-to-delete"}, orgRepo)
@@ -96,8 +96,8 @@ func TestDeleteUntargetedOrganizationDoesNotClearConfig(t *testing.T) {
 	updatedConfig, err := configRepo.Get()
 	assert.NoError(t, err)
 
-	assert.Equal(t, updatedConfig.Organization.Name, "some-other-org")
-	assert.Equal(t, updatedConfig.Space.Name, "some-other-space")
+	assert.Equal(t, updatedConfig.OrganizationFields.Name, "some-other-org")
+	assert.Equal(t, updatedConfig.SpaceFields.Name, "some-other-space")
 }
 
 func TestDeleteOrgWithForceOption(t *testing.T) {
@@ -158,9 +158,9 @@ func deleteOrg(t *testing.T, confirmation string, args []string, orgRepo *testap
 	orgFields := cf.OrganizationFields{}
 	orgFields.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        spaceFields,
-		Organization: orgFields,
-		AccessToken:  token,
+		SpaceFields:        spaceFields,
+		OrganizationFields: orgFields,
+		AccessToken:        token,
 	}
 
 	cmd := NewDeleteOrg(ui, config, orgRepo, configRepo)

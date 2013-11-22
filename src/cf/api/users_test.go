@@ -393,9 +393,9 @@ func createUsersRepo(t *testing.T, ccReqs []testnet.TestRequest, uaaReqs []testn
 	org := cf.OrganizationFields{}
 	org.Guid = "some-org-guid"
 	config := &configuration.Configuration{
-		AccessToken:  "BEARER my_access_token",
-		Target:       ccTarget,
-		Organization: org,
+		AccessToken:        "BEARER my_access_token",
+		Target:             ccTarget,
+		OrganizationFields: org,
 	}
 	ccGateway := net.NewCloudControllerGateway()
 	uaaGateway := net.NewUAAGateway()

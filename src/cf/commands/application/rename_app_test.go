@@ -65,9 +65,9 @@ func callRename(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory,
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	cmd := NewRenameApp(ui, config, appRepo)

@@ -68,7 +68,7 @@ func (cmd *CreateRoute) Run(c *cli.Context) {
 func (cmd *CreateRoute) CreateRoute(hostName string, domain cf.DomainFields, space cf.SpaceFields) (route cf.Route, apiResponse net.ApiResponse) {
 	cmd.ui.Say("Creating route %s for org %s / space %s as %s...",
 		terminal.EntityNameColor(domain.UrlForHost(hostName)),
-		terminal.EntityNameColor(cmd.config.Organization.Name),
+		terminal.EntityNameColor(cmd.config.OrganizationFields.Name),
 		terminal.EntityNameColor(space.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)

@@ -142,9 +142,9 @@ func callRouteMapper(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	cmd := NewRouteMapper(ui, config, routeRepo, createRoute, bind)

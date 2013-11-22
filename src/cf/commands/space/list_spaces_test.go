@@ -49,8 +49,8 @@ func TestListingSpaces(t *testing.T) {
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Organization: org,
-		AccessToken:  token,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, TargetedOrgSuccess: true}
@@ -75,8 +75,8 @@ func TestListingSpacesWhenNoSpaces(t *testing.T) {
 	org2 := cf.OrganizationFields{}
 	org2.Name = "my-org"
 	config := &configuration.Configuration{
-		Organization: org2,
-		AccessToken:  token,
+		OrganizationFields: org2,
+		AccessToken:        token,
 	}
 
 	reqFactory := &testreq.FakeReqFactory{LoginSuccess: true, TargetedOrgSuccess: true}

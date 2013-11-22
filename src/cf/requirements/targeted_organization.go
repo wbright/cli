@@ -33,5 +33,5 @@ func (req targetedOrgApiRequirement) Execute() (success bool) {
 }
 
 func (req targetedOrgApiRequirement) GetOrganizationFields() (org cf.OrganizationFields) {
-	return req.config.Organization
+	return req.config.OrganizationFields
 }

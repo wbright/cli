@@ -90,9 +90,9 @@ func callUnsetOrgRole(t *testing.T, args []string, userRepo *testapi.FakeUserRep
 	space := cf.SpaceFields{}
 	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org2,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org2,
+		AccessToken:        token,
 	}
 
 	cmd := NewUnsetOrgRole(ui, config, userRepo)

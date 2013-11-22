@@ -17,8 +17,8 @@ func (repo FakeConfigRepository) SetOrganization(org cf.OrganizationFields) (err
 		return
 	}
 
-	config.Organization = org
-	config.Space = cf.SpaceFields{}
+	config.OrganizationFields = org
+	config.SpaceFields = cf.SpaceFields{}
 	return repo.Save()
 }
 
@@ -28,7 +28,7 @@ func (repo FakeConfigRepository) SetSpace(space cf.SpaceFields) (err error) {
 		return
 	}
 
-	config.Space = space
+	config.SpaceFields = space
 	return repo.Save()
 }
 
@@ -66,8 +66,8 @@ func (repo FakeConfigRepository) ClearSession() (err error) {
 	repo.ClearTokens()
 
 	c, _ := repo.Get()
-	c.Organization = cf.OrganizationFields{}
-	c.Space = cf.SpaceFields{}
+	c.OrganizationFields = cf.OrganizationFields{}
+	c.SpaceFields = cf.SpaceFields{}
 
 	return nil
 }

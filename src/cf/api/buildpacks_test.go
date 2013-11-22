@@ -279,7 +279,7 @@ func createBuildpackRepo(t *testing.T, requests ...testnet.TestRequest) (ts *htt
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
 		Target:      ts.URL,
-		Space:       space,
+		SpaceFields: space,
 	}
 	gateway := net.NewCloudControllerGateway()
 	repo = NewCloudControllerBuildpackRepository(config, gateway)

@@ -28,8 +28,8 @@ func (cmd MarketplaceServices) GetRequirements(reqFactory requirements.Factory, 
 func (cmd MarketplaceServices) Run(c *cli.Context) {
 	if cmd.config.HasSpace() {
 		cmd.ui.Say("Getting services from marketplace in org %s / space %s as %s...",
-			terminal.EntityNameColor(cmd.config.Organization.Name),
-			terminal.EntityNameColor(cmd.config.Space.Name),
+			terminal.EntityNameColor(cmd.config.OrganizationFields.Name),
+			terminal.EntityNameColor(cmd.config.SpaceFields.Name),
 			terminal.EntityNameColor(cmd.config.Username()),
 		)
 	} else {

@@ -59,9 +59,9 @@ func callListQuotas(t *testing.T, reqFactory *testreq.FakeReqFactory, quotaRepo 
 	orgFields.Name = "my-org"
 
 	config := &configuration.Configuration{
-		Space:        spaceFields,
-		Organization: orgFields,
-		AccessToken:  token,
+		SpaceFields:        spaceFields,
+		OrganizationFields: orgFields,
+		AccessToken:        token,
 	}
 
 	cmd := organization.NewListQuotas(fakeUI, config, quotaRepo)

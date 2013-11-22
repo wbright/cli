@@ -64,9 +64,9 @@ func TestTargetOrganizationWhenUserHasAccess(t *testing.T) {
 	config, err := configRepo.Get()
 	assert.NoError(t, err)
 
-	config.Space = cf.SpaceFields{}
-	config.Space.Name = "my-space"
-	config.Space.Guid = "my-space-guid"
+	config.SpaceFields = cf.SpaceFields{}
+	config.SpaceFields.Name = "my-space"
+	config.SpaceFields.Guid = "my-space-guid"
 
 	org := cf.Organization{}
 	org.Name = "my-organization"
@@ -81,7 +81,7 @@ func TestTargetOrganizationWhenUserHasAccess(t *testing.T) {
 	assert.True(t, ui.ShowConfigurationCalled)
 
 	savedConfig := testconfig.SavedConfiguration
-	assert.Equal(t, savedConfig.Organization.Guid, "my-organization-guid")
+	assert.Equal(t, savedConfig.OrganizationFields.Guid, "my-organization-guid")
 }
 
 func TestTargetOrganizationWhenUserDoesNotHaveAccess(t *testing.T) {
@@ -115,9 +115,9 @@ func TestTargetOrganizationWhenOrgNotFound(t *testing.T) {
 	config, err := configRepo.Get()
 	assert.NoError(t, err)
 
-	config.Organization = cf.OrganizationFields{}
-	config.Organization.Guid = "previous-org-guid"
-	config.Organization.Name = "previous-org"
+	config.OrganizationFields = cf.OrganizationFields{}
+	config.OrganizationFields.Guid = "previous-org-guid"
+	config.OrganizationFields.Name = "previous-org"
 
 	err = configRepo.Save()
 	assert.NoError(t, err)
@@ -142,7 +142,7 @@ func TestTargetSpaceWhenNoOrganizationIsSelected(t *testing.T) {
 	assert.Contains(t, ui.Outputs[0], "FAILED")
 	assert.Contains(t, ui.Outputs[1], "An org must be targeted before targeting a space")
 	savedConfig := testconfig.SavedConfiguration
-	assert.Equal(t, savedConfig.Organization.Guid, "")
+	assert.Equal(t, savedConfig.OrganizationFields.Guid, "")
 }
 
 func TestTargetSpaceWhenUserHasAccess(t *testing.T) {
@@ -150,9 +150,9 @@ func TestTargetSpaceWhenUserHasAccess(t *testing.T) {
 
 	configRepo.Delete()
 	config := configRepo.Login()
-	config.Organization = cf.OrganizationFields{}
-	config.Organization.Name = "my-org"
-	config.Organization.Guid = "my-org-guid"
+	config.OrganizationFields = cf.OrganizationFields{}
+	config.OrganizationFields.Name = "my-org"
+	config.OrganizationFields.Guid = "my-org-guid"
 
 	space := cf.Space{}
 	space.Name = "my-space"
@@ -165,7 +165,7 @@ func TestTargetSpaceWhenUserHasAccess(t *testing.T) {
 
 	assert.Equal(t, spaceRepo.FindByNameName, "my-space")
 	savedConfig := testconfig.SavedConfiguration
-	assert.Equal(t, savedConfig.Space.Guid, "my-space-guid")
+	assert.Equal(t, savedConfig.SpaceFields.Guid, "my-space-guid")
 	assert.True(t, ui.ShowConfigurationCalled)
 }
 
@@ -174,9 +174,9 @@ func TestTargetSpaceWhenUserDoesNotHaveAccess(t *testing.T) {
 
 	configRepo.Delete()
 	config := configRepo.Login()
-	config.Organization = cf.OrganizationFields{}
-	config.Organization.Name = "my-org"
-	config.Organization.Guid = "my-org-guid"
+	config.OrganizationFields = cf.OrganizationFields{}
+	config.OrganizationFields.Name = "my-org"
+	config.OrganizationFields.Guid = "my-org-guid"
 
 	spaceRepo.FindByNameErr = true
 
@@ -186,7 +186,7 @@ func TestTargetSpaceWhenUserDoesNotHaveAccess(t *testing.T) {
 	assert.Contains(t, ui.Outputs[1], "my-space")
 
 	savedConfig := testconfig.SavedConfiguration
-	assert.Equal(t, savedConfig.Space.Guid, "")
+	assert.Equal(t, savedConfig.SpaceFields.Guid, "")
 	assert.True(t, ui.ShowConfigurationCalled)
 }
 
@@ -195,9 +195,9 @@ func TestTargetSpaceWhenSpaceNotFound(t *testing.T) {
 
 	configRepo.Delete()
 	config := configRepo.Login()
-	config.Organization = cf.OrganizationFields{}
-	config.Organization.Name = "my-org"
-	config.Organization.Guid = "my-org-guid"
+	config.OrganizationFields = cf.OrganizationFields{}
+	config.OrganizationFields.Name = "my-org"
+	config.OrganizationFields.Guid = "my-org-guid"
 
 	spaceRepo.FindByNameNotFound = true
 
@@ -229,10 +229,10 @@ func TestTargetOrganizationAndSpace(t *testing.T) {
 	assert.True(t, ui.ShowConfigurationCalled)
 
 	assert.Equal(t, orgRepo.FindByNameName, "my-organization")
-	assert.Equal(t, savedConfig.Organization.Guid, "my-organization-guid")
+	assert.Equal(t, savedConfig.OrganizationFields.Guid, "my-organization-guid")
 
 	assert.Equal(t, spaceRepo.FindByNameName, "my-space")
-	assert.Equal(t, savedConfig.Space.Guid, "my-space-guid")
+	assert.Equal(t, savedConfig.SpaceFields.Guid, "my-space-guid")
 }
 
 func TestTargetOrganizationAndSpaceWhenSpaceFails(t *testing.T) {
@@ -253,9 +253,9 @@ func TestTargetOrganizationAndSpaceWhenSpaceFails(t *testing.T) {
 	assert.True(t, ui.ShowConfigurationCalled)
 
 	assert.Equal(t, orgRepo.FindByNameName, "my-organization")
-	assert.Equal(t, savedConfig.Organization.Guid, "my-organization-guid")
+	assert.Equal(t, savedConfig.OrganizationFields.Guid, "my-organization-guid")
 	assert.Equal(t, spaceRepo.FindByNameName, "my-space")
-	assert.Equal(t, savedConfig.Space.Guid, "")
+	assert.Equal(t, savedConfig.SpaceFields.Guid, "")
 	assert.Contains(t, ui.Outputs[0], "FAILED")
 }
 

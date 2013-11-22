@@ -114,9 +114,9 @@ func callScale(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory, 
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	cmd := NewScale(ui, config, restarter, appRepo)

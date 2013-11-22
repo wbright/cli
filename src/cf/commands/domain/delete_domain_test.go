@@ -188,9 +188,9 @@ func callDeleteDomain(t *testing.T, args []string, inputs []string, reqFactory *
 	orgFields := cf.OrganizationFields{}
 	orgFields.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        spaceFields,
-		Organization: orgFields,
-		AccessToken:  token,
+		SpaceFields:        spaceFields,
+		OrganizationFields: orgFields,
+		AccessToken:        token,
 	}
 
 	cmd := domain.NewDeleteDomain(ui, config, domainRepo)

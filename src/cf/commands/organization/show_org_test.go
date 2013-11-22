@@ -88,9 +88,9 @@ func callShowOrg(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory
 	orgFields.Name = "my-org"
 
 	config := &configuration.Configuration{
-		Space:        spaceFields,
-		Organization: orgFields,
-		AccessToken:  token,
+		SpaceFields:        spaceFields,
+		OrganizationFields: orgFields,
+		AccessToken:        token,
 	}
 
 	cmd := NewShowOrg(ui, config)

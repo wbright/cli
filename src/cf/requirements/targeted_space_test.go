@@ -17,16 +17,16 @@ func TestSpaceRequirement(t *testing.T) {
 	space.Name = "my-space"
 	space.Guid = "my-space-guid"
 	config := &configuration.Configuration{
-		Organization: org,
+		OrganizationFields: org,
 
-		Space: space,
+		SpaceFields: space,
 	}
 
 	req := newTargetedSpaceRequirement(ui, config)
 	success := req.Execute()
 	assert.True(t, success)
 
-	config.Space = cf.SpaceFields{}
+	config.SpaceFields = cf.SpaceFields{}
 
 	req = newTargetedSpaceRequirement(ui, config)
 	success = req.Execute()
@@ -35,7 +35,7 @@ func TestSpaceRequirement(t *testing.T) {
 	assert.Contains(t, ui.Outputs[1], "No space targeted")
 
 	ui.ClearOutputs()
-	config.Organization = cf.OrganizationFields{}
+	config.OrganizationFields = cf.OrganizationFields{}
 
 	req = newTargetedSpaceRequirement(ui, config)
 	success = req.Execute()

@@ -41,8 +41,8 @@ func (cmd CreateService) Run(c *cli.Context) {
 
 	cmd.ui.Say("Creating service %s in org %s / space %s as %s...",
 		terminal.EntityNameColor(name),
-		terminal.EntityNameColor(cmd.config.Organization.Name),
-		terminal.EntityNameColor(cmd.config.Space.Name),
+		terminal.EntityNameColor(cmd.config.OrganizationFields.Name),
+		terminal.EntityNameColor(cmd.config.SpaceFields.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 

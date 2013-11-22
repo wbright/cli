@@ -38,7 +38,7 @@ func (repo CCUserProvidedServiceInstanceRepository) Create(name, drainUrl string
 	jsonBytes, err := json.Marshal(RequestBody{
 		Name:           name,
 		Credentials:    params,
-		SpaceGuid:      repo.config.Space.Guid,
+		SpaceGuid:      repo.config.SpaceFields.Guid,
 		SysLogDrainUrl: drainUrl,
 	})
 

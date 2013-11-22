@@ -100,9 +100,9 @@ func callListDomains(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 	orgFields.Name = "my-org"
 
 	config := &configuration.Configuration{
-		Space:        spaceFields,
-		Organization: orgFields,
-		AccessToken:  token,
+		SpaceFields:        spaceFields,
+		OrganizationFields: orgFields,
+		AccessToken:        token,
 	}
 
 	cmd := NewListDomains(fakeUI, config, domainRepo)

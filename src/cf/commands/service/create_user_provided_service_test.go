@@ -101,9 +101,9 @@ func callCreateUserProvidedService(t *testing.T, args []string, inputs []string,
 	space := cf.SpaceFields{}
 	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	cmd := NewCreateUserProvidedService(fakeUI, config, userProvidedServiceInstanceRepo)

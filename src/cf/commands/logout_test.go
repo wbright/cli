@@ -19,8 +19,8 @@ func TestLogoutClearsAccessTokenOrgAndSpace(t *testing.T) {
 	configRepo := &testconfig.FakeConfigRepository{}
 	config, _ := configRepo.Get()
 	config.AccessToken = "MyAccessToken"
-	config.Organization = org
-	config.Space = space
+	config.OrganizationFields = org
+	config.SpaceFields = space
 
 	ui := new(testterm.FakeUI)
 
@@ -31,6 +31,6 @@ func TestLogoutClearsAccessTokenOrgAndSpace(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Empty(t, updatedConfig.AccessToken)
-	assert.Equal(t, updatedConfig.Organization, cf.OrganizationFields{})
-	assert.Equal(t, updatedConfig.Space, cf.SpaceFields{})
+	assert.Equal(t, updatedConfig.OrganizationFields, cf.OrganizationFields{})
+	assert.Equal(t, updatedConfig.SpaceFields, cf.SpaceFields{})
 }

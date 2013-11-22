@@ -41,7 +41,7 @@ func TestSetOrganization(t *testing.T) {
 	config := repo.loadDefaultConfig(t)
 	defer repo.restoreConfig(t)
 
-	config.Organization = cf.OrganizationFields{}
+	config.OrganizationFields = cf.OrganizationFields{}
 
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
@@ -53,8 +53,8 @@ func TestSetOrganization(t *testing.T) {
 
 	savedConfig, err := repo.Get()
 	assert.NoError(t, err)
-	assert.Equal(t, savedConfig.Organization, org)
-	assert.Equal(t, savedConfig.Space, cf.SpaceFields{})
+	assert.Equal(t, savedConfig.OrganizationFields, org)
+	assert.Equal(t, savedConfig.SpaceFields, cf.SpaceFields{})
 }
 
 func TestSetSpace(t *testing.T) {
@@ -71,7 +71,7 @@ func TestSetSpace(t *testing.T) {
 
 	savedConfig, err := repo.Get()
 	assert.NoError(t, err)
-	assert.Equal(t, savedConfig.Space, space)
+	assert.Equal(t, savedConfig.SpaceFields, space)
 }
 
 func TestClearTokens(t *testing.T) {
@@ -87,8 +87,8 @@ func TestClearTokens(t *testing.T) {
 	config.Target = "http://api.example.com"
 	config.RefreshToken = "some old refresh token"
 	config.AccessToken = "some old access token"
-	config.Organization = org
-	config.Space = space
+	config.OrganizationFields = org
+	config.SpaceFields = space
 	repo.Save()
 
 	err := repo.ClearTokens()
@@ -101,8 +101,8 @@ func TestClearTokens(t *testing.T) {
 	assert.Equal(t, savedConfig.Target, "http://api.example.com")
 	assert.Empty(t, savedConfig.AccessToken)
 	assert.Empty(t, savedConfig.RefreshToken)
-	assert.Equal(t, savedConfig.Organization, org)
-	assert.Equal(t, savedConfig.Space, space)
+	assert.Equal(t, savedConfig.OrganizationFields, org)
+	assert.Equal(t, savedConfig.SpaceFields, space)
 }
 
 func TestClearSession(t *testing.T) {
@@ -129,8 +129,8 @@ func TestClearSession(t *testing.T) {
 	assert.Equal(t, savedConfig.Target, "http://api.example.com")
 	assert.Empty(t, savedConfig.AccessToken)
 	assert.Empty(t, savedConfig.RefreshToken)
-	assert.Equal(t, savedConfig.Organization, cf.OrganizationFields{})
-	assert.Equal(t, savedConfig.Space, cf.SpaceFields{})
+	assert.Equal(t, savedConfig.OrganizationFields, cf.OrganizationFields{})
+	assert.Equal(t, savedConfig.SpaceFields, cf.SpaceFields{})
 }
 
 func (repo ConfigurationDiskRepository) loadDefaultConfig(t *testing.T) (config *Configuration) {

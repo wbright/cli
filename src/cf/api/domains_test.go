@@ -500,10 +500,10 @@ func createDomainRepo(t *testing.T, reqs []testnet.TestRequest) (ts *httptest.Se
 	space.Guid = "my-space-guid"
 
 	config := &configuration.Configuration{
-		AccessToken:  "BEARER my_access_token",
-		Target:       ts.URL,
-		Space:        space,
-		Organization: org,
+		AccessToken:        "BEARER my_access_token",
+		Target:             ts.URL,
+		SpaceFields:        space,
+		OrganizationFields: org,
 	}
 	gateway := net.NewCloudControllerGateway()
 	repo = NewCloudControllerDomainRepository(config, gateway)

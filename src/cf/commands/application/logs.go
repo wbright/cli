@@ -64,8 +64,8 @@ func (cmd *Logs) recentLogsFor(app cf.Application, logChan chan *logmessage.Mess
 	onConnect := func() {
 		cmd.ui.Say("Connected, dumping recent logs for app %s in org %s / space %s as %s...\n",
 			terminal.EntityNameColor(app.Name),
-			terminal.EntityNameColor(cmd.config.Organization.Name),
-			terminal.EntityNameColor(cmd.config.Space.Name),
+			terminal.EntityNameColor(cmd.config.OrganizationFields.Name),
+			terminal.EntityNameColor(cmd.config.SpaceFields.Name),
 			terminal.EntityNameColor(cmd.config.Username()),
 		)
 	}
@@ -81,8 +81,8 @@ func (cmd *Logs) tailLogsFor(app cf.Application, logChan chan *logmessage.Messag
 	onConnect := func() {
 		cmd.ui.Say("Connected, tailing logs for app %s in org %s / space %s as %s...\n",
 			terminal.EntityNameColor(app.Name),
-			terminal.EntityNameColor(cmd.config.Organization.Name),
-			terminal.EntityNameColor(cmd.config.Space.Name),
+			terminal.EntityNameColor(cmd.config.OrganizationFields.Name),
+			terminal.EntityNameColor(cmd.config.SpaceFields.Name),
 			terminal.EntityNameColor(cmd.config.Username()),
 		)
 	}

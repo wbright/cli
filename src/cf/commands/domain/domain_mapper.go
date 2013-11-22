@@ -68,14 +68,14 @@ func (cmd *DomainMapper) Run(c *cli.Context) {
 	if cmd.bind {
 		cmd.ui.Say("Mapping domain %s to org %s / space %s as %s...",
 			terminal.EntityNameColor(domainName),
-			terminal.EntityNameColor(cmd.config.Organization.Name),
+			terminal.EntityNameColor(cmd.config.OrganizationFields.Name),
 			terminal.EntityNameColor(space.Name),
 			terminal.EntityNameColor(cmd.config.Username()),
 		)
 	} else {
 		cmd.ui.Say("Unmapping domain %s from org %s / space %s as %s...",
 			terminal.EntityNameColor(domainName),
-			terminal.EntityNameColor(cmd.config.Organization.Name),
+			terminal.EntityNameColor(cmd.config.OrganizationFields.Name),
 			terminal.EntityNameColor(space.Name),
 			terminal.EntityNameColor(cmd.config.Username()),
 		)

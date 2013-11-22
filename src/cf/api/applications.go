@@ -97,7 +97,7 @@ func NewCloudControllerApplicationRepository(config *configuration.Configuration
 }
 
 func (repo CloudControllerApplicationRepository) FindByName(name string) (app cf.Application, apiResponse net.ApiResponse) {
-	path := fmt.Sprintf("%s/v2/spaces/%s/apps?q=name%s&inline-relations-depth=1", repo.config.Target, repo.config.Space.Guid, "%3A"+name)
+	path := fmt.Sprintf("%s/v2/spaces/%s/apps?q=name%s&inline-relations-depth=1", repo.config.Target, repo.config.SpaceFields.Guid, "%3A"+name)
 	appResources := new(PaginatedApplicationResources)
 	apiResponse = repo.gateway.GetResource(path, repo.config.AccessToken, appResources)
 	if apiResponse.IsNotSuccessful() {
@@ -141,7 +141,7 @@ func (repo CloudControllerApplicationRepository) Create(name, buildpackUrl, stac
 	path := fmt.Sprintf("%s/v2/apps", repo.config.Target)
 	data := fmt.Sprintf(
 		`{"space_guid":"%s","name":"%s","instances":%d,"buildpack":%s,"memory":%d,"stack_guid":%s,"command":%s}`,
-		repo.config.Space.Guid,
+		repo.config.SpaceFields.Guid,
 		name,
 		instances,
 		stringOrNull(buildpackUrl),

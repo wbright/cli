@@ -14,14 +14,14 @@ func TestTargetedOrgRequirement(t *testing.T) {
 	org.Name = "my-org"
 	org.Guid = "my-org-guid"
 	config := &configuration.Configuration{
-		Organization: org,
+		OrganizationFields: org,
 	}
 
 	req := newTargetedOrgRequirement(ui, config)
 	success := req.Execute()
 	assert.True(t, success)
 
-	config.Organization = cf.OrganizationFields{}
+	config.OrganizationFields = cf.OrganizationFields{}
 
 	req = newTargetedOrgRequirement(ui, config)
 	success = req.Execute()

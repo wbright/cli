@@ -101,9 +101,9 @@ func callSpaceUsers(t *testing.T, args []string, reqFactory *testreq.FakeReqFact
 	space2 := cf.SpaceFields{}
 	space2.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space2,
-		Organization: org2,
-		AccessToken:  token,
+		SpaceFields:        space2,
+		OrganizationFields: org2,
+		AccessToken:        token,
 	}
 
 	cmd := NewSpaceUsers(ui, config, spaceRepo, userRepo)

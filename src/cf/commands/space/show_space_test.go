@@ -79,8 +79,8 @@ func callShowSpace(t *testing.T, args []string, reqFactory *testreq.FakeReqFacto
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	config := &configuration.Configuration{
-		AccessToken:  token,
-		Organization: org,
+		AccessToken:        token,
+		OrganizationFields: org,
 	}
 
 	cmd := NewShowSpace(ui, config)

@@ -91,7 +91,7 @@ func TestDeleteSpaceWhenSpaceIsTargeted(t *testing.T) {
 	configRepo := &testconfig.FakeConfigRepository{}
 
 	config, _ := configRepo.Get()
-	config.Space = space
+	config.SpaceFields = space
 	configRepo.Save()
 
 	ui := &testterm.FakeUI{}
@@ -116,7 +116,7 @@ func TestDeleteSpaceWhenSpaceNotTargeted(t *testing.T) {
 	otherSpace := cf.SpaceFields{}
 	otherSpace.Name = "do-not-delete"
 	otherSpace.Guid = "do-not-delete-guid"
-	config.Space = otherSpace
+	config.SpaceFields = otherSpace
 	configRepo.Save()
 
 	ui := &testterm.FakeUI{}
@@ -167,9 +167,9 @@ func deleteSpace(t *testing.T, confirmation string, args []string) (ui *testterm
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space8,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space8,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	cmd := NewDeleteSpace(ui, config, spaceRepo, configRepo)

@@ -75,9 +75,9 @@ func callFiles(t *testing.T, args []string, reqFactory *testreq.FakeReqFactory, 
 	space := cf.SpaceFields{}
 	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	cmd := NewFiles(ui, config, appFilesRepo)

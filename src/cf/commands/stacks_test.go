@@ -56,9 +56,9 @@ func callStacks(t *testing.T, stackRepo *testapi.FakeStackRepository) (ui *testt
 	org.Name = "my-org"
 
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	cmd := NewStacks(ui, config, stackRepo)

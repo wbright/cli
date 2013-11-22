@@ -126,7 +126,7 @@ func createUserProvidedServiceInstanceRepo(t *testing.T, req testnet.TestRequest
 	space.Guid = "my-space-guid"
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
-		Space:       space,
+		SpaceFields: space,
 		Target:      ts.URL,
 	}
 

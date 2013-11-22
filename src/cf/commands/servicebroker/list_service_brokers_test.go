@@ -84,9 +84,9 @@ func callListServiceBrokers(t *testing.T, args []string, serviceBrokerRepo *test
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	ctxt := testcmd.NewContext("service-brokers", args)

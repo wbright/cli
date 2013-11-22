@@ -103,9 +103,9 @@ func callSetSpaceRole(t *testing.T, args []string, reqFactory *testreq.FakeReqFa
 	org2 := cf.OrganizationFields{}
 	org2.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space2,
-		Organization: org2,
-		AccessToken:  token,
+		SpaceFields:        space2,
+		OrganizationFields: org2,
+		AccessToken:        token,
 	}
 
 	cmd := NewSetSpaceRole(ui, config, spaceRepo, userRepo)

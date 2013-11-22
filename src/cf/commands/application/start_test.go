@@ -76,8 +76,8 @@ func startAppWithInstancesAndErrors(t *testing.T, app cf.Application, instances 
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:                   space,
-		Organization:            org,
+		SpaceFields:             space,
+		OrganizationFields:      org,
 		AccessToken:             token,
 		ApplicationStartTimeout: 2,
 	}
@@ -347,8 +347,8 @@ func TestStartApplicationWithLoggingFailure(t *testing.T) {
 	org2 := cf.OrganizationFields{}
 	org2.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:                   space2,
-		Organization:            org2,
+		SpaceFields:             space2,
+		OrganizationFields:      org2,
 		AccessToken:             token,
 		ApplicationStartTimeout: 2,
 	}

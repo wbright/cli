@@ -64,9 +64,9 @@ func callRenameSpace(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space2,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space2,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	cmd := NewRenameSpace(ui, config, spaceRepo, testconfig.FakeConfigRepository{})

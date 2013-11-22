@@ -343,7 +343,7 @@ func createRoutesRepo(t *testing.T, requests ...testnet.TestRequest) (ts *httpte
 	config := &configuration.Configuration{
 		AccessToken: "BEARER my_access_token",
 		Target:      ts.URL,
-		Space:       space,
+		SpaceFields: space,
 	}
 
 	gateway := net.NewCloudControllerGateway()

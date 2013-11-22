@@ -89,7 +89,7 @@ func NewCloudControllerServiceSummaryRepository(config *configuration.Configurat
 }
 
 func (repo CloudControllerServiceSummaryRepository) GetSummariesInCurrentSpace() (instances []cf.ServiceInstance, apiResponse net.ApiResponse) {
-	path := fmt.Sprintf("%s/v2/spaces/%s/summary", repo.config.Target, repo.config.Space.Guid)
+	path := fmt.Sprintf("%s/v2/spaces/%s/summary", repo.config.Target, repo.config.SpaceFields.Guid)
 	resource := new(ServiceInstancesSummaries)
 
 	apiResponse = repo.gateway.GetResource(path, repo.config.AccessToken, resource)

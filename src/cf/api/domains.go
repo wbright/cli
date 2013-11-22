@@ -130,7 +130,7 @@ func (repo CloudControllerDomainRepository) FindByName(name string) (domain cf.D
 }
 
 func (repo CloudControllerDomainRepository) FindByNameInCurrentSpace(name string) (domain cf.Domain, apiResponse net.ApiResponse) {
-	spacePath := fmt.Sprintf("%s/v2/spaces/%s/domains?inline-relations-depth=1&q=name%%3A%s", repo.config.Target, repo.config.Space.Guid, name)
+	spacePath := fmt.Sprintf("%s/v2/spaces/%s/domains?inline-relations-depth=1&q=name%%3A%s", repo.config.Target, repo.config.SpaceFields.Guid, name)
 	return repo.findOneWithPaths(spacePath, name)
 }
 

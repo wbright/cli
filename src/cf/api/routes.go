@@ -154,7 +154,7 @@ func (repo CloudControllerRouteRepository) findNextWithPath(path string) (routes
 }
 
 func (repo CloudControllerRouteRepository) Create(host, domainGuid string) (createdRoute cf.RouteFields, apiResponse net.ApiResponse) {
-	return repo.CreateInSpace(host, domainGuid, repo.config.Space.Guid)
+	return repo.CreateInSpace(host, domainGuid, repo.config.SpaceFields.Guid)
 }
 
 func (repo CloudControllerRouteRepository) CreateInSpace(host, domainGuid, spaceGuid string) (createdRoute cf.RouteFields, apiResponse net.ApiResponse) {

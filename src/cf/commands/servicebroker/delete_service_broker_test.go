@@ -108,9 +108,9 @@ func callDeleteServiceBroker(t *testing.T, args []string, reqFactory *testreq.Fa
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	cmd := NewDeleteServiceBroker(ui, config, repo)
@@ -138,9 +138,9 @@ func deleteServiceBroker(t *testing.T, confirmation string, args []string) (ui *
 	org2 := cf.OrganizationFields{}
 	org2.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space2,
-		Organization: org2,
-		AccessToken:  token,
+		SpaceFields:        space2,
+		OrganizationFields: org2,
+		AccessToken:        token,
 	}
 
 	ctxt := testcmd.NewContext("delete-service-broker", args)

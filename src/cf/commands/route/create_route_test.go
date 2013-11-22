@@ -132,8 +132,8 @@ func TestRouteCreator(t *testing.T) {
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Organization: org,
-		AccessToken:  token,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	cmd := NewCreateRoute(ui, config, routeRepo)
@@ -165,9 +165,9 @@ func callCreateRoute(t *testing.T, args []string, reqFactory *testreq.FakeReqFac
 	space := cf.SpaceFields{}
 	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	cmd := NewCreateRoute(fakeUI, config, routeRepo)

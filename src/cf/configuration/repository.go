@@ -39,8 +39,8 @@ func (repo ConfigurationDiskRepository) SetOrganization(org cf.OrganizationField
 		return
 	}
 
-	config.Organization = org
-	config.Space = cf.SpaceFields{}
+	config.OrganizationFields = org
+	config.SpaceFields = cf.SpaceFields{}
 
 	return saveConfiguration(config)
 }
@@ -51,7 +51,7 @@ func (repo ConfigurationDiskRepository) SetSpace(space cf.SpaceFields) (err erro
 		return
 	}
 
-	config.Space = space
+	config.SpaceFields = space
 
 	return saveConfiguration(config)
 }
@@ -107,8 +107,8 @@ func (repo ConfigurationDiskRepository) ClearSession() (err error) {
 	if err != nil {
 		return
 	}
-	c.Organization = cf.OrganizationFields{}
-	c.Space = cf.SpaceFields{}
+	c.OrganizationFields = cf.OrganizationFields{}
+	c.SpaceFields = cf.SpaceFields{}
 
 	return saveConfiguration(c)
 }

@@ -47,8 +47,8 @@ func (cmd *Events) Run(c *cli.Context) {
 
 	cmd.ui.Say("Getting events for app %s in org %s / space %s as %s...\n",
 		terminal.EntityNameColor(app.Name),
-		terminal.EntityNameColor(cmd.config.Organization.Name),
-		terminal.EntityNameColor(cmd.config.Space.Name),
+		terminal.EntityNameColor(cmd.config.OrganizationFields.Name),
+		terminal.EntityNameColor(cmd.config.SpaceFields.Name),
 		terminal.EntityNameColor(cmd.config.Username()),
 	)
 

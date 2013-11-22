@@ -119,9 +119,9 @@ func callApps(t *testing.T, appSummaryRepo *testapi.FakeAppSummaryRepo, reqFacto
 	org := cf.OrganizationFields{}
 	org.Name = "my-org"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	ctxt := testcmd.NewContext("apps", []string{})

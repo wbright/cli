@@ -132,9 +132,9 @@ func callDeleteUser(t *testing.T, args []string, userRepo *testapi.FakeUserRepos
 	space := cf.SpaceFields{}
 	space.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space,
-		Organization: org,
-		AccessToken:  token,
+		SpaceFields:        space,
+		OrganizationFields: org,
+		AccessToken:        token,
 	}
 
 	cmd := NewDeleteUser(ui, config, userRepo)
@@ -163,9 +163,9 @@ func deleteWithConfirmation(t *testing.T, confirmation string) (ui *testterm.Fak
 	space2 := cf.SpaceFields{}
 	space2.Name = "my-space"
 	config := &configuration.Configuration{
-		Space:        space2,
-		Organization: org2,
-		AccessToken:  token,
+		SpaceFields:        space2,
+		OrganizationFields: org2,
+		AccessToken:        token,
 	}
 
 	cmd := NewDeleteUser(ui, config, userRepo)
