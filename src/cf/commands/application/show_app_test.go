@@ -67,7 +67,7 @@ func TestDisplayingAppSummary(t *testing.T) {
 	appSummary.InstanceCount = 2
 	appSummary.RunningInstances = 2
 	appSummary.Memory = 256
-	appSummary.RouteSummary = []cf.RouteSummary{route1, route2}
+	appSummary.RouteSummaries = []cf.RouteSummary{route1, route2}
 
 	time1, err := time.Parse("Mon Jan 2 15:04:05 -0700 MST 2006", "Mon Jan 2 15:04:05 -0700 MST 2012")
 	assert.NoError(t, err)
@@ -166,7 +166,7 @@ func testDisplayingAppSummaryWithErrorCode(t *testing.T, errorCode string) {
 
 	appSummary := cf.AppSummary{}
 	appSummary.ApplicationFields = app
-	appSummary.RouteSummary = routes
+	appSummary.RouteSummaries = routes
 
 	appSummaryRepo := &testapi.FakeAppSummaryRepo{GetSummarySummary: appSummary, GetSummaryErrorCode: errorCode}
 	appInstancesRepo := &testapi.FakeAppInstancesRepo{}

@@ -75,7 +75,7 @@ func (cmd *ShowApp) Run(c *cli.Context) {
 	cmd.ui.Say("%s %s x %d instances", terminal.HeaderColor("usage:"), formatters.ByteSize(appSummary.Memory*formatters.MEGABYTE), appSummary.InstanceCount)
 
 	var urls []string
-	for _, route := range appSummary.RouteSummary {
+	for _, route := range appSummary.RouteSummaries {
 		urls = append(urls, route.URL())
 	}
 	cmd.ui.Say("%s %s\n", terminal.HeaderColor("urls:"), strings.Join(urls, ", "))

@@ -45,7 +45,7 @@ func TestApps(t *testing.T) {
 	app.InstanceCount = 1
 	app.Memory = 512
 	app.DiskQuota = 1024
-	app.RouteSummary = app1Routes
+	app.RouteSummaries = app1Routes
 
 	app2 := cf.AppSummary{}
 	app2.Name = "Application-2"
@@ -54,7 +54,7 @@ func TestApps(t *testing.T) {
 	app2.InstanceCount = 2
 	app2.Memory = 256
 	app2.DiskQuota = 1024
-	app2.RouteSummary = app2Routes
+	app2.RouteSummaries = app2Routes
 
 	apps := []cf.AppSummary{app, app2}
 

@@ -50,7 +50,7 @@ func (resource ApplicationFromSummary) ToModel() (app cf.AppSummary) {
 	for _, route := range resource.Routes {
 		routes = append(routes, route.ToModel())
 	}
-	app.RouteSummary = routes
+	app.RouteSummaries = routes
 
 	return
 }

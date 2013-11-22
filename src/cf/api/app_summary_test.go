@@ -86,8 +86,8 @@ func TestGetAppSummariesInCurrentSpace(t *testing.T) {
 	app1 := apps[0]
 	assert.Equal(t, app1.Name, "app1")
 	assert.Equal(t, app1.Guid, "app-1-guid")
-	assert.Equal(t, len(app1.RouteSummary), 1)
-	assert.Equal(t, app1.RouteSummary[0].URL(), "app1.cfapps.io")
+	assert.Equal(t, len(app1.RouteSummaries), 1)
+	assert.Equal(t, app1.RouteSummaries[0].URL(), "app1.cfapps.io")
 
 	assert.Equal(t, app1.State, "started")
 	assert.Equal(t, app1.InstanceCount, 1)
@@ -97,9 +97,9 @@ func TestGetAppSummariesInCurrentSpace(t *testing.T) {
 	app2 := apps[1]
 	assert.Equal(t, app2.Name, "app2")
 	assert.Equal(t, app2.Guid, "app-2-guid")
-	assert.Equal(t, len(app2.RouteSummary), 2)
-	assert.Equal(t, app2.RouteSummary[0].URL(), "app2.cfapps.io")
-	assert.Equal(t, app2.RouteSummary[1].URL(), "foo.cfapps.io")
+	assert.Equal(t, len(app2.RouteSummaries), 2)
+	assert.Equal(t, app2.RouteSummaries[0].URL(), "app2.cfapps.io")
+	assert.Equal(t, app2.RouteSummaries[1].URL(), "foo.cfapps.io")
 
 	assert.Equal(t, app2.State, "started")
 	assert.Equal(t, app2.InstanceCount, 3)

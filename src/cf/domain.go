@@ -65,7 +65,7 @@ type Application struct {
 
 type AppSummary struct {
 	ApplicationFields
-	RouteSummary []RouteSummary
+	RouteSummaries []RouteSummary
 }
 
 type AppFileFields struct {

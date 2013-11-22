@@ -54,7 +54,7 @@ func (cmd ListApps) Run(c *cli.Context) {
 
 	for _, appSummary := range apps {
 		var urls []string
-		for _, route := range appSummary.RouteSummary {
+		for _, route := range appSummary.RouteSummaries {
 			urls = append(urls, route.URL())
 		}
 
