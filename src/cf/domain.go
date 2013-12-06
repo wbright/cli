@@ -68,6 +68,15 @@ type AppSummary struct {
 	RouteSummaries []RouteSummary
 }
 
+type AppParams map[string]interface{}
+const (
+	AppState = "state",
+	AppCommand = "command",
+	AppBuildpackUrl = "buildpack",
+	AppInstanceCount = "instances",
+
+)
+
 type AppFileFields struct {
 	Path string
 	Sha1 string
